@@ -4,7 +4,7 @@
 
 part of PurityClient;
 
-html.WebSocket _ws;
+WebSocket _ws;
 InitAppView _initAppView;
 Map<ObjectId, ClientModel> _models = new Map<ObjectId, ClientModel>();
 
@@ -20,7 +20,7 @@ void initPurityAppView(InitAppView initAppView){
 }
 
 void _initSocket(){
-  _ws = new html.WebSocket('ws://${Uri.base.host}:${Uri.base.port}$PURITY_SOCKET_ROUTE_PATH');
+  _ws = new WebSocket('ws://${Uri.base.host}:${Uri.base.port}$PURITY_SOCKET_ROUTE_PATH');
   _ws.onOpen.first.then((_) =>
     _ws.onMessage.listen((msg) =>
       _handlePurityEvent(new Transmittable.fromTranString(msg.data, (v){ if(v is ClientModel){ _processNewClientModels(v); } return v; }))));

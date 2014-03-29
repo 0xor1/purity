@@ -6,7 +6,7 @@ part of Internal;
 
 class InvocationEvent extends Event implements IInvocationEvent{}
 abstract class IInvocationEvent{
-  String method;
+  Symbol method;
   List<dynamic> positionalArguments;
-  Map<String, dynamic> namedArguments;
+  Map<Symbol, dynamic> namedArguments;
 }

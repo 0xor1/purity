@@ -5,6 +5,7 @@
 library PurityServer;
 
 import 'dart:io';
+import 'dart:mirrors';
 import 'purity.dart';
 import 'src/internal/internal.dart';
 import 'package:bson/bson.dart' show ObjectId;

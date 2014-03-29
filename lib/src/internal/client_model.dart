@@ -13,12 +13,9 @@ class ClientModel extends ModelBase{
     var name = MirrorSystem.getName(inv.memberName);
     if(inv.isMethod){
       var invEvent = new InvocationEvent()
-      ..method = name
+      ..method = inv.memberName
       ..positionalArguments = inv.positionalArguments
-      ..namedArguments = new Map<String, dynamic>.fromIterable(
-        inv.namedArguments.keys,
-        key: (k) => MirrorSystem.getName(k),
-        value: (k) => inv.namedArguments[k]);
+      ..namedArguments = inv.namedArguments;
       emitEvent(invEvent);
     }else{
       throw new UnsupportedInvocationTypeError(this, name);
