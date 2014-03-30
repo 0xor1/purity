@@ -8,7 +8,7 @@ WebSocket _ws;
 InitAppView _initAppView;
 Map<ObjectId, ClientModel> _models = new Map<ObjectId, ClientModel>();
 
-typedef void InitAppView(ClientModel model);
+typedef void InitAppView(dynamic model);
 
 void initPurityAppView(InitAppView initAppView){
   if(_models.isNotEmpty){
