@@ -23,10 +23,10 @@ void _initSocket(){
   _ws = new WebSocket('ws://${Uri.base.host}:${Uri.base.port}$PURITY_SOCKET_ROUTE_PATH');
   _ws.onOpen.first.then((_) =>
     _ws.onMessage.listen((msg) =>
-      _handlePurityEvent(new Transmittable.fromTranString(msg.data, (v){ if(v is ClientModel){ _processNewClientModels(v); } return v; }))));
+      _handleMessage(new Transmittable.fromTranString(msg.data, (v){ if(v is ClientModel){ _processNewClientModels(v); } return v; }))));
 }
 
-void _handlePurityEvent(Transmittable t){
+void _handleMessage(Transmittable t){
   if(t is SessionInitialisedTransmission){
     _initAppView(t.model);
   }else{
