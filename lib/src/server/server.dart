@@ -52,9 +52,11 @@ class PurityServer{
 
               ValueProcessor processModel;
               processModel = (dynamic v){
-                if(v is Model && !models.containsKey(v.id)){
-                  models[v.id] = v;
-                  v.addEventAction(Omni, (e) => ws.add(e.toTranString(processModel)));
+                if(v is Model){
+                  if(!models.containsKey(v.id)){
+                    models[v.id] = v;
+                    v.addEventAction(Omni, (e) => ws.add(e.toTranString(processModel)));
+                  }
                   return new ClientModel(v.id);
                 }
                 return v;
@@ -63,7 +65,7 @@ class PurityServer{
               ws.map((str) => new Transmittable.fromTranString(str))
               .listen((InvocationEvent ie){
                 var modelMirror = reflect(models[(ie.emitter as ModelBase).id]);
-                modelMirror.invoke(ie.method, ie.positionalArguments, ie.positionalArguments);
+                modelMirror.invoke(ie.method, ie.positionalArguments, ie.namedArguments);
               });
 
               var sessionInitTran = new SessionInitialisedTransmission()
