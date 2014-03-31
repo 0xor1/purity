@@ -82,7 +82,7 @@ class PurityServer{
         // Default handler serves files.
         var virDir = new http_server.VirtualDirectory(staticFileDirectory);
         virDir.jailRoot = true;
-        virDir.allowDirectoryListing = false;
+        virDir.allowDirectoryListing = true;
         virDir.directoryHandler = (dir, request) {
           // Redirect directory requests to index.html files.
           var indexUri = new Uri.file(dir.path).resolve('index.html');
