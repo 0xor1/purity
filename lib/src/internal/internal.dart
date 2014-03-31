@@ -25,7 +25,7 @@ const String PURITY_SOCKET_ROUTE_PATH = '/purity_socket';
 const String CLIENT_MODEL_TRAN_KEY = 'cm';
 
 bool _registeredTranTypes = false;
-void _registerTranTypes(){
+void registerTranTypes(){
   if(_registeredTranTypes){ return; }
   _registeredTranTypes = true;
   registerTranCodec(CLIENT_MODEL_TRAN_KEY, ClientModel, (ClientModel cm) => cm.id.toHexString(), (String s) => new ClientModel(new ObjectId.fromHexString(s)));

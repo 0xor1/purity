@@ -22,6 +22,8 @@ class PurityServer{
 
   PurityServer._internal(dynamic address, int port, String staticFileDirectory, AppInitialiser initialiseApp){
 
+    registerTranTypes();
+
     _singleton = this;
 
     Logger.root.level = Level.ALL;

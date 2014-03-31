@@ -14,6 +14,7 @@ void initPurityAppView(InitAppView initAppView){
   if(_models.isNotEmpty){
     throw 'App already initialised.';
   }else{
+    registerTranTypes();
     _initAppView = initAppView;
     _initSocket();
   }
