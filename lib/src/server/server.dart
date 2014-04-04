@@ -6,21 +6,22 @@ part of PurityServer;
 
 final Logger _log = new Logger('Purity Server');
 
-typedef Model AppInitialiser();
+typedef Model OpenApp();
+typedef void CloseApp(Model m);
 
 class PurityServer{
 
   static PurityServer _singleton;
 
-  factory PurityServer(dynamic address, int port, String staticFileDirectory, AppInitialiser appInitialiser /*need to add app close handler*/){
+  factory PurityServer(dynamic address, int port, String staticFileDirectory, OpenApp openApp, CloseApp closeApp){
     if(_singleton != null){
       return _singleton;
     }else{
-      return new PurityServer._internal(address, port, staticFileDirectory, appInitialiser);
+      return new PurityServer._internal(address, port, staticFileDirectory, openApp, closeApp);
     }
   }
 
-  PurityServer._internal(dynamic address, int port, String staticFileDirectory, AppInitialiser initialiseApp){
+  PurityServer._internal(dynamic address, int port, String staticFileDirectory, OpenApp openApp, CloseApp closeApp){
 
     registerTranTypes();
 
@@ -45,7 +46,7 @@ class PurityServer{
 
         router.serve(PURITY_SOCKET_ROUTE_PATH).listen((HttpRequest request){
           if(WebSocketTransformer.isUpgradeRequest(request)){
-            var appModel = initialiseApp();
+            var appModel = openApp();
             var models = new Map<ObjectId, Model>();
             WebSocketTransformer.upgrade(request)
             .then((WebSocket ws){
@@ -66,7 +67,7 @@ class PurityServer{
               .listen((InvocationEvent ie){
                 var modelMirror = reflect(models[(ie.emitter as ModelBase).id]);
                 modelMirror.invoke(ie.method, ie.positionalArguments, ie.namedArguments);
-              });
+              }, onDone: () => closeApp(appModel), onError: () => closeApp(appModel));
 
               var sessionInitTran = new SessionInitialisedTransmission()
               ..model = appModel;

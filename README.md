@@ -65,7 +65,7 @@ Once you have setup a purity application you can run it either all on the client
 for quick and rapid testing cycles, or you can split it and run it as a client-
 server application. Taken from [Stopwatch](http://github.com/0xor1/purity_stopwatch_example)
 
-`index.dart` For local testing
+`index.dart` for local testing
 ```dart
 void main(){
   var model = new SW.Stopwatch();			//create the app model
@@ -74,7 +74,7 @@ void main(){
 }
 ```
 
-`index.dart` For client-server app
+`index.dart` for client-server app
 ```dart
 void main(){
   initPurityAppView((stopwatch){			//initialise Purity
@@ -91,7 +91,8 @@ void main(){
       InternetAddress.LOOPBACK_IP_V4,
       4346,
       Platform.script.resolve('../build/web').toFilePath(),
-      () => new SW.Stopwatch());			//create the app model
+      () => new SW.Stopwatch(),       //create the app model
+      (stopwatch){});                 //close the app (nothing needs doing in this instance)			
 }
 ```
 ```
