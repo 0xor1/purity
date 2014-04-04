@@ -67,7 +67,7 @@ class PurityServer{
               .listen((InvocationEvent ie){
                 var modelMirror = reflect(models[(ie.emitter as ModelBase).id]);
                 modelMirror.invoke(ie.method, ie.positionalArguments, ie.namedArguments);
-              }, onDone: () => closeApp(appModel), onError: () => closeApp(appModel));
+              }, onDone: () => closeApp(appModel), onError: (error) => closeApp(appModel));
 
               var sessionInitTran = new SessionInitialisedTransmission()
               ..model = appModel;
