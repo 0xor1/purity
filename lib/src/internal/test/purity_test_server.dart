@@ -31,8 +31,9 @@ class PurityTestServer{
     }
     _StreamPack toServer = new _StreamPack<String>();
     _StreamPack toClient = new _StreamPack<String>();
+    String clientId = 'client_${testClientId++}';
     new PurityClientCore(_initTestAppView, _onTestConnectionClose, toClient.stream, toServer.controller.add);
-    purityServerCore.createPurityAppSession('client_${testClientId++}', toServer.stream, toClient.controller.add);
+    purityServerCore.createPurityAppSession(clientId, toServer.stream, toClient.controller.add);
   }
   
 }

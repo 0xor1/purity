@@ -34,6 +34,7 @@ class PurityServerCore extends PurityModel{
       });
       sessionSendString = (String str){
         _emitPurityServerMessageEvent(sessionName, false, str);
+        sendString(str);
       };
     }
     new PurityAppSession(sessionName, _openApp(), _closeApp, incoming, sessionSendString, garbageCollectionFrequency);

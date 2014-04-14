@@ -5,8 +5,8 @@
 part of PurityInternal;
 
 abstract class PurityModelBase extends Object with EventEmitter, EventDetector{
-  final ObjectId purityId;
-  PurityModelBase(this.purityId);
-  int get hashCode => purityId.hashCode;
-  bool operator ==(PurityModelBase other) => purityId == other.purityId;
+  final ObjectId _purityId;
+  PurityModelBase(this._purityId);
+  int get hashCode => _purityId.hashCode;
+  bool operator ==(PurityModelBase other) => _purityId == other._purityId;
 }

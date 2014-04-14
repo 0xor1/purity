@@ -7,6 +7,8 @@ part of PurityInternal;
 @proxy
 class PurityClientModel extends PurityModelBase{
 
+  ObjectId _clientId;
+  
   PurityClientModel(ObjectId id):super(id);
 
   void noSuchMethod(Invocation inv){
@@ -21,6 +23,5 @@ class PurityClientModel extends PurityModelBase{
       throw new PurityUnsupportedInvocationTypeError(this, name);
     }
   }
-
 
 }

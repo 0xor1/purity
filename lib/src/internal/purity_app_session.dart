@@ -25,10 +25,10 @@ class PurityAppSession extends PurityModel{
       ..model = _appModel);
   }
 
-  PurityClientModel _preprocessTran(dynamic v){
+  dynamic _preprocessTran(dynamic v){
     if(v is PurityModel){
-      if(!_models.containsKey(v.purityId)){
-        _models[v.purityId] = v;
+      if(!_models.containsKey(v._purityId)){
+        _models[v._purityId] = v;
         listen(v, Omni, (PurityEvent e){
           if(_garbageCollectionInProgress){
             _messageQueue.add(e);
@@ -37,7 +37,7 @@ class PurityAppSession extends PurityModel{
           }
         });
       }
-      return new PurityClientModel(v.purityId);
+      return new PurityClientModel(v._purityId);
     }
     return v;
   }
@@ -47,7 +47,7 @@ class PurityAppSession extends PurityModel{
     if(tran is PurityGarbageCollectionReportTransmission){
       _runGarbageCollectionSequence(tran.models);
     }else if(tran is PurityInvocationEvent){
-      var modelMirror = reflect(_models[(tran.emitter as PurityModelBase).purityId]);
+      var modelMirror = reflect(_models[(tran.emitter as PurityModelBase)._purityId]);
       modelMirror.invoke(tran.method, tran.positionalArguments, tran.namedArguments);
     }else{
       throw new PurityUnsupportedMessageTypeError(tran.runtimeType);
@@ -67,7 +67,7 @@ class PurityAppSession extends PurityModel{
   
   void _runGarbageCollectionSequence(Set<PurityModelBase> models){
     models.forEach((model){
-      _models.remove(model.purityId);
+      _models.remove(model._purityId);
     });
     for(var i = 0; i < _messageQueue.length; i++){
       _sendTran(_messageQueue[i]);

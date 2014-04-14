@@ -35,7 +35,7 @@ part 'test/stream_pack.dart';
 
 const String PURITY_SOCKET_ROUTE_PATH = '/purity_socket';
 
-typedef PurityModelBase OpenApp();
+typedef PurityModel OpenApp();
 typedef void CloseApp(PurityModel m);
 typedef dynamic InitAppView(PurityModelBase model);
 typedef void OnConnectionClose();
@@ -47,7 +47,7 @@ void _registerPurityTranTypes(){
   if(_purityTranTypesRegistered){ return; }
   _purityTranTypesRegistered = true;
   registerTranTypes('Purity', 'p', (){
-    registerTranCodec('a', PurityClientModel, (PurityClientModel cm) => cm.purityId.toHexString(), (String s) => new PurityClientModel(new ObjectId.fromHexString(s)));
+    registerTranCodec('a', PurityClientModel, (PurityClientModel cm) => cm._purityId.toHexString(), (String s) => new PurityClientModel(new ObjectId.fromHexString(s)));
     registerTranSubtype('b', PurityInvocationEvent);
     registerTranSubtype('c', PurityServerMessageEvent);
     registerTranSubtype('d', PurityAppSessionInitialisedTransmission);
