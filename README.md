@@ -1,76 +1,191 @@
 #Purity
 
-Purity is both a coding pattern and a simple web framework for developing single
-page, real time web apps with web sockets. Purity hides all of the server-client
-communications from the developer and allows for the same app code to run
-completely on the client for quick and rapid testing cycles, or with a few
-additional lines of code, split the server side and client side ready for
-production mode. Purity is currently in the early stages of development and so
-only recommended for experimental use for now.
+Purity is a web framework designed to make web app development faster, easier,
+more maintainable and more testable than ever before. It removes the need for 
+developers to write any client-server communications code, that means no http
+requests on the client and no http request handlers on the server. The pattern 
+Purity employs keeps your data, business logic and view entities seperated
+and independent which means business logic should be easy to unit test and
+your Purity projects should be easy to maintain, extend and reuse.
+
+The Purity pattern also allows you to run your applications fully just on the client
+side for fast and frequent testing cycles, this can be done without using the Purity
+framework for a very simple test setup and simple app debugging. However, one nice
+feature of Purity is that the core application server itself can be run on the client
+side, meaning you can fully test your application with the purity framework all 
+on a single web page with useful views already provided to make debugging Purity
+apps as easy as pie, all of this works both in native Dart and compiled javascript.
 
 ##Examples
 
 * [Stopwatch](http://github.com/0xor1/purity_stopwatch_example)
 
-##Pattern
+To use the Purity framework all you have to do is follow the golden rules:
 
-The Pattern that Purity follows means you should split your application packages
-into three distinct libraries, **Model**, **Interface** and **View**. The over
-arching design of Purity is that each Model is independent and keeps its internal
-state private, and notifies interested parties of internal state changes by emitting
-events. These Events can be picked up by other models and views and used to update
-other parts of the system and/or user interface. Other objects (views or models)
-invoke changes on a models internal state by calling its pubic methods which
-should always return void, because all communication of model state is done via 
-asynchronous events.
+##The Golden Rules (quick glance)
 
-###Model
+  1. Business Logic Entities (Models), extend from PurityModel and emit PurityEvents when their internal state changes
+  2. View Entities (Views) extend from PurityModelConsumer (or PurityView for more built in html support) and attach event listeners to the models they represent 
+  3. Data Entities (Data) are well defined and are registered as Transmittable types
+  4. The interfaces which Models expose to Views are explicitly declared in abstract classes and contain only methods which all return void
+  5. All of the types used as arguments to the Model interfaces, the Data Entities and the event tpes are all registered as Transmittable types
+  6. A View may only consume and represent one Model, though a Model may be consumed and represented by any numver of Views
+  
+##The Golden Rules (in depth)
 
-The **Model** library is for pure application business logic and should
-reference the **Purity** library `import 'package:purity/purity.dart';` and not
-use any specific libraries that are only supported on either client (dart:html)
-or server (dart:io). Each **Model** should `extend` off of the `class` **Model**
-in the **Purity** library. When a models state changes it should `emitEvent` saying
-so.
+Purity Application packages are split into three distinct
+libraries, **Interface**, **Model** and **View**. 
 
 ###Interface
 
-The **Interface** library is the place to define abstract classes which explicitly define
-each models public methods. Because models only reveal information about themselves
-by emitting asynchronous events the method signatures defined on model interfaces
-should always specify a return of `void`. The **Interface** library should also
-contain the Events that your packages models will emit.
+The Interface library should reference the Purity library and declare all the
+model interfaces as abstract classes containing only methods which all return void.
+The interface library should also declare all of the data entity types which extend
+Transmittable and event types which extend PurityEvent. Perhaps most importantly to note,
+is the interface library should contain a top level function used to register 
+all of the data entity types, all the types used as arguments to the model interface
+methods and all the event types as Transmittable types.
 
-Once you have defined all of your model public methods and events, you then need
-to register those types using the `registerTranType()` method from the
-[transmittable](pub.dartlang.org/packages/transmittable) package, you don't need to
-explicitly import transmittable, it is exported by the purity library.
-It is best to register all your types in a single function call, to see how this is done,
-look in [here](https://github.com/0xor1/transmittable/blob/dev/lib/src/registration.dart)
-or [here](https://github.com/0xor1/purity_stopwatch_example/blob/dev/lib/interface/i_stopwatch.dart)
+  * From the [Stopwatch]() example
+  ```dart
+  library IStopwatch;
+  import 'package:purity/purity.dart';
+  
+  class DurationChangeEvent extends PurityEvent implements IDurationChangeEvent{}
+  abstract class IDurationChangeEvent{
+    Duration duration;
+  }
+
+  class StartEvent extends PurityEvent{}
+
+  class StopEvent extends PurityEvent{}
+  
+  abstract class IStopwatch{
+    void start();
+    void stop();
+    void reset();
+  }
+
+  bool _stopwatchTranTypesRegistered = false;
+  void registerStopwatchTranTypes(){
+    if(_stopwatchTranTypesRegistered){ return; }
+    _stopwatchTranTypesRegistered = true;
+    registerTranTypes('Stopwatch', 's', (){
+      registerTranSubtype('a', DurationChangeEvent);
+      registerTranSubtype('b', StartEvent);
+      registerTranSubtype('c', StopEvent);
+    });
+  }
+  ```
+
+###Model
+
+The Model library should reference Purity and associated interface library, it
+should only be concerned with business logic, it should not reference dart:io / 
+dart:html or any other client-server only libraries. This keeps your app logic
+seperated from data persistance and view concerns and makes it simple to unit test.
+
+  * From the [Stopwatch]() example, note that the constructor calls the interface
+    libraries registerStopwatchTranTypes() function. and emits events when appropriate.
+  ```dart
+  library Stopwatch;
+  import 'package:purity/purity.dart';
+  import 'package:stopwatch/interface/i_stopwatch.dart';
+  
+  class Stopwatch extends PurityModel implements IStopwatch{
+    
+    Stopwatch(){
+      registerStopwatchTranTypes();
+    }
+    
+    void start(){
+      //do start logic
+      emitEvent(new StartEvent()); //tell anyone listening my state has changed
+    }
+
+    void stop(){
+      //do stop logic
+      emitEvent(new StopEvent()); //tell anyone listening my state has changed
+    }
+
+    void reset(){
+      //do reset stuff
+    }
+    
+    Duration _duration;
+    void _setDuration(Duration duration){
+      //do some private setDuration logic
+      emitEvent(new DurationChangeEvent()..duration = _duration);
+    }
+    
+  }
+  ``` 
 
 ###View
 
-The **View** library is where you define your visual elements that consume the
-**interfaces** of your models by attaching event listeners to their underlying
-models and making appropriate calls to their public methods. By having your views
-only reference the interface library and not the model library, your business logic
-will never leave the server and so always remain completely private from the user,
-they will only ever have access to the public interface but not the implemenation.
+The **View** library should reference PurityClient if it is implementing views for the client side,
+is where you define your visual elements that consume the **interfaces** 
+of your models by attaching event listeners to their underlying models and making
+appropriate calls to their public methods. By having your views only reference 
+the interface library and not the model library, your business logic will never 
+leave the server and so always remain completely private from the user, they will
+only ever have access to the public interface but not the implemenation.
 
+  * From the [Stopwatch]() example, again notice that the view constructor calls
+    the interface top level method to register the transmittable types.
+  ```dart
+  library StopwatchView;
+  import 'package:purity/purity_client.dart';
+  import 'package:purity_stopwatch_example/interface/i_stopwatch.dart';
 
-##Run
+  class StopwatchView extends PurityView{
+
+    IStopwatch get stopwatch => model;
+
+    StopwatchView(stopwatch):
+      super(stopwatch){
+
+      registerStopwatchTranTypes();
+
+      //do html initialisation stuff
+
+      _startButton.onClick.listen((e) => stopwatch.start());
+      _stopButton.onClick.listen((e) => stopwatch.stop());
+
+      listen(stopwatch, DurationChangeEvent, (dce){/*handle event*/});
+
+      stopwatch.reset();
+
+    }
+
+  }
+  ```
+  
+##Run Configurations
 
 Once you have setup a purity application you can run it either all on the client
 for quick and rapid testing cycles, or you can split it and run it as a client-
 server application. Taken from [Stopwatch](http://github.com/0xor1/purity_stopwatch_example)
 
-`index.dart` for local testing
+`index.dart` for local testing without Purity
 ```dart
 void main(){
-  var model = new SW.Stopwatch();			//create the app model
-  var view = new StopwatchView(model);		//create the app view
-  document.body.children.add(view.html);	//drop the view on the page
+  var model = new SW.Stopwatch();     //create the app model
+  var view = new StopwatchView(model);    //create the app view
+  document.body.children.add(view.html);  //drop the view on the page
+}
+```
+
+`index.dart` for local testing with Purity
+```dart
+void main(){
+
+  new PurityTestServer(
+    ()=> new Stopwatch(),
+    (stopwatch){/*no closing code required here*/});
+  var model = new SW.Stopwatch();     //create the app model
+  var view = new StopwatchView(model);    //create the app view
+  document.body.children.add(view.html);  //drop the view on the page
 }
 ```
 
