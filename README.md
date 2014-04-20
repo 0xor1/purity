@@ -1,4 +1,4 @@
-#Purity
+#Purity [![Build Status](https://drone.io/github.com/0xor1/purity/status.png)](https://drone.io/github.com/0xor1/purity/latest)
 
 Purity is a web framework designed to make web app development faster, easier,
 more maintainable and more testable than ever before. It removes the need for 
