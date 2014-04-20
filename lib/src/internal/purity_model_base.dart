@@ -2,7 +2,7 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of PurityInternal;
+part of purity.internal;
 
 abstract class PurityModelBase extends Object with EventEmitter, EventDetector{
   final ObjectId _purityId;

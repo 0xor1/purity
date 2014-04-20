@@ -2,10 +2,16 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-library Purity;
+library purity;
 
 import 'src/internal/purity_internal.dart';
-export 'src/internal/purity_internal.dart' show PurityModel, PurityEvent, PurityTestServer, initPurityTestAppView;
+export 'src/internal/purity_internal.dart' 
+  show
+    PurityModel,
+    PurityModelConsumer,
+    PurityEvent,
+    PurityTestServer,
+    initPurityTestAppView;
 import 'package:transmittable/transmittable.dart';
 export 'package:transmittable/transmittable.dart';
 import 'package:eventable/eventable.dart';

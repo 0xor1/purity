@@ -2,26 +2,19 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of PurityServer;
+part of purity.server;
 
 final Logger _log = new Logger('Purity Server');
 
 class PurityServer{
 
-  static PurityServer _singleton;
   final PurityServerCore _purityServerCore;
 
   factory PurityServer(dynamic address, int port, String staticFileDirectory, OpenApp openApp, CloseApp closeApp, [int garbageCollectionFrequency = 60]){
-    if(_singleton != null){
-      return _singleton;
-    }else{
-      return new PurityServer._internal(address, port, staticFileDirectory, new PurityServerCore(openApp, closeApp, garbageCollectionFrequency));
-    }
+    return new PurityServer._internal(address, port, staticFileDirectory, new PurityServerCore(openApp, closeApp, garbageCollectionFrequency));
   }
 
   PurityServer._internal(dynamic address, int port, String staticFileDirectory, PurityServerCore this._purityServerCore){
-    
-    _singleton = this;
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {

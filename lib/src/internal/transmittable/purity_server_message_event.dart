@@ -2,7 +2,7 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of PurityInternal;
+part of purity.internal;
 
 class PurityServerMessageEvent extends PurityEvent implements IPurityServerMessageEvent{}
 abstract class IPurityServerMessageEvent{

@@ -2,7 +2,7 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of PurityInternal;
+part of purity.internal;
 
 @proxy
 class PurityClientModel extends PurityModelBase{
@@ -16,8 +16,8 @@ class PurityClientModel extends PurityModelBase{
     if(inv.isMethod){
       var invEvent = new PurityInvocationEvent()
       ..method = inv.memberName
-      ..positionalArguments = inv.positionalArguments
-      ..namedArguments = inv.namedArguments;
+      ..posArgs = inv.positionalArguments
+      ..namArgs = inv.namedArguments;
       emitEvent(invEvent);
     }else{
       throw new PurityUnsupportedInvocationTypeError(this, name);

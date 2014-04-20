@@ -2,7 +2,7 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of PurityInternal;
+part of purity.internal;
 
 class PurityAppSession extends PurityModel{
   final String name;
@@ -48,7 +48,7 @@ class PurityAppSession extends PurityModel{
       _runGarbageCollectionSequence(tran.models);
     }else if(tran is PurityInvocationEvent){
       var modelMirror = reflect(_models[(tran.emitter as PurityModelBase)._purityId]);
-      modelMirror.invoke(tran.method, tran.positionalArguments, tran.namedArguments);
+      modelMirror.invoke(tran.method, tran.posArgs, tran.namArgs);
     }else{
       throw new PurityUnsupportedMessageTypeError(tran.runtimeType);
     }

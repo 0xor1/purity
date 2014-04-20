@@ -6,7 +6,7 @@
  * e.g. dart:html.
  */
 
-library PurityInternal;
+library purity.internal;
 
 import 'dart:mirrors';
 import 'dart:async';

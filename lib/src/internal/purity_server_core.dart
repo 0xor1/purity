@@ -2,33 +2,23 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of PurityInternal;
+part of purity.internal;
 
 class PurityServerCore extends PurityModel{
-
-  static PurityServerCore _singleton;
 
   final OpenApp _openApp;
   final CloseApp _closeApp;
   final int garbageCollectionFrequency; //in seconds
   final bool _isTestMode;
 
-  factory PurityServerCore(OpenApp openApp, CloseApp closeApp, [int garbageCollectionFrequency = 60, bool isTestMode = false]){
-    if(_singleton != null){
-      return _singleton;
-    }else{
-      return new PurityServerCore._internal(openApp, closeApp, garbageCollectionFrequency, isTestMode);
-    }
-  }
-
-  PurityServerCore._internal(OpenApp this._openApp, CloseApp this._closeApp, int this.garbageCollectionFrequency, bool this._isTestMode){
+  PurityServerCore(OpenApp this._openApp, CloseApp this._closeApp, [int this.garbageCollectionFrequency = 60, bool this._isTestMode = false]){
     _registerPurityTranTypes();
-    _singleton = this;
   }
 
   void createPurityAppSession(String sessionName, Stream<String> incoming, SendString sendString){
     SendString sessionSendString = sendString;
     if(_isTestMode){
+      _emitPurityServerMessageEvent(sessionName, true, 'New client connected to server');
       incoming.listen((str){
         _emitPurityServerMessageEvent(sessionName, true, str);
       });
@@ -43,8 +33,8 @@ class PurityServerCore extends PurityModel{
   void _emitPurityServerMessageEvent(String name, bool isClientToServer, String tranStr){
     emitEvent(
       new PurityServerMessageEvent()
-      ..clientToServer = true
       ..sessionName = name
+      ..clientToServer = isClientToServer
       ..tranString = tranStr);
   }
 }

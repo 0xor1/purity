@@ -41,9 +41,9 @@ libraries, **Interface**, **Model** and **View**.
 ###Interface
 
 The Interface library should reference the Purity library and declare all the
-model interfaces as abstract classes containing only methods which all return void.
+model interfaces as abstract classes containing only methods which return void.
 The interface library should also declare all of the data entity types which extend
-Transmittable and event types which extend PurityEvent. Perhaps most importantly to note,
+Transmittable and event types which extend PurityEvent. Perhaps most importantly to note
 is the interface library should contain a top level function used to register 
 all of the data entity types, all the types used as arguments to the model interface
 methods and all the event types as Transmittable types.
