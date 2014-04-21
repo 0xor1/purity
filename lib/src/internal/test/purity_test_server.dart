@@ -4,7 +4,7 @@
 
 part of purity.internal;
 
-class PurityTestServer extends Object with EventDetector, EventEmitter{
+class PurityTestServer extends PurityModel{
 
   static int testClientId = 0;
   final PurityServerCore _purityServerCore;

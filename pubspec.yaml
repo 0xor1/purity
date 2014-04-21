@@ -6,8 +6,8 @@ homepage: http://github.com/0xor1/purity
 environment:
   sdk: '>=1.3.0+6 <2.0.0'
 dependencies:
-  angular: any
   bson: '>=0.1.15 <2.0.0'
+  controls_and_panels: any
   eventable: '>=3.0.0 <4.0.0'
   http: '>=0.9.0 <0.10.0'
   http_server: '>=0.9.0 <0.10.0'

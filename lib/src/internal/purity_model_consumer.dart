@@ -16,7 +16,7 @@ abstract class PurityModelConsumer extends Object with EventEmitter, EventDetect
   }
 
   /**
-   * Dispose of this [View]
+   * Dispose of this [PurityModelConsumer]
    */
   void dispose(){
     ignoreAllEvents();
