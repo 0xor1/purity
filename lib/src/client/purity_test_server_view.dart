@@ -68,13 +68,17 @@ class PurityTestServerView extends PurityModelConsumer{
       }else{
         msg = 'Server -> ${event.sessionName}: ${event.tranString}';
       }
-      _serverMessageStack.add(new Label(msg));
+      var label = new Label(msg);
+      _serverMessageStack.add(label);
+      label.html.scrollIntoView(ScrollAlignment.BOTTOM);
+      _serverMessageStack.addSplitter(lineColor: '#fff', beforeMargin: 5, afterMargin: 5);
     });
     _newClientButton.onClick.listen((_){server.simulateNewClient();});
   }
   
   void addNewClientView(Element el){
     _clientStack.add(new _ClientControlWrapper(el));
+    _clientStack.addSplitter(beforeMargin: 5, afterMargin: 5);
   } 
 }
 
