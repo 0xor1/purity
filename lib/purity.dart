@@ -11,6 +11,7 @@ export 'src/internal/purity_internal.dart'
     PurityModelConsumer,
     PurityEvent,
     PurityTestServer,
+    PurityServerMessageEvent,
     initPurityTestAppView;
 import 'package:transmittable/transmittable.dart';
 export 'package:transmittable/transmittable.dart';

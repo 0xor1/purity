@@ -9,7 +9,7 @@ abstract class PurityModelConsumer extends Object with EventEmitter, EventDetect
   PurityModelBase _model;
   PurityModelBase get model => _model;
 
-  PurityModelConsumer(PurityModelBase this._model){
+  PurityModelConsumer(this._model){
     if(_model is PurityClientModel){
       _clientCores[(_model as PurityClientModel)._clientId]._modelConsumption[_model._purityId]++;
     }
@@ -21,7 +21,7 @@ abstract class PurityModelConsumer extends Object with EventEmitter, EventDetect
   void dispose(){
     ignoreAllEvents();
     if(_model is PurityClientModel){
-      _clientCores[(_model as PurityClientModel)._clientId]._modelConsumption[_model._purityId]++;
+      _clientCores[(_model as PurityClientModel)._clientId]._modelConsumption[_model._purityId]--;
     }
     _model = null;
   }
