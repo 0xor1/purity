@@ -27,7 +27,7 @@ To use the Purity framework all you have to do is follow the golden rules:
 ##The Golden Rules (quick glance)
 
   1. Business Logic Entities (Models), extend from PurityModel and emit PurityEvents when their internal state changes
-  2. View Entities (Views) extend from PurityModelConsumer (or PurityView for more built in html support) and attach event listeners to the models they represent 
+  2. View Entities (Views) extend from PurityModelConsumer and attach event listeners to the models they represent 
   3. Data Entities (Data) are well defined and are registered as Transmittable types
   4. The interfaces which Models expose to Views are explicitly declared in abstract classes and contain only methods which return void
   5. All of the types used as arguments to the Model interface methods, the Data Entities and the event types are all registered as [Transmittable](https://github.com/0xor1/transmittable#registered-types) types

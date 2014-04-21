@@ -21,7 +21,9 @@ class PurityServerCore extends PurityModel{
       _emitPurityServerMessageEvent(sessionName, true, 'New client connected to server');
       incoming.listen((str){
         _emitPurityServerMessageEvent(sessionName, true, str);
-      });
+      },
+      onDone: (){ _emitPurityServerMessageEvent(sessionName, true, 'Client connection closed onDone'); },
+      onError: (_){ _emitPurityServerMessageEvent(sessionName, true, 'Client connection closed onError'); });
       sessionSendString = (String str){
         _emitPurityServerMessageEvent(sessionName, false, str);
         sendString(str);
