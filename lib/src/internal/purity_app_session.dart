@@ -46,8 +46,8 @@ class PurityAppSession extends PurityModel{
     var tran = new Transmittable.fromTranString(str);
     if(tran is PurityGarbageCollectionReportTransmission){
       _runGarbageCollectionSequence(tran.models);
-    }else if(tran is PurityInvocationEvent){
-      var modelMirror = reflect(_models[(tran.emitter as PurityModelBase)._purityId]);
+    }else if(tran is PurityInvocationTransmission){
+      var modelMirror = reflect(_models[(tran.model as PurityModelBase)._purityId]);
       modelMirror.invoke(tran.method, tran.posArgs, tran.namArgs);
     }else{
       throw new PurityUnsupportedMessageTypeError(tran.runtimeType);

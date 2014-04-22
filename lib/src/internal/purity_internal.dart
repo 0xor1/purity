@@ -23,7 +23,7 @@ part 'purity_app_session.dart';
 part 'purity_model_consumer.dart';
 part 'purity_unsupported_invocation_type_error.dart';part 'purity_unsupported_message_type_error.dart';
 part 'transmittable/purity_event.dart';
-part 'transmittable/purity_invocation_event.dart';
+part 'transmittable/purity_invocation_transmission.dart';
 part 'transmittable/purity_server_message_event.dart';
 part 'transmittable/purity_transmission.dart';
 part 'transmittable/purity_app_session_initialised_transmission.dart';
@@ -48,7 +48,7 @@ void _registerPurityTranTypes(){
   _purityTranTypesRegistered = true;
   registerTranTypes('Purity', 'p', (){
     registerTranCodec('a', PurityClientModel, (PurityClientModel cm) => cm._purityId.toHexString(), (String s) => new PurityClientModel(new ObjectId.fromHexString(s)));
-    registerTranSubtype('b', PurityInvocationEvent);
+    registerTranSubtype('b', PurityInvocationTransmission);
     registerTranSubtype('c', PurityServerMessageEvent);
     registerTranSubtype('d', PurityAppSessionInitialisedTransmission);
     registerTranSubtype('e', PurityGarbageCollectionReportTransmission);

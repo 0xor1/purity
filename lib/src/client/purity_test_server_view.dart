@@ -72,6 +72,9 @@ class PurityTestServerView extends PurityModelConsumer{
       _serverMessageStack.add(label);
       label.html.scrollIntoView(ScrollAlignment.BOTTOM);
       _serverMessageStack.addSplitter(lineColor: '#fff', beforeMargin: 5, afterMargin: 5);
+      if(_serverMessageStack.items.length >= 100){
+        _serverMessageStack.remove(_serverMessageStack.items[0]);
+      }
     });
     _newClientButton.onClick.listen((_){server.simulateNewClient();});
   }

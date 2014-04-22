@@ -7,7 +7,7 @@ part of purity.internal;
 abstract class PurityModelConsumer extends Object with EventEmitter, EventDetector{
 
   PurityModelBase _model;
-  PurityModelBase get model => _model;
+  dynamic get model => _model;
 
   PurityModelConsumer(this._model){
     if(_model is PurityClientModel){

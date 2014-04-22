@@ -8,18 +8,20 @@ part of purity.internal;
 class PurityClientModel extends PurityModelBase{
 
   ObjectId _clientId;
+  SendTran _sendTran;
   
   PurityClientModel(ObjectId id):super(id);
 
   void noSuchMethod(Invocation inv){
-    var name = MirrorSystem.getName(inv.memberName);
     if(inv.isMethod){
-      var invEvent = new PurityInvocationEvent()
+      var invTran = new PurityInvocationTransmission()
       ..method = inv.memberName
       ..posArgs = inv.positionalArguments
-      ..namArgs = inv.namedArguments;
-      emitEvent(invEvent);
+      ..namArgs = inv.namedArguments
+      ..model = this;
+      _sendTran(invTran);
     }else{
+      var name = MirrorSystem.getName(inv.memberName);
       throw new PurityUnsupportedInvocationTypeError(this, name);
     }
   }

@@ -39,10 +39,10 @@ class PurityClientCore extends PurityModel{
   dynamic _postprocessTran(dynamic v){
     if(v is PurityClientModel){
       v._clientId = _purityId;
+      v._sendTran = _sendTran;
       if(!_models.containsKey(v._purityId)){
         _models[v._purityId] = v;
         _modelConsumption[v._purityId] = 0;
-        listen(v, PurityInvocationEvent, (PurityInvocationEvent pie) => _sendTran(pie));
       }
     }
     return v;
