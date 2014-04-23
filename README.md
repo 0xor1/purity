@@ -20,7 +20,14 @@ Learning to use Purity is best done by following examples:
 
 ##Examples
 
-* [Stopwatch](http://github.com/0xor1/purity_stopwatch_example)
+* Stopwatch
+  * [Repo](http://github.com/0xor1/purity_stopwatch_example)
+  * [Local test with Purity!](http://0xor1.net/index_with_purity.html)
+  * [Local test without Purity](http://0xor1.net/index_without_purity.html)
+* Chat
+  * [Repo](http://github.com/0xor1/purity_chat_example)
+  * Local test with Purity! (coming soon)
+  * Local test without Purity (coming soon)
 
 To use the Purity framework all you have to do is follow the golden rules:
 
@@ -98,6 +105,7 @@ seperated from data persistance and view concerns and makes it simple to unit te
     
     Stopwatch(){
       registerStopwatchTranTypes();
+      //do other stopwatch construction stuff
     }
     
     void start(){
@@ -125,11 +133,11 @@ seperated from data persistance and view concerns and makes it simple to unit te
 
 ###View
 
-The **View** library should reference PurityClient if it is implementing views for the client side.
-It is where you define your visual elements that consume the **interfaces** 
+The **View** library should reference the Purity library.
+It is where you define the objects which consume the **interfaces** 
 of your models by attaching event listeners to their underlying models and making
-appropriate calls to their public methods. By having your views only reference 
-the interface library and not the model library, your business logic will never 
+appropriate calls to the public methods. By having your views only reference 
+the interface library and not the model library, your business logic will not 
 leave the server and so always remain completely private from the user, they will
 only ever have access to the public interface but not the implemenation.
 
@@ -137,29 +145,39 @@ only ever have access to the public interface but not the implemenation.
     the interface top level method to register the transmittable types.
   ```dart
   library StopwatchView;
-  import 'package:purity/purity_client.dart';
+  import 'package:purity/purity.dart';
   import 'package:purity_stopwatch_example/interface/i_stopwatch.dart';
 
-  class StopwatchView extends PurityView{
+  class StopwatchView extends PurityModelConsumer{
 
-    IStopwatch get stopwatch => model;
+    dynamic get stopwatch => model;
 
     StopwatchView(stopwatch):
-      super(stopwatch){
-
-      registerStopwatchTranTypes();
-
-      //do html initialisation stuff
-
-      _startButton.onClick.listen((e) => stopwatch.start());
-      _stopButton.onClick.listen((e) => stopwatch.stop());
-
-      listen(stopwatch, DurationChangeEvent, (dce){/*handle event*/});
-
-      stopwatch.reset();
-
+    super(stopwatch){
+    
+    registerStopwatchTranTypes();
+    /**
+     * setup html stuff
+     */
+    _hookUpEvents()
+    stopwatch.reset();
+    
     }
 
+    void _hookUpEvents(){
+      _startButton.onClick.listen((e) => stopwatch.start());
+      _stopButton.onClick.listen((e) => stopwatch.stop());
+      _resetButton.onClick.listen((e) => stopwatch.reset());
+      listen(stopwatch, DurationChangeEvent, _handleDurationChangeEvent);
+    }
+    
+    String _durationToDisplayString(Duration du){
+      // duration to display string stuff
+    }
+  
+    void _handleDurationChangeEvent(DurationChangeEvent e){
+      _duration.text = _durationToDisplayString(e.duration);
+    }
   }
   ```
   
@@ -181,7 +199,18 @@ void main(){
 `index.dart` for local testing with Purity
 ```dart
 void main(){
-  //TODO once controls_and_panels has had appropriate additions made to it
+  
+  var purityTestServer = new PurityTestServer(() => new SW.Stopwatch(), (stopwatch){});
+  var purityTestServerView = new PurityTestServerView(purityTestServer);
+  
+  initPurityTestAppView(
+    (stopwatch){
+      var view = new StopwatchView(stopwatch);
+      purityTestServerView.addNewClientView(view.html);
+    },
+    (){});
+  
+  document.body.append(purityTestServerView.html);
 }
 ```
 
@@ -189,12 +218,14 @@ void main(){
 ```dart
 void main(){
   initPurityAppView(
-    'ws',             //'ws' or 'wss' protocol
+    'ws',
     (stopwatch){
-      var view = new StopwatchView(stopwatch);//create app view
-      document.body.children.add(view.html);	//drop the view on the page
+      var view = new StopwatchView(stopwatch);
+      document.body.children.add(view.html);
     },
-    (){});                                    //close the client side (nothing needs doing in this instance)
+    (){
+      //No shutdown code required for this app
+    });
 }
 ```
 
@@ -204,7 +235,7 @@ void main(){
   var server = new PurityServer(			//create a purity server
       InternetAddress.LOOPBACK_IP_V4, //address to bind to
       4346,                           //port number
-      Platform.script.resolve('../build/web').toFilePath(), //website root directory
+      Platform.script.resolve('../web').toFilePath(), //website root directory
       () => new SW.Stopwatch(),       //create the app model
       (stopwatch){});                 //close the app (nothing needs doing in this instance)			
 }
