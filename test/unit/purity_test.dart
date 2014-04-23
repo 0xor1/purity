@@ -52,11 +52,20 @@ TestView currentTestView;
 dynamic modelPassedToView;
 TestEvent lastEventCaughtByView;
 
-void runAsyncPurityTest(callback){
-  Timer.run(expectAsync((){
-    callback();
-    expect(true, equals(true));
-  }));
+void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), int timeout, void expect()){
+  DateTime start = new DateTime.now();
+  Duration limit = new Duration(seconds: timeout);
+  var inner;
+  inner = (){
+    if(readyCheck()){
+      expect();
+    }else if(new DateTime.now().subtract(limit).isAfter(start)){
+      throw 'async test timed out';
+    }else{
+      Timer.run(expectAsync(inner));
+    }
+  };
+  inner();
 }
 
 void _setUp(){
@@ -74,6 +83,7 @@ void _setUp(){
 }
 
 void _tearDown(){
+  server.shutdown();
   server = currentTestModel = currentTestView = modelPassedToView = lastEventCaughtByView = null;
 }
 
