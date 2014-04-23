@@ -21,13 +21,14 @@ Learning to use Purity is best done by following examples:
 ##Examples
 
 * Stopwatch
-  * [Repo](http://github.com/0xor1/purity_stopwatch_example)
-  * [Local test with Purity!](http://0xor1.net/index_with_purity.html)
-  * [Local test without Purity](http://0xor1.net/index_without_purity.html)
+    * [Repo](http://github.com/0xor1/purity_stopwatch_example)
+    * [Local test with Purity!](http://0xor1.net/index_with_purity.html)
+    * [Local test without Purity](http://0xor1.net/index_without_purity.html)
+    
 * Chat
-  * [Repo](http://github.com/0xor1/purity_chat_example)
-  * Local test with Purity! (coming soon)
-  * Local test without Purity (coming soon)
+    * [Repo](http://github.com/0xor1/purity_chat_example)
+    * Local test with Purity! (coming soon)
+    * Local test without Purity (coming soon)
 
 To use the Purity framework all you have to do is follow the golden rules:
 
@@ -55,8 +56,9 @@ is the interface library should contain a top level function used to register
 all of the data entity types, all the types used as arguments to the model interface
 methods and all the event types as Transmittable types.
 
-  * From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/tree/dev/lib/interface) example
-  ```dart
+From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/tree/dev/lib/interface) example
+
+```dart
   library IStopwatch;
   import 'package:purity/purity.dart';
   
@@ -85,7 +87,8 @@ methods and all the event types as Transmittable types.
       registerTranSubtype('c', StopEvent);
     });
   }
-  ```
+  
+```
 
 ###Model
 
@@ -94,9 +97,10 @@ should only be concerned with business logic, it should not reference dart:io /
 dart:html or any other client-server only libraries. This keeps your app logic
 seperated from data persistance and view concerns and makes it simple to unit test.
 
-  * From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/lib/model/stopwatch.dart#L15) example, note that the constructor calls the interface
-    libraries registerStopwatchTranTypes() function. and emits events when appropriate.
-  ```dart
+From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/lib/model/stopwatch.dart#L15) example, note that the constructor calls the interface
+libraries registerStopwatchTranTypes() function. and emits events when appropriate.
+  
+```dart
   library Stopwatch;
   import 'package:purity/purity.dart';
   import 'package:stopwatch/interface/i_stopwatch.dart';
@@ -129,7 +133,8 @@ seperated from data persistance and view concerns and makes it simple to unit te
     }
     
   }
-  ``` 
+  
+``` 
 
 ###View
 
@@ -141,9 +146,10 @@ the interface library and not the model library, your business logic will not
 leave the server and so always remain completely private from the user, they will
 only ever have access to the public interface but not the implemenation.
 
-  * From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/lib/view/stopwatch_view.dart#L12) example, again notice that the view constructor calls
-    the interface top level method to register the transmittable types.
-  ```dart
+From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/lib/view/stopwatch_view.dart#L12) example, again notice that the view constructor calls
+the interface top level method to register the transmittable types.
+  
+```dart
   library StopwatchView;
   import 'package:purity/purity.dart';
   import 'package:purity_stopwatch_example/interface/i_stopwatch.dart';
@@ -179,7 +185,8 @@ only ever have access to the public interface but not the implemenation.
       _duration.text = _durationToDisplayString(e.duration);
     }
   }
-  ```
+
+```
   
 ##Run Configurations
 
@@ -188,6 +195,7 @@ for quick and rapid testing cycles, or you can split it and run it as a client-
 server application. Taken from [Stopwatch](http://github.com/0xor1/purity_stopwatch_example)
 
 `index.dart` for local testing without Purity
+
 ```dart
 void main(){
   var model = new SW.Stopwatch();     //create the app model
@@ -197,6 +205,7 @@ void main(){
 ```
 
 `index.dart` for local testing with Purity
+
 ```dart
 void main(){
   
@@ -215,6 +224,7 @@ void main(){
 ```
 
 `index.dart` for client-server app
+
 ```dart
 void main(){
   initPurityAppView(
@@ -230,6 +240,7 @@ void main(){
 ```
 
 `server.dart` for client-server app
+
 ```dart
 void main(){
   var server = new PurityServer(			//create a purity server
@@ -239,5 +250,4 @@ void main(){
       () => new SW.Stopwatch(),       //create the app model
       (stopwatch){});                 //close the app (nothing needs doing in this instance)			
 }
-```
 ```
