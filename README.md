@@ -24,7 +24,8 @@ Learning to use Purity is best done by following examples:
     * [Repo](http://github.com/0xor1/purity_stopwatch_example)
     * [Local test with Purity!](http://0xor1.net/index_with_purity.html)
     * [Local test without Purity](http://0xor1.net/index_without_purity.html)
-    
+
+
 * Chat
     * [Repo](http://github.com/0xor1/purity_chat_example)
     * Local test with Purity! (coming soon)
@@ -59,7 +60,7 @@ methods and all the event types as Transmittable types.
 From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/tree/dev/lib/interface) example
 
 ```dart
-  library IStopwatch;
+  library stopwatch.interface;
   import 'package:purity/purity.dart';
   
   class DurationChangeEvent extends PurityEvent implements IDurationChangeEvent{}
@@ -101,7 +102,7 @@ From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/
 libraries registerStopwatchTranTypes() function. and emits events when appropriate.
   
 ```dart
-  library Stopwatch;
+  library stopwatch.model;
   import 'package:purity/purity.dart';
   import 'package:stopwatch/interface/i_stopwatch.dart';
   
@@ -150,7 +151,7 @@ From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/
 the interface top level method to register the transmittable types.
   
 ```dart
-  library StopwatchView;
+  library stopwatch.view;
   import 'package:purity/purity.dart';
   import 'package:purity_stopwatch_example/interface/i_stopwatch.dart';
 
