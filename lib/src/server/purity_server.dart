@@ -2,30 +2,19 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of PurityServer;
+part of purity.server;
 
 final Logger _log = new Logger('Purity Server');
 
-typedef Model OpenApp();
-typedef void CloseApp(Model m);
-
 class PurityServer{
 
-  static PurityServer _singleton;
+  final PurityServerCore _purityServerCore;
 
-  factory PurityServer(dynamic address, int port, String staticFileDirectory, OpenApp openApp, CloseApp closeApp){
-    if(_singleton != null){
-      return _singleton;
-    }else{
-      return new PurityServer._internal(address, port, staticFileDirectory, openApp, closeApp);
-    }
+  factory PurityServer(dynamic address, int port, String staticFileDirectory, OpenApp openApp, CloseApp closeApp, [int garbageCollectionFrequency = 60]){
+    return new PurityServer._internal(address, port, staticFileDirectory, new PurityServerCore(openApp, closeApp, garbageCollectionFrequency));
   }
 
-  PurityServer._internal(dynamic address, int port, String staticFileDirectory, OpenApp openApp, CloseApp closeApp){
-
-    registerTranTypes();
-
-    _singleton = this;
+  PurityServer._internal(dynamic address, int port, String staticFileDirectory, PurityServerCore this._purityServerCore){
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
@@ -46,32 +35,9 @@ class PurityServer{
 
         router.serve(PURITY_SOCKET_ROUTE_PATH).listen((HttpRequest request){
           if(WebSocketTransformer.isUpgradeRequest(request)){
-            var appModel = openApp();
-            var models = new Map<ObjectId, Model>();
             WebSocketTransformer.upgrade(request)
-            .then((WebSocket ws){
-
-              ValueProcessor processModel;
-              processModel = (dynamic v){
-                if(v is Model){
-                  if(!models.containsKey(v.id)){
-                    models[v.id] = v;
-                    v.addEventAction(Omni, (e) => ws.add(e.toTranString(processModel)));
-                  }
-                  return new ClientModel(v.id);
-                }
-                return v;
-              };
-
-              ws.map((str) => new Transmittable.fromTranString(str))
-              .listen((InvocationEvent ie){
-                var modelMirror = reflect(models[(ie.emitter as ModelBase).id]);
-                modelMirror.invoke(ie.method, ie.positionalArguments, ie.namedArguments);
-              }, onDone: () => closeApp(appModel), onError: (error) => closeApp(appModel));
-
-              var sessionInitTran = new SessionInitialisedTransmission()
-              ..model = appModel;
-              ws.add(sessionInitTran.toTranString(processModel));
+            .then((ws){
+              _purityServerCore.createPurityAppSession(request.connectionInfo.remoteAddress.toString(), ws, ws.add);
             });
           }else{
             _log.warning("Purity app web socket request not valid");
