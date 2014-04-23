@@ -18,7 +18,12 @@ class PurityAppSession extends PurityModel{
 
   PurityAppSession(String this.name, PurityModel this._appModel, CloseApp this._closeApp, Stream<String> this._incoming, SendString this._sendString, int this._garbageCollectionFrequency){
     _setGarbageCollectionTimer();
-    var shutdownSession = (){ ignoreAllEvents(); _closeApp(_appModel); };
+    var shutdownSession = (){ 
+      ignoreAllEvents();
+      if(_garbageCollectionTimer != null){
+        _garbageCollectionTimer.cancel();
+      }
+      _closeApp(_appModel); };
     _incoming.listen(_receiveString, onDone: shutdownSession, onError: (error) => shutdownSession());
     _sendTran(
       new PurityAppSessionInitialisedTransmission()
