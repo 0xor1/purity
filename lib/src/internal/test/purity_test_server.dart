@@ -6,7 +6,9 @@ part of purity.internal;
 
 class PurityTestServer extends PurityModel{
 
-  static int testClientId = 0;
+  int _testClientId = 0;
+  String _lastClientNameCreated;
+  String get lastClientNameCreated => _lastClientNameCreated;
   final PurityServerCore _purityServerCore;
   final List<_StreamPack> _streamPacks = new List<_StreamPack>();
 
@@ -27,9 +29,9 @@ class PurityTestServer extends PurityModel{
     _StreamPack toClient = new _StreamPack<String>();
     _streamPacks.add(toServer);
     _streamPacks.add(toClient);
-    String clientId = 'client_${testClientId++}';
+    _lastClientNameCreated = 'client_${_testClientId++}';
     new PurityClientCore(_initTestAppView, _onTestConnectionClose, toClient.stream, toServer.controller.add);
-    _purityServerCore.createPurityAppSession(clientId, toServer.stream, toClient.controller.add);
+    _purityServerCore.createPurityAppSession(_lastClientNameCreated, toServer.stream, toClient.controller.add);
   }
   
   void shutdown(){

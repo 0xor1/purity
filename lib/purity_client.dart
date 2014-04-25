@@ -11,3 +11,4 @@ import 'package:controls_and_panels/controls_and_panels.dart';
 
 part 'src/client/purity_client.dart';
 part 'src/client/purity_test_server_view.dart';
+part 'src/client/client_window.dart';
