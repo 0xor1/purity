@@ -64,6 +64,12 @@ class PurityAppSession extends PurityModel{
   }
 
   void _setGarbageCollectionTimer(){
+    if(_garbageCollectionTimer != null){
+      _garbageCollectionTimer.cancel();
+    }
+    if(_garbageCollectionFrequency == 0 || _garbageCollectionFrequency == null){
+      return;
+    }
     _garbageCollectionTimer = new Timer(new Duration(seconds: _garbageCollectionFrequency), (){
       _garbageCollectionInProgress = true;
       _sendTran(new PurityGarbageCollectionStartTransmission());
