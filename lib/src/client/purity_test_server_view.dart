@@ -13,6 +13,8 @@ part of purity.client;
 class PurityTestServerView extends PurityModelConsumer{
   
   PurityTestServer get server => model;
+  static const String color = '#9AF';
+  static const String background = '#000';
   
   final StackPanel _root =
     new StackPanel.horizontal()
@@ -21,26 +23,26 @@ class PurityTestServerView extends PurityModelConsumer{
   
   final StackPanel _serverStack =
     new StackPanel.vertical()
-    ..style.width = 'calc(50% - 1px)'
+    ..style.width = '50%'
     ..style.height = '100%';
   final StackPanel _serverHeaderStack =
     new StackPanel.horizontal()
     ..style.width = '100%'
     ..style.height = '30px'
-    ..style.background = '#9AF';
+    ..style.background = color;
   final Label _serverLabel = new Label('Purity Server: ');
   final Button _newClientButton =
     new Button.text('New Client');
   final StackPanel _serverMessageStack =
     new StackPanel.vertical()
     ..style.width = '100%'
-    ..style.height = 'calc(100% - 31px)'
+    ..style.height = 'calc(100% - 30px)'
     ..style.overflow = 'auto'
-    ..style.background = '#000'
-    ..style.color = '#9AF';
+    ..style.background = background
+    ..style.color = color;
   final StackPanel _clientStack =
     new StackPanel.vertical()
-    ..style.width = 'calc(50% - 1px)'
+    ..style.width = '50%'
     ..style.height = '100%'
     ..style.overflow = 'auto';
   
@@ -71,8 +73,9 @@ class PurityTestServerView extends PurityModelConsumer{
       var label = new Label(msg);
       _serverMessageStack.add(label);
       label.html.scrollIntoView(ScrollAlignment.BOTTOM);
-      _serverMessageStack.addSplitter(lineColor: '#fff', beforeMargin: 5, afterMargin: 5);
-      if(_serverMessageStack.items.length >= 100){
+      _serverMessageStack.addSplitter(lineColor: background, beforeMargin: 5, afterMargin: 5);
+      if(_serverMessageStack.items.length >= 300){
+        _serverMessageStack.remove(_serverMessageStack.items[0]);
         _serverMessageStack.remove(_serverMessageStack.items[0]);
       }
     });
@@ -80,13 +83,7 @@ class PurityTestServerView extends PurityModelConsumer{
   }
   
   void addNewClientView(Element el){
-    _clientStack.add(new _ClientControlWrapper(el));
-    _clientStack.addSplitter(beforeMargin: 5, afterMargin: 5);
+    _clientStack.add(new _ClientWindow(server.lastClientNameCreated, el));
+    _clientStack.items.last.html.scrollIntoView(ScrollAlignment.BOTTOM);
   } 
-}
-
-class _ClientControlWrapper extends Base{
-  _ClientControlWrapper(Element el){
-    html.append(el);
-  }
 }
