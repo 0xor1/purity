@@ -1,5 +1,5 @@
 name: purity
-version: 0.1.6
+version: 0.1.7
 author: Daniel Robinson <daniel.robinson.dart@gmail.com>
 description: Purity is a simple web framework for developing single page, real time web apps with web sockets. Purity hides all of the server-client communications from the developer and allows for the same app code to run completely on the client for quick and rapid testing cycles, or with a few additional lines of code split the server side and client side ready for production.
 homepage: http://github.com/0xor1/purity
@@ -13,6 +13,6 @@ dependencies:
   http_server: '>=0.9.0 <0.10.0'
   logging: '>=0.9.0 <0.10.0'
   route: '>=0.4.0 <0.5.0'
-  transmittable: '>=0.1.2 <1.0.0'
+  transmittable: '>=0.1.4 <1.0.0'
 dev_dependencies:
   unittest: any

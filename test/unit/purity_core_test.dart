@@ -13,7 +13,6 @@ void _runCoreTests(){
       Timer.run(() => currentTestView.doStuff(x));
       expectAsyncWithReadyCheckAndTimeout(
         () => lastEventCaughtByView != null,
-        1,
         (){
           expect(lastEventCaughtByView.aFakeTestProp, equals(x));
         });
