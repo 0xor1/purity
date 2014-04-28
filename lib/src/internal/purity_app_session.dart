@@ -67,6 +67,7 @@ class PurityAppSession extends PurityModel{
     if(_garbageCollectionTimer != null){
       _garbageCollectionTimer.cancel();
     }
+    _garbageCollectionInProgress = false;
     if(_garbageCollectionFrequency == 0 || _garbageCollectionFrequency == null){
       return;
     }
@@ -84,7 +85,6 @@ class PurityAppSession extends PurityModel{
       _sendTran(_messageQueue[i]);
     }
     _messageQueue.clear();
-    _garbageCollectionInProgress = false;
     _setGarbageCollectionTimer();
   }
 }
