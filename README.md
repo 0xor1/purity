@@ -25,9 +25,7 @@ Learning to use Purity is best done by following examples:
     * [Local test with Purity!](http://0xor1.net/purity_stopwatch_example/index_with_purity.html)
     * [Local test without Purity](http://0xor1.net/purity_stopwatch_example/index_without_purity.html)
 
-To use the Purity framework all you have to do is follow the golden rules:
-
-##The Golden Rules (quick glance)
+##Quick start
 
   1. Business Logic Entities (Models), extend from PurityModel and emit PurityEvents when their internal state changes
   2. View Entities (Views) extend from PurityModelConsumer and attach event listeners to the models they represent 
@@ -36,7 +34,7 @@ To use the Purity framework all you have to do is follow the golden rules:
   5. All of the types used as arguments to the Model interface methods, the Data Entities and the event types are all registered as [Transmittable](https://github.com/0xor1/transmittable#registered-types) types
   6. A View may only consume and represent one Model, though a Model may be consumed and represented by any number of Views
   
-##The Golden Rules (in depth)
+##Further reading
 
 Purity Application packages are split into three distinct
 libraries, **Interface**, **Model** and **View**. 
