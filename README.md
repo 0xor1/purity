@@ -43,45 +43,10 @@ libraries, **Interface**, **Model** and **View**.
 
 The Interface library should reference the Purity library and declare all the
 model interfaces as abstract classes containing only methods which return void.
-The interface library should also declare all of the data entity types which extend
-Transmittable and event types which extend PurityEvent. Perhaps most importantly to note
-is the interface library should contain a top level function used to register 
-all of the data entity types, all the types used as arguments to the model interface
-methods and all the event types as Transmittable types.
-
-From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/tree/dev/lib/interface) example
-
-```dart
-  library stopwatch.interface;
-  import 'package:purity/purity.dart';
-  
-  class DurationChangeEvent extends PurityEvent implements IDurationChangeEvent{}
-  abstract class IDurationChangeEvent{
-    Duration duration;
-  }
-
-  class StartEvent extends PurityEvent{}
-
-  class StopEvent extends PurityEvent{}
-  
-  abstract class IStopwatch{
-    void start();
-    void stop();
-    void reset();
-  }
-
-  bool _stopwatchTranTypesRegistered = false;
-  void registerStopwatchTranTypes(){
-    if(_stopwatchTranTypesRegistered){ return; }
-    _stopwatchTranTypesRegistered = true;
-    registerTranTypes('Stopwatch', 's', (){
-      registerTranSubtype('a', DurationChangeEvent);
-      registerTranSubtype('b', StartEvent);
-      registerTranSubtype('c', StopEvent);
-    });
-  }
-  
-```
+The interface library should also declare all of the event types which extend PurityEvent. 
+Perhaps most importantly to note is the interface library should contain a top level
+function used to register all of the data entity types, all the types used as arguments
+to the model interface methods and all the event types as Transmittable types.
 
 ###Model
 
@@ -90,102 +55,23 @@ should only be concerned with business logic, it should not reference dart:io /
 dart:html or any other client-server only libraries. This keeps your app logic
 seperated from data persistance and view concerns and makes it simple to unit test.
 
-From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/lib/model/stopwatch.dart#L15) example, note that the constructor calls the interface
-libraries registerStopwatchTranTypes() function. and emits events when appropriate.
-  
-```dart
-  library stopwatch.model;
-  import 'package:purity/purity.dart';
-  import 'package:stopwatch/interface/i_stopwatch.dart';
-  
-  class Stopwatch extends PurityModel implements IStopwatch{
-    
-    Stopwatch(){
-      registerStopwatchTranTypes();
-      //do other stopwatch construction stuff
-    }
-    
-    void start(){
-      //do start logic
-      emitEvent(new StartEvent()); //tell anyone listening my state has changed
-    }
-
-    void stop(){
-      //do stop logic
-      emitEvent(new StopEvent()); //tell anyone listening my state has changed
-    }
-
-    void reset(){
-      //do reset stuff
-    }
-    
-    Duration _duration;
-    void _setDuration(Duration duration){
-      //do some private setDuration logic
-      emitEvent(new DurationChangeEvent()..duration = _duration);
-    }
-    
-  }
-  
-``` 
-
 ###View
 
-The **View** library should reference the Purity library.
-It is where you define the objects which consume the **interfaces** 
+The View library should reference the Purity library.
+It is where you define the objects which consume the interfaces 
 of your models by attaching event listeners to their underlying models and making
 appropriate calls to the public methods. By having your views only reference 
 the interface library and not the model library, your business logic will not 
 leave the server and so always remain completely private from the user, they will
 only ever have access to the public interface but not the implemenation.
-
-From the [Stopwatch](https://github.com/0xor1/purity_stopwatch_example/blob/dev/lib/view/stopwatch_view.dart#L12) example, again notice that the view constructor calls
-the interface top level method to register the transmittable types.
-  
-```dart
-  library stopwatch.view;
-  import 'package:purity/purity.dart';
-  import 'package:purity_stopwatch_example/interface/i_stopwatch.dart';
-
-  class StopwatchView extends PurityModelConsumer{
-
-    dynamic get stopwatch => model;
-
-    StopwatchView(stopwatch):
-    super(stopwatch){
-    
-    registerStopwatchTranTypes();
-    /**
-     * setup html stuff
-     */
-    _hookUpEvents()
-    stopwatch.reset();
-    
-    }
-
-    void _hookUpEvents(){
-      _startButton.onClick.listen((e) => stopwatch.start());
-      _stopButton.onClick.listen((e) => stopwatch.stop());
-      _resetButton.onClick.listen((e) => stopwatch.reset());
-      listen(stopwatch, DurationChangeEvent, _handleDurationChangeEvent);
-    }
-    
-    String _durationToDisplayString(Duration du){
-      // duration to display string stuff
-    }
-  
-    void _handleDurationChangeEvent(DurationChangeEvent e){
-      _duration.text = _durationToDisplayString(e.duration);
-    }
-  }
-
-```
   
 ##Run Configurations
 
 Once you have a purity application you can run it either all on the client
 for quick and rapid testing cycles, or you can split it and run it as a client-
-server application. Taken from [Stopwatch](http://github.com/0xor1/purity_stopwatch_example)
+server application. 
+
+Taken from [Stopwatch](http://github.com/0xor1/purity_stopwatch_example)
 
 `index.dart` for local testing without Purity
 
