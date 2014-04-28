@@ -52,7 +52,7 @@ TestView currentTestView;
 dynamic modelPassedToView;
 TestEvent lastEventCaughtByView;
 
-void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), int timeout, void expect()){
+void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int timeout = 1, void onTimeout() = null]){
   DateTime start = new DateTime.now();
   Duration limit = new Duration(seconds: timeout);
   var inner;
@@ -60,7 +60,11 @@ void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), int timeout, void ex
     if(readyCheck()){
       expect();
     }else if(new DateTime.now().subtract(limit).isAfter(start)){
-      throw 'async test timed out';
+      if(onTimeout == null){
+        throw 'async test timed out';
+      }else{
+        onTimeout();
+      }
     }else{
       Timer.run(expectAsync(inner));
     }
