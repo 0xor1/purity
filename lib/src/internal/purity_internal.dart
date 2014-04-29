@@ -25,6 +25,7 @@ part 'purity_unsupported_invocation_type_error.dart';part 'purity_unsupported_m
 part 'transmittable/purity_event.dart';
 part 'transmittable/purity_invocation_transmission.dart';
 part 'transmittable/purity_server_message_event.dart';
+part 'transmittable/purity_app_session_shutdown_event.dart';
 part 'transmittable/purity_transmission.dart';
 part 'transmittable/purity_app_session_initialised_transmission.dart';
 part 'transmittable/purity_garbage_collection_report_transmission.dart';
@@ -37,8 +38,8 @@ const String PURITY_SOCKET_ROUTE_PATH = '/purity_socket';
 
 typedef PurityModel OpenApp();
 typedef void CloseApp(PurityModel m);
-typedef dynamic InitAppView(PurityModelBase model);
-typedef void OnConnectionClose();
+typedef void InitAppView(PurityModelBase model, PurityClientCore client);
+typedef void Action();
 typedef void SendString(String data);
 typedef void SendTran(Transmittable data);
 
@@ -53,5 +54,6 @@ void _registerPurityTranTypes(){
     registerTranSubtype('d', PurityAppSessionInitialisedTransmission);
     registerTranSubtype('e', PurityGarbageCollectionReportTransmission);
     registerTranSubtype('f', PurityGarbageCollectionStartTransmission);
+    registerTranSubtype('g', PurityAppSessionShutdownEvent);
   });
 }

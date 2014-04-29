@@ -4,15 +4,15 @@
 
 part of purity.internal;
 
-bool _hasTestAppViewInitialised = false;
-InitAppView _initTestAppView;
-OnConnectionClose _onTestConnectionClose;
+bool hasTestAppViewInitialised = false;
+dynamic initTestAppView;
+Action onTestConnectionClose;
 
-void initPurityTestAppView(InitAppView initAppView, OnConnectionClose onConnectionClose){
-  if(_hasTestAppViewInitialised){
+void initPurityTestAppView(InitAppView initAppView, Action onConnectionClose){
+  if(hasTestAppViewInitialised){
     throw 'App view already initialised.';
   }
-  _hasTestAppViewInitialised = true;
-  _initTestAppView = initAppView;
-  _onTestConnectionClose = onConnectionClose;
+  hasTestAppViewInitialised = true;
+  initTestAppView = initAppView;
+  onTestConnectionClose = onConnectionClose;
 }

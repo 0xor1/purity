@@ -7,10 +7,7 @@ part of purity.internal;
 class PurityTestServer extends PurityModel{
 
   int _testClientId = 0;
-  String _lastClientNameCreated;
-  String get lastClientNameCreated => _lastClientNameCreated;
   final PurityServerCore _purityServerCore;
-  final List<_StreamPack> _streamPacks = new List<_StreamPack>();
 
   factory PurityTestServer(OpenApp openApp, CloseApp closeApp, [int garbageCollectionFrequency = 60]){
     var serverCore = new PurityServerCore(openApp, closeApp, garbageCollectionFrequency, true);
@@ -21,23 +18,17 @@ class PurityTestServer extends PurityModel{
     listen(_purityServerCore, Omni, (event){ emitEvent(event); });    
   }
   
+  void shutdown() => _purityServerCore.shutdown();
+  
   void simulateNewClient(){
-    if(!_hasTestAppViewInitialised){
+    if(!hasTestAppViewInitialised){
       throw 'initPurityTestAppView must be called before a new test client can be initialised';
     }
     _StreamPack toServer = new _StreamPack<String>();
     _StreamPack toClient = new _StreamPack<String>();
-    _streamPacks.add(toServer);
-    _streamPacks.add(toClient);
-    _lastClientNameCreated = 'client_${_testClientId++}';
-    new PurityClientCore(_initTestAppView, _onTestConnectionClose, toClient.stream, toServer.controller.add);
-    _purityServerCore.createPurityAppSession(_lastClientNameCreated, toServer.stream, toClient.controller.add);
+    var name = 'client_${_testClientId++}';
+    new PurityClientCore(name, initTestAppView, onTestConnectionClose, toClient.stream, toServer.controller.add, toServer.controller.close);
+    _purityServerCore.createPurityAppSession(name, toServer.stream, toClient.controller.add, toClient.controller.close);
   }
-  
-  void shutdown(){
-    _streamPacks.forEach((pack){
-      pack.controller.close();
-    });
-  }  
 }
 

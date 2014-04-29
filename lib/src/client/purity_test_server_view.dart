@@ -70,20 +70,27 @@ class PurityTestServerView extends PurityModelConsumer{
       }else{
         msg = 'Server -> ${event.sessionName}: ${event.tranString}';
       }
-      var label = new Label(msg);
-      _serverMessageStack.add(label);
-      label.html.scrollIntoView(ScrollAlignment.BOTTOM);
-      _serverMessageStack.addSplitter(lineColor: background, beforeMargin: 5, afterMargin: 5);
-      if(_serverMessageStack.items.length >= 300){
-        _serverMessageStack.remove(_serverMessageStack.items[0]);
-        _serverMessageStack.remove(_serverMessageStack.items[0]);
-      }
+      _writeMessage(msg);
+    });
+    listen(server, PurityAppSessionShutdownEvent, (event){
+      _writeMessage('"${event.emitter.name}" Purity App Session Shutdown');
     });
     _newClientButton.onClick.listen((_){server.simulateNewClient();});
   }
   
-  void addNewClientView(Element el){
-    _clientStack.add(new _ClientWindow(server.lastClientNameCreated, el));
+  void addNewClientView(PurityClientCore clientCore, Element appHtmlRoot){
+    _clientStack.add(new _ClientWindow(clientCore, appHtmlRoot));
     _clientStack.items.last.html.scrollIntoView(ScrollAlignment.BOTTOM);
   } 
+  
+  void _writeMessage(String msg){
+    var label = new Label(msg);
+    _serverMessageStack.add(label);
+    label.html.scrollIntoView(ScrollAlignment.BOTTOM);
+    _serverMessageStack.addSplitter(lineColor: background, beforeMargin: 5, afterMargin: 5);
+    if(_serverMessageStack.items.length >= 300){
+      _serverMessageStack.remove(_serverMessageStack.items[0]);
+      _serverMessageStack.remove(_serverMessageStack.items[0]);
+    }
+  }
 }

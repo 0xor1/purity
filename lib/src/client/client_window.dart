@@ -4,9 +4,11 @@
 
 part of purity.client;
 
-class _ClientWindow extends Control{
+class _ClientWindow extends PurityModelConsumer{
   
   static const String CLASS = 'purity-client-window';
+  
+  final DivElement html = new DivElement();
   
   final StackPanel _containerStack =
     new StackPanel.vertical()
@@ -22,22 +24,35 @@ class _ClientWindow extends Control{
     ..style.overflow = 'auto';
   
   
-  _ClientWindow(String clientName, Element el){
+  _ClientWindow(PurityClientCore clientCore, Element el)
+      :super(clientCore){
     _clientWindowStyle.insert();
     html.classes.add(CLASS);
     html.append(_containerStack.html);
-    _headerStack.add(new Label(clientName));
+    _headerStack.add(new Label(clientCore.name));
     _containerStack
     ..add(_headerStack)
     ..add(
       _clientContainer
       ..add(new _ClientControlWrapper(el)));
+    _headerStack.html.onDoubleClick.listen((_){ //temporary, add in a X to close the client window.
+      (model as PurityClientCore).shutdown();
+      if(html.parent != null){
+        html.parent.children.remove(html);
+      }
+      dispose();
+    });
   }
   
   static final Style _clientWindowStyle = new Style('''
 
     .$CLASS
     {
+      display: inline-block;
+      position: relative;
+      margin: 0;
+      border: 0;
+      padding: 0;
       width: 100%;
       height: 100%;
     }

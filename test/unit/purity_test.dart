@@ -39,7 +39,7 @@ abstract class ITestEvent{
 
 bool _purityTestTranTypesRegistered = false;
 void _registerPurityTestTranTypes(){
-  if(_purityTestTranTypesRegistered){return;}
+  if(_purityTestTranTypesRegistered){ return; }
   _purityTestTranTypesRegistered = true;
   registerTranTypes('purity.test', 'pt',(){
     registerTranSubtype('a', TestEvent);
@@ -47,6 +47,7 @@ void _registerPurityTestTranTypes(){
 }
 
 PurityTestServer server;
+PurityClientCore currentClientCore;
 TestModel currentTestModel;
 TestView currentTestView;
 dynamic modelPassedToView;
@@ -78,7 +79,8 @@ void _setUp(){
     (model){}
   );
   initPurityTestAppView(
-    (model){
+    (model, clientCore){
+      currentClientCore = clientCore;
       currentTestView = new TestView(model);
     },
     (){}

@@ -8,25 +8,32 @@ Map<ObjectId, PurityClientCore> _clientCores = new Map<ObjectId, PurityClientCor
 
 class PurityClientCore extends PurityModel{
 
+  final String name;
   final InitAppView _initAppView;
-  final OnConnectionClose _onConnectionClose;
+  final Action _onConnectionClose;
   final Stream<String> _incoming;
   final SendString _sendString;
+  final Action _closeStream;
   final Map<ObjectId, PurityClientModel> _models = new Map<ObjectId, PurityClientModel>();
   final Map<ObjectId, int> _modelConsumption = new Map<ObjectId, int>();
   bool _modelEventInProgress = false;
   
-  PurityClientCore(InitAppView this._initAppView, OnConnectionClose this._onConnectionClose, Stream<String> this._incoming, SendString this._sendString){
+  PurityClientCore(this.name, this._initAppView, this._onConnectionClose, this._incoming, this._sendString, this._closeStream){
     _registerPurityTranTypes();
     _clientCores[_purityId] = this;
-    _incoming.listen(_receiveString, onError: (_) => _onConnectionClose(), onDone: _onConnectionClose);
+    _incoming.listen(_receiveString, onError: (_) => shutdown(), onDone: shutdown);
+  }
+  
+  void shutdown(){
+    _onConnectionClose();
+    _closeStream();
   }
   
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
     if(tran is PurityTransmission){
       if(tran is PurityAppSessionInitialisedTransmission){
-        _initAppView(tran.model);
+        _initAppView(tran.model, this);
       }else if(tran is PurityGarbageCollectionStartTransmission){
         _runGarbageCollectionSequence();
       }

@@ -37,7 +37,7 @@ class PurityServer{
           if(WebSocketTransformer.isUpgradeRequest(request)){
             WebSocketTransformer.upgrade(request)
             .then((ws){
-              _purityServerCore.createPurityAppSession(request.connectionInfo.remoteAddress.toString(), ws, ws.add);
+              _purityServerCore.createPurityAppSession(request.connectionInfo.remoteAddress.toString(), ws, ws.add, ws.close);
             });
           }else{
             _log.warning("Purity app web socket request not valid");

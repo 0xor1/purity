@@ -10,24 +10,28 @@ class PurityAppSession extends PurityModel{
   final CloseApp _closeApp;
   final Stream<String> _incoming;
   final SendString _sendString;
+  final Action _closeStream;
   final List<Transmittable> _messageQueue = new List<Transmittable>();
   final Map<ObjectId, PurityModel> _models = new Map<ObjectId, PurityModel>();
   final int _garbageCollectionFrequency; //in seconds
   bool _garbageCollectionInProgress = false;
   Timer _garbageCollectionTimer;
 
-  PurityAppSession(String this.name, PurityModel this._appModel, CloseApp this._closeApp, Stream<String> this._incoming, SendString this._sendString, int this._garbageCollectionFrequency){
+  PurityAppSession(String this.name, this._appModel, this._closeApp, this._incoming, this._sendString, this._closeStream, this._garbageCollectionFrequency){
     _setGarbageCollectionTimer();
-    var shutdownSession = (){ 
-      ignoreAllEvents();
-      if(_garbageCollectionTimer != null){
-        _garbageCollectionTimer.cancel();
-      }
-      _closeApp(_appModel); };
-    _incoming.listen(_receiveString, onDone: shutdownSession, onError: (error) => shutdownSession());
+    _incoming.listen(_receiveString, onDone: shutdown, onError: (error) => shutdown());
     _sendTran(
       new PurityAppSessionInitialisedTransmission()
       ..model = _appModel);
+  }
+  
+  void shutdown(){
+    ignoreAllEvents();
+    if(_garbageCollectionTimer != null){
+      _garbageCollectionTimer.cancel();
+    }
+    _closeApp(_appModel);
+    _closeStream();
   }
 
   dynamic _preprocessTran(dynamic v){
