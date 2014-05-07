@@ -2,22 +2,20 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of purity.internal;
+part of purity.core;
 
-class PurityAppSession extends PurityModel{
-  final String name;
-  final PurityModel _appModel;
+class SourceManager extends Source implements IManager{
+  final Fn_PurityEventSourceManager_PurityEventSource ;
   final CloseApp _closeApp;
-  final Stream<String> _incoming;
-  final SendString _sendString;
-  final Action _closeStream;
+  final BiConnection _connection;
   final List<Transmittable> _messageQueue = new List<Transmittable>();
   final Map<ObjectId, PurityModel> _models = new Map<ObjectId, PurityModel>();
   final int _garbageCollectionFrequency; //in seconds
   bool _garbageCollectionInProgress = false;
   Timer _garbageCollectionTimer;
 
-  PurityAppSession(String this.name, this._appModel, this._closeApp, this._incoming, this._sendString, this._closeStream, this._garbageCollectionFrequency){
+  SourceManager(this._appModel, this._closeApp, this._connection, this._garbageCollectionFrequency){
+    _registerPurityTranTypes();
     _setGarbageCollectionTimer();
     _incoming.listen(_receiveString, onDone: shutdown, onError: (error) => shutdown());
     _sendTran(
@@ -32,6 +30,7 @@ class PurityAppSession extends PurityModel{
     }
     _closeApp(_appModel);
     _closeStream();
+    emitEvent(new PurityAppSessionShutdownEvent());
   }
 
   dynamic _preprocessTran(dynamic v){
@@ -59,7 +58,7 @@ class PurityAppSession extends PurityModel{
       var modelMirror = reflect(_models[(tran.model as PurityModelBase)._purityId]);
       modelMirror.invoke(tran.method, tran.posArgs, tran.namArgs);
     }else{
-      throw new PurityUnsupportedMessageTypeError(tran.runtimeType);
+      throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
     }
   }
   

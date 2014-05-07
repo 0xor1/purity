@@ -8,8 +8,8 @@ import 'package:transmittable/transmittable.dart';
 export 'package:transmittable/transmittable.dart';
 import 'package:eventable/eventable.dart';
 export 'package:eventable/eventable.dart';
-import 'src/internal/purity_internal.dart';
-export 'src/internal/purity_internal.dart' 
+import 'core/purity_internal.dart';
+export 'core/purity_internal.dart' 
   show
     PurityModel,
     PurityModelConsumer,

@@ -5,7 +5,7 @@
 library purity.server;
 
 import 'dart:io';
-import 'src/internal/purity_internal.dart';
+import 'core/purity_internal.dart';
 import 'package:http_server/http_server.dart' as http_server;
 import 'package:route/server.dart' show Router;
 import 'package:logging/logging.dart' show Logger, Level, LogRecord;
