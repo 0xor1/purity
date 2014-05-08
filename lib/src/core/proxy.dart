@@ -7,8 +7,8 @@ part of purity.core;
 @proxy
 class _Proxy extends _Base{
 
-  ObjectId _managerId;
-  SendString _send;
+  Map<ObjectId, int> _proxyConsumptionCount;
+  SendTran _send;
   
   _Proxy(ObjectId id):super(id);
 
@@ -19,7 +19,7 @@ class _Proxy extends _Base{
       .._posArgs = inv.positionalArguments
       .._namArgs = inv.namedArguments
       .._src = this;
-      _send(invTran.toTranString());
+      _send(invTran);
     }else{
       var name = MirrorSystem.getName(inv.memberName);
       throw new UnsupportedProxyInvocationError(this, name);

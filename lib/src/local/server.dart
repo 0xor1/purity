@@ -2,9 +2,9 @@
  * author: Daniel Robinson  http://github.com/0xor1
  */
 
-part of purity.internal;
+part of purity.local;
 
-class PurityTestServer extends PurityModel{
+class PurityTestServer extends Source{
 
   int _testClientId = 0;
   final PurityServerCore _purityServerCore;

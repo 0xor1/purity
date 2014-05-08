@@ -4,7 +4,7 @@
 
 part of purity.core;
 
-class _SourceReady extends _Transmission implements _ISourceReady{}
-abstract class _ISourceReady{
+class _Ready extends _Transmission implements _IReady{}
+abstract class _IReady{
   _Base _src;
 }

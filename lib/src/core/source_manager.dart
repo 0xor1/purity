@@ -5,22 +5,27 @@
 part of purity.core;
 
 class SourceManager extends Source implements IManager{
-  final Fn_PurityEventSourceManager_PurityEventSource ;
-  final CloseApp _closeApp;
+  
+  Source _rootSrc;
+  final InitSource _initSrc;
+  final CloseSource _closeSrc;
   final BiConnection _connection;
   final List<Transmittable> _messageQueue = new List<Transmittable>();
-  final Map<ObjectId, PurityModel> _models = new Map<ObjectId, PurityModel>();
+  final Map<ObjectId, Source> _srcs = new Map<ObjectId, Source>();
   final int _garbageCollectionFrequency; //in seconds
   bool _garbageCollectionInProgress = false;
   Timer _garbageCollectionTimer;
 
-  SourceManager(this._appModel, this._closeApp, this._connection, this._garbageCollectionFrequency){
-    _registerPurityTranTypes();
+  SourceManager(this._initSrc, this._closeSrc, this._connection, this._garbageCollectionFrequency){
+    _registerPurityCoreTranTypes();
     _setGarbageCollectionTimer();
-    _incoming.listen(_receiveString, onDone: shutdown, onError: (error) => shutdown());
-    _sendTran(
-      new PurityAppSessionInitialisedTransmission()
-      ..model = _appModel);
+    _connection._incoming.listen(_receiveString, onDone: shutdown, onError: (error) => shutdown());
+    _initSrc(this).then((src){
+      _rootSrc = src;
+      _sendTran(
+        new _Ready()
+        .._src = src);
+    });
   }
   
   void shutdown(){
@@ -28,16 +33,17 @@ class SourceManager extends Source implements IManager{
     if(_garbageCollectionTimer != null){
       _garbageCollectionTimer.cancel();
     }
-    _closeApp(_appModel);
-    _closeStream();
-    emitEvent(new PurityAppSessionShutdownEvent());
+    _closeSrc(_rootSrc).then((_){
+      _connection._close(); 
+      emitEvent(new ShutdownEvent());     
+    });
   }
 
   dynamic _preprocessTran(dynamic v){
-    if(v is PurityModel){
-      if(!_models.containsKey(v._purityId)){
-        _models[v._purityId] = v;
-        listen(v, Omni, (PurityEvent e){
+    if(v is Source){
+      if(!_srcs.containsKey(v._purityId)){
+        _srcs[v._purityId] = v;
+        listen(v, Omni, (Event e){
           if(_garbageCollectionInProgress){
             _messageQueue.add(e);
           }else{
@@ -45,25 +51,29 @@ class SourceManager extends Source implements IManager{
           }
         });
       }
-      return new PurityClientModel(v._purityId);
+      return new _Proxy(v._purityId);
     }
     return v;
   }
 
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
-    if(tran is PurityGarbageCollectionReportTransmission){
+    if(tran is _GarbageCollectionReport){
       _runGarbageCollectionSequence(tran.models);
-    }else if(tran is PurityInvocationTransmission){
-      var modelMirror = reflect(_models[(tran.model as PurityModelBase)._purityId]);
-      modelMirror.invoke(tran.method, tran.posArgs, tran.namArgs);
+    }else if(tran is _ProxyInvocation){
+      var modelMirror = reflect(_srcs[(tran.model as _Base)._purityId]);
+      try{
+        modelMirror.invoke(tran.method, tran.posArgs, tran.namArgs);
+      }catch(e){
+        //emitEvent(new NoSuchMethodException());
+      }
     }else{
       throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
     }
   }
   
   void _sendTran(Transmittable tran){
-    _sendString(tran.toTranString(_preprocessTran));
+    _connection._send(tran.toTranString(_preprocessTran));
   }
 
   void _setGarbageCollectionTimer(){
@@ -76,13 +86,13 @@ class SourceManager extends Source implements IManager{
     }
     _garbageCollectionTimer = new Timer(new Duration(seconds: _garbageCollectionFrequency), (){
       _garbageCollectionInProgress = true;
-      _sendTran(new PurityGarbageCollectionStartTransmission());
+      _sendTran(new _GarbageCollectionStart());
     });
   }
   
-  void _runGarbageCollectionSequence(Set<PurityModelBase> models){
-    models.forEach((model){
-      _models.remove(model._purityId);
+  void _runGarbageCollectionSequence(Set<_Base> srcs){
+    srcs.forEach((src){
+      _srcs.remove(src._purityId);
     });
     for(var i = 0; i < _messageQueue.length; i++){
       _sendTran(_messageQueue[i]);

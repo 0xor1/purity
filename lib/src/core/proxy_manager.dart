@@ -4,34 +4,31 @@
 
 part of purity.core;
 
-Map<ObjectId, ProxyManager> _proxyManagers = new Map<ObjectId, ProxyManager>();
-
 class ProxyManager extends Source implements IManager{
   
-  final InitAppView _initAppView;
+  final InitProxy _initProxy;
   final Action _onConnectionClose;
   final BiConnection _connection;
   final Map<ObjectId, _Proxy> _proxies = new Map<ObjectId, _Proxy>();
   final Map<ObjectId, int> _proxyConsumptionCount = new Map<ObjectId, int>();
   bool _proxyEventInProgress = false;
   
-  ProxyManager(this._initAppView, this._onConnectionClose, this._connection){
-    _registerPurityTranTypes();
-    _proxyManagers[_purityId] = this;
-    _connection.incoming.listen(_receiveString, onError: (_) => shutdown(), onDone: shutdown);
+  ProxyManager(this._initProxy, this._onConnectionClose, this._connection){
+    _registerPurityCoreTranTypes();
+    _connection._incoming.listen(_receiveString, onError: (_) => shutdown(), onDone: shutdown);
   }
   
   void shutdown(){
     _onConnectionClose();
-    _proxyManagers.remove(_purityId);
-    _connection.close();
+    emitEvent(new ShutdownEvent());
+    _connection._close();
   }
   
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
     if(tran is _Transmission){
-      if(tran is _SourceReady){
-        _initAppView(tran.model, this);
+      if(tran is _Ready){
+        _initProxy(tran.model, this);
       }else if(tran is _GarbageCollectionStart){
         _runGarbageCollectionSequence();
       }
@@ -45,8 +42,8 @@ class ProxyManager extends Source implements IManager{
   
   dynamic _postprocessTran(dynamic v){
     if(v is _Proxy){
-      v._clientId = _purityId;
-      v._sendTran = _sendTran;
+      v._proxyConsumptionCount = _proxyConsumptionCount;
+      v._send = _sendTran;
       if(!_proxies.containsKey(v._purityId)){
         _proxies[v._purityId] = v;
         _proxyConsumptionCount[v._purityId] = 0;
@@ -56,7 +53,7 @@ class ProxyManager extends Source implements IManager{
   }
   
   void _sendTran(Transmittable tran){
-    _connection.send(tran.toTranString());
+    _connection._send(tran.toTranString());
   }
   
   void _runGarbageCollectionSequence(){

@@ -7,11 +7,11 @@ part of purity.core;
 class Consumer extends Object with EventDetector{
 
   _Base _src;
-  dynamic get source => _src;
+  _Base get source => _src;
 
   Consumer(this._src){
     if(_src is _Proxy){
-      _proxyManagers[(_src as _Proxy)._clientId]._proxyConsumptionCount[_src._purityId]++;
+      (_src as _Proxy)._proxyConsumptionCount[_src._purityId]++;
     }
   }
 
@@ -21,7 +21,7 @@ class Consumer extends Object with EventDetector{
   void dispose(){
     ignoreAllEvents();
     if(_src is _Proxy){
-      _proxyManagers[(_src as _Proxy)._clientId]._proxyConsumptionCount[_src._purityId]--;
+      (_src as _Proxy)._proxyConsumptionCount[_src._purityId]--;
     }
     _src = null;
   }

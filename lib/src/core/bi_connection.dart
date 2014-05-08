@@ -5,8 +5,8 @@
 part of purity.core;
 
 class BiConnection{
-  final Stream<String> incoming;
-  final SendString send;
-  final Action close;
-  BiConnection(this.incoming, this.send, this.close);
+  final Stream<String> _incoming;
+  final SendString _send;
+  final Action _close;
+  BiConnection(this._incoming, this._send, this._close);
 }
