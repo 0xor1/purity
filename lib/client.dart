@@ -6,7 +6,13 @@ library purity.client;
 
 import 'dart:html';
 export 'dart:html';
-import 'core.dart';
-import 'package:controls_and_panels/controls_and_panels.dart';
+import 'core.dart' as core;
 
-part 'src/client/client.dart';
+void initConsumptionSettings(core.InitConsumption initCon, core.Action onConnectionClose, String protocol){
+  core.initConsumptionSettings(initCon, onConnectionClose);
+  var ws = new WebSocket('$protocol://${Uri.base.host}:${Uri.base.port}${core.PURITY_SOCKET_ROUTE_PATH}');
+  ws.onOpen.first.then((_){
+    var biConnection = new core.BiConnection(ws.onMessage.map((msg) => msg.data), ws.sendString, ws.close);
+    new core.ProxyManager(initCon, onConnectionClose, biConnection);
+  });
+}

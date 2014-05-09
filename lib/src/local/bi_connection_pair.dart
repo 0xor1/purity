@@ -14,15 +14,15 @@ class BiConnectionPair{
   Stream<String> _streamBStore;
   Stream<String> get _streamB => _streamB != null? _streamBStore: _streamBStore = _controllerB.stream.asBroadcastStream();
   
-  BiConnection _a;
-  BiConnection get a => _a;
+  core.BiConnection _a;
+  core.BiConnection get a => _a;
   
-  BiConnection _b;
-  BiConnection get b => _b;
+  core.BiConnection _b;
+  core.BiConnection get b => _b;
   
   BiConnectionPair(){
-    _a = new BiConnection(_streamB, _controllerA.add, _controllerA.close);
-    _a = new BiConnection(_streamA, _controllerB.add, _controllerB.close);
+    _a = new core.BiConnection(_streamB, _controllerA.add, _controllerA.close);
+    _a = new core.BiConnection(_streamA, _controllerB.add, _controllerB.close);
   }
   
 }

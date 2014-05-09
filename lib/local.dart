@@ -5,8 +5,9 @@
 library purity.local;
 
 import 'dart:async';
-import 'core.dart';
+import 'core.dart' as core;
 
 part 'src/local/bi_connection_pair.dart';
-part 'src/local/client.dart';
 part 'src/local/server.dart';
+
+part 'src/local/event/client_created_event.dart';

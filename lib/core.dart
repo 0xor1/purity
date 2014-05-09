@@ -20,24 +20,45 @@ part 'src/core/proxy_manager.dart';
 part 'src/core/consumer.dart';
 part 'src/core/bi_connection.dart';
 part 'src/core/i_manager.dart';
+part 'src/core/server.dart';
 
 part 'src/core/tran/event.dart';
 part 'src/core/tran/shutdown_event.dart';
+part 'src/core/tran/server_message_event.dart';
 part 'src/core/tran/proxy_invocation.dart';
 part 'src/core/tran/transmission.dart';
 part 'src/core/tran/ready.dart';
 part 'src/core/tran/garbage_collection_report.dart';
 part 'src/core/tran/garbage_collection_start.dart';
 
-part 'src/core/unsupported_proxy_invocation_error.dart';
-part 'src/core/unsupported_message_type_error.dart';
+part 'src/core/error/unsupported_proxy_invocation_error.dart';
+part 'src/core/error/unsupported_message_type_error.dart';
+part 'src/core/error/consumption_settings_already_initialised_error.dart';
 
 typedef void Action();
 typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
 typedef Future<Source> InitSource(SourceManager srcManager);
 typedef Future<Source> CloseSource(_Base src);
-typedef void InitProxy(_Base src);
+typedef void InitConsumption(_Base src);
+
+const String PURITY_SOCKET_ROUTE_PATH = '/purity_socket';
+
+bool _consumptionSettingsInitialised = false;
+bool get consumptionSettingsInitialised => _consumptionSettingsInitialised;
+InitConsumption _initConsumption;
+InitConsumption get initConsumption => _initConsumption;
+Action _onConnectionClose;
+Action get onConnectionClose => _onConnectionClose;
+
+void initConsumptionSettings(InitConsumption initCon, Action onConnectionClose){
+  if(_consumptionSettingsInitialised){
+    throw new ConsumptionSettingsAlreadyInitialisedError();
+  }
+  _consumptionSettingsInitialised = true;
+  _initConsumption = initCon;
+  _onConnectionClose = onConnectionClose;
+}
 
 bool _purityCoreTranTypesRegistered = false;
 void _registerPurityCoreTranTypes(){

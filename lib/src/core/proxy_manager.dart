@@ -6,7 +6,7 @@ part of purity.core;
 
 class ProxyManager extends Source implements IManager{
   
-  final InitProxy _initProxy;
+  final InitConsumption _initProxy;
   final Action _onConnectionClose;
   final BiConnection _connection;
   final Map<ObjectId, _Proxy> _proxies = new Map<ObjectId, _Proxy>();

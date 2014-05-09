@@ -4,31 +4,25 @@
 
 part of purity.local;
 
-class PurityTestServer extends Source{
+class Server extends core.Server{
 
-  int _testClientId = 0;
-  final PurityServerCore _purityServerCore;
+  int _localClientId = 0;
 
-  factory PurityTestServer(OpenApp openApp, CloseApp closeApp, [int garbageCollectionFrequency = 60]){
-    var serverCore = new PurityServerCore(openApp, closeApp, garbageCollectionFrequency, true);
-    return new PurityTestServer._internal(serverCore);
-  }
-
-  PurityTestServer._internal(PurityServerCore this._purityServerCore){
-    listen(_purityServerCore, Omni, (event){ emitEvent(event); });    
-  }
+  Server(core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = true])
+      :super(initSrc, closeSrc, garbageCollectionFrequency, verbose);
   
-  void shutdown() => _purityServerCore.shutdown();
-  
-  void simulateNewClient(){
-    if(!hasTestAppViewInitialised){
-      throw 'initPurityTestAppView must be called before a new test client can be initialised';
+  void newClient(){
+    if(!core.consumptionSettingsInitialised){
+      throw 'initConsumptionSettings must be called before a new test client can be initialised';
     }
-    _StreamPack toServer = new _StreamPack<String>();
-    _StreamPack toClient = new _StreamPack<String>();
-    var name = 'client_${_testClientId++}';
-    new PurityClientCore(name, initTestAppView, onTestConnectionClose, toClient.stream, toServer.controller.add, toServer.controller.close);
-    _purityServerCore.createPurityAppSession(name, toServer.stream, toClient.controller.add, toClient.controller.close);
+    var biConnectionPair = new BiConnectionPair();
+    var name = 'client_${_localClientId++}';
+    var proxyManager = new core.ProxyManager(core.initConsumption, core.onConnectionClose, biConnectionPair.a);
+    createSourceManager(name, biConnectionPair.b);
+    emitEvent(
+      new ClientCreatedEvent()
+      ..name = name
+      ..proxyManager = proxyManager);
   }
 }
 
