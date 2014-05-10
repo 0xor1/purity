@@ -1,5 +1,5 @@
 /**
- * author Daniel Robinson http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 library purity.test;
@@ -11,8 +11,8 @@ import 'package:purity/core.dart' as core;
 import 'dart:async';
 import 'dart:math';
 
-part 'purity_end_to_end_test.dart';
-part 'purity_error_test.dart';
+part 'end_to_end_test.dart';
+part 'error_test.dart';
 
 class TestSource extends Source{
   void doStuff(int x){

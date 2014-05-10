@@ -1,12 +1,12 @@
 /**
- * author: Daniel Robinson  http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 part of purity.test;
 
 void _runCoreTests(){
   
-  group('Purity end-to-end tests: ', (){
+  group('End-to-end tests: ', (){
     
     test('A proxy can make calls to its source and receive events back.', (){
       int x = new Random().nextInt(100);
