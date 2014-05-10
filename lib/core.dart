@@ -75,6 +75,17 @@ void initConsumerSettings(InitConsumer initConsumer, Action handleConnectionClos
   _handleConnectionClose = handleConnectionClose;
 }
 
+/**
+ * Clears the current set of consumer initialisation settings.
+ * 
+ * This is only expected to be used in the unit testing of the purity.core library.
+ */
+void clearConsumerSettings(){
+  _initConsumer = null;
+  _handleConnectionClose = null;
+  _consumerSettingsInitialised = false;
+}
+
 bool _purityCoreTranTypesRegistered = false;
 void _registerPurityCoreTranTypes(){
   if(_purityCoreTranTypesRegistered){ return; }

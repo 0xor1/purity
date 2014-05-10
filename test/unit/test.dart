@@ -115,6 +115,7 @@ void _setUp(){
 
 void _tearDown(){
   currentHost.shutdown();
+  local.clearConsumerSettings();
   currentHost = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventCaughtByConsumer = null;
 }
 
@@ -122,6 +123,6 @@ void main(){
   _registerPurityTestTranTypes();
   setUp(_setUp);
   tearDown(_tearDown);
-  _runCoreTests();
+  _runEndToEndTests();
   _runErrorTests();
 }

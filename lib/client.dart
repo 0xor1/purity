@@ -8,7 +8,7 @@ import 'dart:html';
 export 'dart:html';
 import 'core.dart' as core;
 
-void initConsumptionSettings(core.InitConsumer initCon, core.Action onConnectionClose, String protocol){
+void initConsumerSettings(core.InitConsumer initCon, core.Action onConnectionClose, String protocol){
   core.initConsumerSettings(initCon, onConnectionClose);
   var ws = new WebSocket('$protocol://${Uri.base.host}:${Uri.base.port}${core.PURITY_WEB_SOCKET_ROUTE_PATH}');
   ws.onOpen.first.then((_){

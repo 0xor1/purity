@@ -6,7 +6,7 @@ library purity.local;
 
 import 'dart:async';
 import 'core.dart' as core;
-export 'core.dart' show initConsumerSettings;
+export 'core.dart' show initConsumerSettings, clearConsumerSettings;
 
 part 'src/local/end_point_connection_pair.dart';
 part 'src/local/host.dart';

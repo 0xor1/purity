@@ -4,7 +4,7 @@
 
 part of purity.test;
 
-void _runCoreTests(){
+void _runEndToEndTests(){
   
   group('End-to-end tests: ', (){
     
