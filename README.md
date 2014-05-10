@@ -1,8 +1,8 @@
 #Purity [![Build Status](https://drone.io/github.com/0xor1/purity/status.png)](https://drone.io/github.com/0xor1/purity/latest)
 
 Purity is a framework for building applications following a **Source->Consumer** pattern.
-A **Source** is an object which emits **Event**s a **Consumer** is an object which listens
-for **Event**s from a single **Source**. A **Consumer** may consume a **Source** directly,
+A **Source** is an object which emits **Events**, a **Consumer** is an object which listens
+for **Events** from a single **Source**. A **Consumer** may consume a **Source** directly,
 or it may consume it by proxy over a **Stream<String>**. Any infrastructure which supports
 **Stream<String>** will support the Purity framework, for example, it will work directly
 in memory, or over a **HTTP** connection.
