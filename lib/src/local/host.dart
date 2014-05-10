@@ -4,20 +4,20 @@
 
 part of purity.local;
 
-class SourceEndPointHost extends core.SourceEndPointHost{
+class Host extends core.Host{
 
   static int _endPointIdSrc = 0;
 
-  SourceEndPointHost(core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = true])
+  Host(core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = true])
       :super(initSrc, closeSrc, garbageCollectionFrequency, verbose);
   
   void createEndPointPair(){
-    if(!core.consumptionSettingsInitialised){
+    if(!core.consumerSettingsInitialised){
       throw 'initConsumptionSettings must be called before a new test client can be initialised';
     }
     var biConnectionPair = new EndPointConnectionPair();
     var name = 'end-point_${_endPointIdSrc++}';
-    var proxyEndPoint = new ProxyEndPoint(name, core.initConsumption, core.onConnectionClose, biConnectionPair.a);
+    var proxyEndPoint = new ProxyEndPoint(name, core.initConsumer, core.hanleConnectionClose, biConnectionPair.a);
     createSourceEndPoint(name, biConnectionPair.b);
     emitEvent(
       new ProxyEndPointCreatedEvent()

@@ -6,13 +6,14 @@ library purity.test;
 
 import 'package:unittest/unittest.dart';
 import 'package:purity/purity.dart';
+import 'package:purity/local.dart' as local;
 import 'dart:async';
 import 'dart:math';
 
 part 'purity_core_test.dart';
 part 'purity_error_test.dart';
 
-class TestModel extends PurityModel{
+class TestSource extends Source{
   void doStuff(int x){
     emitEvent(
       new TestEvent()
@@ -20,19 +21,19 @@ class TestModel extends PurityModel{
   }
 }
 
-class TestView extends PurityModelConsumer{
-  TestView(model):super(model){
-    listen(model, Omni, (event){
-      lastEventCaughtByView = event;
+class TestConsumer extends Consumer{
+  TestConsumer(src):super(src){
+    listen(src, Omni, (event){
+      lastEventCaughtByConsumer = event;
     });
   }
   
   doStuff(int x){
-    model.doStuff(x);
+    source.doStuff(x);
   }
 }
 
-class TestEvent extends PurityEvent implements ITestEvent{}
+class TestEvent extends Event implements ITestEvent{}
 abstract class ITestEvent{
   String doingStuffMessage;
 }
@@ -46,12 +47,12 @@ void _registerPurityTestTranTypes(){
   });
 }
 
-PurityTestServer server;
-PurityClientCore currentClientCore;
-TestModel currentTestModel;
-TestView currentTestView;
-dynamic modelPassedToView;
-TestEvent lastEventCaughtByView;
+local.Host host;
+local.ProxyEndPoint proxyEndPoint;
+TestSource currentTestSrc;
+TestConsumer currentTestConsumer;
+dynamic srcPassedToConsumer;
+TestEvent lastEventCaughtByConsumer;
 
 void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int timeout = 1, void onTimeout() = null]){
   DateTime start = new DateTime.now();
@@ -74,23 +75,26 @@ void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int 
 }
 
 void _setUp(){
-  server = new PurityTestServer(
-    ()=> currentTestModel = new TestModel(),
-    (model){}
-  );
-  initPurityTestAppView(
-    (model, clientCore){
-      currentClientCore = clientCore;
-      currentTestView = new TestView(model);
+  
+  host = new local.Host(
+    (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestSource()),
+    (src) => new Future.delayed(new Duration(), (){}),
+    2);
+  
+  local.initConsumerSettings(
+    (src, proxyEndPoint){
+      proxyEndPoint = proxyEndPoint;
+      currentTestConsumer = new TestConsumer(src);
     },
     (){}
   );
-  server.simulateNewClient();
+  
+  host.createEndPointPair();
 }
 
 void _tearDown(){
-  server.shutdown();
-  server = currentTestModel = currentTestView = modelPassedToView = lastEventCaughtByView = null;
+  host.shutdown();
+  host = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventCaughtByConsumer = null;
 }
 
 void main(){  

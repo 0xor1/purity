@@ -7,7 +7,7 @@ part of purity.core;
 /**
  * Hosts multiple [SourceEndPoint]s.
  */
-abstract class SourceEndPointHost extends Source implements EndPoint{
+abstract class Host extends Source{
 
   final InitSource _initSrc;
   final CloseSource _closeSrc;
@@ -16,7 +16,7 @@ abstract class SourceEndPointHost extends Source implements EndPoint{
   final bool _verbose;
   
   /**
-   * Constructs a new [SourceEndPointHost] instance with:
+   * Constructs a new [Host] instance with:
    * 
    * * [_initSrc] as the [InitSource] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
@@ -24,10 +24,10 @@ abstract class SourceEndPointHost extends Source implements EndPoint{
    * * [_verbose] as an optional argument to emit events for each message sent and received from all hosted [SourceEndPoint]s.
    * 
    */
-  SourceEndPointHost(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
+  Host(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
 
   /**
-   * 
+   * Creates a [SourceEndPoint] with the supplied [name] and [connection]
    */
   void createSourceEndPoint(String name, EndPointConnection connection){
     SendString verboseSend = connection._send;
@@ -49,6 +49,7 @@ abstract class SourceEndPointHost extends Source implements EndPoint{
     new SourceEndPoint(_initSrc, _closeSrc, _garbageCollectionFrequency, connection);
   }
   
+  /// shuts down all hosted [SourceEndPoint]s.
   void shutdown(){
     srcEndPoints.forEach((srcEndPoint){
       srcEndPoint.shutdown();
@@ -56,11 +57,11 @@ abstract class SourceEndPointHost extends Source implements EndPoint{
     srcEndPoints.clear();
   }
   
-  void _emitEndPointMessageEvent(String name, bool isIncoming, String str){
+  void _emitEndPointMessageEvent(String name, bool isProxyToSource, String str){
     emitEvent(
       new EndPointMessageEvent()
-      ..sessionName = name
-      ..isIncoming = isIncoming
+      ..endPointName = name
+      ..isProxyToSource = isProxyToSource
       ..message = str);
   }
 }

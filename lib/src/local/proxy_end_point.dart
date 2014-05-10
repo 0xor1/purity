@@ -6,6 +6,6 @@ part of purity.local;
 
 class ProxyEndPoint extends core.ProxyEndPoint{
   final String name;
-  ProxyEndPoint(this.name, core.InitConsumption initConsumption, core.Action onCloseConnection, core.EndPointConnection connection):
+  ProxyEndPoint(this.name, core.InitConsumer initConsumption, core.Action onCloseConnection, core.EndPointConnection connection):
     super(initConsumption, onCloseConnection, connection);
 }

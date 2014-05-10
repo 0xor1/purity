@@ -1,9 +1,12 @@
 /**
- * Author: Daniel Robinson  http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 part of purity.core;
 
-class ConsumptionSettingsAlreadyInitialisedError{
-  String get message => 'Consumption settings may only be initialised once.';
+/**
+ * Thrown if [initConsumerSettings] is called more than once.
+ */
+class ConsumerSettingsAlreadyInitialisedError{
+  String get message => 'Consumer settings may only be initialised once.';
 }

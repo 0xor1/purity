@@ -17,13 +17,20 @@ class SourceEndPoint extends EndPoint{
   final int _garbageCollectionFrequency;
   bool _garbageCollectionInProgress = false;
   Timer _garbageCollectionTimer;
-
+  
+  /**
+   * Constructs a new [SourceEndPoint] instance with:
+   * 
+   * * [_initSrc] as the [InitSource] function for the application.
+   * * [_closeSrc] as the [CloseSource] function for the application.
+   * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
+   * * [connection] as the bi-directional connection to the paired down-stream [ProxyEndPoint].
+   * 
+   */
   SourceEndPoint(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
   super(connection){
-    _setDeniedAccessMethods();
-    _registerPurityCoreTranTypes();
+    _setRestrictedMethods();
     _setGarbageCollectionTimer();
-    _connection._incoming.listen(_receiveString, onDone: shutdown, onError: (error) => shutdown());
     _initSrc(this).then((src){
       _rootSrc = src;
       _sendTran(
@@ -38,8 +45,7 @@ class SourceEndPoint extends EndPoint{
       _garbageCollectionTimer.cancel();
     }
     _closeSrc(_rootSrc).then((_){
-      super.shutdown(); 
-      emitEvent(new ShutdownEvent());     
+      super.shutdown();    
     });
   }
 
@@ -60,7 +66,7 @@ class SourceEndPoint extends EndPoint{
     return v;
   }
 
-  void _receiveString(String str){
+  void receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
     if(tran is _GarbageCollectionReport){
       _runGarbageCollectionSequence(tran._proxies);

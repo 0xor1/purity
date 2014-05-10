@@ -19,8 +19,8 @@ class Source extends _Base{
   }
   
   void _invoke(_ProxyInvocation inv){
-    if(_deniedAccessMethods.contains(inv._method)){
-      throw new DeniedAccessMethodError(inv._method);
+    if(_restrictedMethods.contains(inv._method)){
+      throw new RestrictedMethodError(inv._method);
     }else{
       _this.invoke(inv._method, inv._posArgs, inv._namArgs);
     }

@@ -8,13 +8,13 @@ void _runCoreTests(){
   
   group('Purity Core Tests: ', (){
     
-    test('The clients remote proxy model can make calls to the server model and receive events back.', (){
+    test('The proxy can make calls to the source and receive events back.', (){
       int x = new Random().nextInt(100);
-      Timer.run(() => currentTestView.doStuff(x));
+      Timer.run(() => currentTestConsumer.doStuff(x));
       expectAsyncWithReadyCheckAndTimeout(
-        () => lastEventCaughtByView != null,
+        () => lastEventCaughtByConsumer != null,
         (){
-          expect(lastEventCaughtByView.aFakeTestProp, equals(x));
+          expect(lastEventCaughtByConsumer.aFakeTestProp, equals(x));
         });
     });
     

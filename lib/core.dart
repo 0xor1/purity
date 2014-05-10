@@ -1,5 +1,5 @@
 /**
- * author: Daniel Robinson  http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 library purity.core;
@@ -20,7 +20,7 @@ part 'src/core/proxy_end_point.dart';
 part 'src/core/consumer.dart';
 part 'src/core/end_point_connection.dart';
 part 'src/core/end_point.dart';
-part 'src/core/source_end_point_host.dart';
+part 'src/core/host.dart';
 
 part 'src/core/tran/event.dart';
 part 'src/core/tran/shutdown_event.dart';
@@ -34,41 +34,47 @@ part 'src/core/tran/garbage_collection_start.dart';
 part 'src/core/error/unsupported_proxy_invocation_error.dart';
 part 'src/core/error/unsupported_message_type_error.dart';
 part 'src/core/error/consumption_settings_already_initialised_error.dart';
-part 'src/core/error/denied_access_method_error.dart';
+part 'src/core/error/restricted_method_error.dart';
 
 typedef void Action();
 typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
 typedef Future<Source> InitSource(EndPoint srcEndPoint);
-typedef Future<Source> CloseSource(Source src);
-typedef void InitConsumption(_Proxy proxy, EndPoint proxyEndPoint);
+typedef Future CloseSource(Source src);
+typedef void InitConsumer(_Proxy proxy, EndPoint proxyEndPoint);
 
 const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
 
-Set<Symbol> _deniedAccessMethods = new Set<Symbol>();
+Set<Symbol> _restrictedMethods = new Set<Symbol>();
 
-void _setDeniedAccessMethods(){
-  if(_deniedAccessMethods.isEmpty){
-    _deniedAccessMethods.addAll(reflectClass(EventEmitter).instanceMembers.keys);
-    _deniedAccessMethods.addAll(reflectClass(EventDetector).instanceMembers.keys);
+void _setRestrictedMethods(){
+  if(_restrictedMethods.isEmpty){
+    _restrictedMethods.addAll(reflectClass(EventEmitter).instanceMembers.keys);
+    _restrictedMethods.addAll(reflectClass(EventDetector).instanceMembers.keys);
   }
 }
 
-bool _consumptionSettingsInitialised = false;
-InitConsumption _initConsumption;
-Action _onConnectionClose;
+bool _consumerSettingsInitialised = false;
+InitConsumer _initConsumer;
+Action _handleConnectionClose;
 
-bool get consumptionSettingsInitialised => _consumptionSettingsInitialised;
-InitConsumption get initConsumption => _initConsumption;
-Action get onConnectionClose => _onConnectionClose;
+bool get consumerSettingsInitialised => _consumerSettingsInitialised;
+InitConsumer get initConsumer => _initConsumer;
+Action get hanleConnectionClose => _handleConnectionClose;
 
-void initConsumptionSettings(InitConsumption initCon, Action onConnectionClose){
-  if(_consumptionSettingsInitialised){
-    throw new ConsumptionSettingsAlreadyInitialisedError();
+/**
+ * Stores the [initConsumer] and [handleConnectionClose] to be called when the [SourceEndPoint] is ready,
+ * and when the [EndPointConnection] to the [SourceEndPoint] is closed, respectively.
+ * 
+ * Throws [ConsumerSettingsAlreadyInitialisedError] if called more than once.
+ */
+void initConsumerSettings(InitConsumer initConsumer, Action handleConnectionClose){
+  if(_consumerSettingsInitialised){
+    throw new ConsumerSettingsAlreadyInitialisedError();
   }
-  _consumptionSettingsInitialised = true;
-  _initConsumption = initCon;
-  _onConnectionClose = onConnectionClose;
+  _consumerSettingsInitialised = true;
+  _initConsumer = initConsumer;
+  _handleConnectionClose = handleConnectionClose;
 }
 
 bool _purityCoreTranTypesRegistered = false;

@@ -1,5 +1,5 @@
 /**
- * author: Daniel Robinson http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 library purity.host;
@@ -12,9 +12,9 @@ import 'package:logging/logging.dart' show Logger, Level, LogRecord;
 
 final Logger _log = new Logger('Purity Host');
 
-class SourceEndPointHost extends core.SourceEndPointHost{
+class Host extends core.Host{
 
-  SourceEndPointHost(dynamic address, int port, String staticFileDirectory, core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = false]):
+  Host(dynamic address, int port, String staticFileDirectory, core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = false]):
     super(initSrc, closeSrc, garbageCollectionFrequency, verbose){
 
     Logger.root.level = Level.ALL;

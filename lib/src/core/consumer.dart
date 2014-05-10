@@ -14,7 +14,7 @@ part of purity.core;
 class Consumer extends Object with EventDetector{
   _Base _src;
   /// The [Source] being consumed.
-  _Base get source => _src;
+  dynamic get source => _src;
 
   /**
    * Constructs a [Consumer] instance with the only [Source] it will consume for its lifetime.
