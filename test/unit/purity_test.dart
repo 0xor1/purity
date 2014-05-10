@@ -7,10 +7,11 @@ library purity.test;
 import 'package:unittest/unittest.dart';
 import 'package:purity/purity.dart';
 import 'package:purity/local.dart' as local;
+import 'package:purity/core.dart' as core;
 import 'dart:async';
 import 'dart:math';
 
-part 'purity_core_test.dart';
+part 'purity_end_to_end_test.dart';
 part 'purity_error_test.dart';
 
 class TestSource extends Source{

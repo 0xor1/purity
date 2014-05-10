@@ -8,9 +8,7 @@ import 'dart:mirrors';
 import 'dart:async';
 import 'package:bson/bson.dart' show ObjectId;
 import 'package:eventable/eventable.dart';
-export 'package:eventable/eventable.dart';
 import 'package:transmittable/transmittable.dart';
-export 'package:transmittable/transmittable.dart';
 
 part 'src/core/base.dart';
 part 'src/core/source.dart';
