@@ -6,7 +6,7 @@ part of purity.test;
 
 void _runErrorTests(){
 
-  group('Error tests: ', (){
+  group('Error: ', (){
     
     test('A proxy can make calls to its source and receive events back.', (){
       int x = new Random().nextInt(100);
