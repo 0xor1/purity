@@ -1,22 +1,26 @@
 /**
- * author: Daniel Robinson  http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 part of purity.core;
 
-class SourceManager extends Source implements IManager{
+/**
+ * An up-stream [EndPoint] to route proxy method invocations to their underlying [Source] and pass [Event]s from all relevant [Source]s down to the connected [ProxyEndPoint].
+ */
+class SourceEndPoint extends EndPoint{
   
   Source _rootSrc;
   final InitSource _initSrc;
   final CloseSource _closeSrc;
-  final BiConnection _connection;
   final List<Transmittable> _messageQueue = new List<Transmittable>();
   final Map<ObjectId, Source> _srcs = new Map<ObjectId, Source>();
-  final int _garbageCollectionFrequency; //in seconds
+  final int _garbageCollectionFrequency;
   bool _garbageCollectionInProgress = false;
   Timer _garbageCollectionTimer;
 
-  SourceManager(this._initSrc, this._closeSrc, this._connection, this._garbageCollectionFrequency){
+  SourceEndPoint(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
+  super(connection){
+    _setDeniedAccessMethods();
     _registerPurityCoreTranTypes();
     _setGarbageCollectionTimer();
     _connection._incoming.listen(_receiveString, onDone: shutdown, onError: (error) => shutdown());
@@ -34,7 +38,7 @@ class SourceManager extends Source implements IManager{
       _garbageCollectionTimer.cancel();
     }
     _closeSrc(_rootSrc).then((_){
-      _connection._close(); 
+      super.shutdown(); 
       emitEvent(new ShutdownEvent());     
     });
   }
@@ -59,14 +63,9 @@ class SourceManager extends Source implements IManager{
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
     if(tran is _GarbageCollectionReport){
-      _runGarbageCollectionSequence(tran.models);
+      _runGarbageCollectionSequence(tran._proxies);
     }else if(tran is _ProxyInvocation){
-      var modelMirror = reflect(_srcs[(tran.model as _Base)._purityId]);
-      try{
-        modelMirror.invoke(tran.method, tran.posArgs, tran.namArgs);
-      }catch(e){
-        //emitEvent(new NoSuchMethodException());
-      }
+      _srcs[tran._src._purityId]._invoke(tran);
     }else{
       throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
     }
@@ -90,9 +89,9 @@ class SourceManager extends Source implements IManager{
     });
   }
   
-  void _runGarbageCollectionSequence(Set<_Base> srcs){
-    srcs.forEach((src){
-      _srcs.remove(src._purityId);
+  void _runGarbageCollectionSequence(Set<_Proxy> proxies){
+    proxies.forEach((proxy){
+      _srcs.remove(proxy._purityId);
     });
     for(var i = 0; i < _messageQueue.length; i++){
       _sendTran(_messageQueue[i]);

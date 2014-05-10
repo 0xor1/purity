@@ -1,34 +1,35 @@
 /**
- * author: Daniel Robinson  http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 part of purity.core;
 
-class ProxyManager extends Source implements IManager{
-  
-  final InitConsumption _initProxy;
+/**
+ * A down-stream [EndPoint] to route [Source] [Event]s to their proxies for re-emitting to any listening [Consumer]s.
+ */
+class ProxyEndPoint extends EndPoint{
+  final InitConsumption _initConsumption;
   final Action _onConnectionClose;
-  final BiConnection _connection;
   final Map<ObjectId, _Proxy> _proxies = new Map<ObjectId, _Proxy>();
-  final Map<ObjectId, int> _proxyConsumptionCount = new Map<ObjectId, int>();
   bool _proxyEventInProgress = false;
   
-  ProxyManager(this._initProxy, this._onConnectionClose, this._connection){
+  ProxyEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
+    super(connection){
     _registerPurityCoreTranTypes();
     _connection._incoming.listen(_receiveString, onError: (_) => shutdown(), onDone: shutdown);
   }
   
   void shutdown(){
     _onConnectionClose();
+    super.shutdown();
     emitEvent(new ShutdownEvent());
-    _connection._close();
   }
   
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
     if(tran is _Transmission){
       if(tran is _Ready){
-        _initProxy(tran.model, this);
+        _initConsumption(tran.model, this);
       }else if(tran is _GarbageCollectionStart){
         _runGarbageCollectionSequence();
       }
@@ -42,11 +43,9 @@ class ProxyManager extends Source implements IManager{
   
   dynamic _postprocessTran(dynamic v){
     if(v is _Proxy){
-      v._proxyConsumptionCount = _proxyConsumptionCount;
       v._send = _sendTran;
       if(!_proxies.containsKey(v._purityId)){
         _proxies[v._purityId] = v;
-        _proxyConsumptionCount[v._purityId] = 0;
       }
     }
     return v;
@@ -61,18 +60,14 @@ class ProxyManager extends Source implements IManager{
       new Future.delayed(new Duration(), _runGarbageCollectionSequence);
       return;
     }else{
-      var srcsCollected = new Set<_Base>();
-      _proxyConsumptionCount.forEach((_purityId, usageCount){
-        if(usageCount == 0){
-          var src = _proxies.remove(_purityId);
-          ignoreAllEventsFrom(src);
-          srcsCollected.add(src);
+      var proxiesCollected = new Set<_Proxy>();
+      _proxies.forEach((purityId, proxy){
+        if(proxy._usageCount == 0){
+          _proxies.remove(purityId);
+          proxiesCollected.add(proxy);
         }
       });
-      srcsCollected.forEach((src){
-        _proxyConsumptionCount.remove(src._purityId);
-      });
-      _sendTran(new _GarbageCollectionReport().._srcs = srcsCollected);
+      _sendTran(new _GarbageCollectionReport().._proxies = proxiesCollected);
     }
   }
 }

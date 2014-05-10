@@ -2,7 +2,7 @@
  * author: Daniel Robinson http://github.com/0xor1
  */
 
-library purity.server;
+library purity.host;
 
 import 'dart:io';
 import 'core.dart' as core;
@@ -10,11 +10,11 @@ import 'package:http_server/http_server.dart' as http_server;
 import 'package:route/server.dart' show Router;
 import 'package:logging/logging.dart' show Logger, Level, LogRecord;
 
-final Logger _log = new Logger('Purity Server');
+final Logger _log = new Logger('Purity Host');
 
-class Server extends core.Server{
+class SourceEndPointHost extends core.SourceEndPointHost{
 
-  Server(dynamic address, int port, String staticFileDirectory, core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = false]):
+  SourceEndPointHost(dynamic address, int port, String staticFileDirectory, core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = false]):
     super(initSrc, closeSrc, garbageCollectionFrequency, verbose){
 
     Logger.root.level = Level.ALL;
@@ -34,12 +34,12 @@ class Server extends core.Server{
 
         var router = new Router(server);
 
-        router.serve(core.PURITY_SOCKET_ROUTE_PATH).listen((HttpRequest request){
+        router.serve(core.PURITY_WEB_SOCKET_ROUTE_PATH).listen((HttpRequest request){
           if(WebSocketTransformer.isUpgradeRequest(request)){
             WebSocketTransformer.upgrade(request)
             .then((ws){
-              var biConnection = new core.BiConnection(ws, ws.add, ws.close);
-              createSourceManager(request.connectionInfo.remoteAddress.toString(), biConnection);
+              var biConnection = new core.EndPointConnection(ws, ws.add, ws.close);
+              createSourceEndPoint(request.connectionInfo.remoteAddress.toString(), biConnection);
             });
           }else{
             _log.warning("Purity app web socket request not valid");

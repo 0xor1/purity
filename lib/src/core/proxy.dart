@@ -1,5 +1,5 @@
 /**
- * author: Daniel Robinson  http://github.com/0xor1
+ * Author:  Daniel Robinson http://github.com/0xor1
  */
 
 part of purity.core;
@@ -7,10 +7,12 @@ part of purity.core;
 @proxy
 class _Proxy extends _Base{
 
-  Map<ObjectId, int> _proxyConsumptionCount;
+  int _usageCount;
   SendTran _send;
   
-  _Proxy(ObjectId id):super(id);
+  _Proxy(ObjectId id):super(id){
+    _usageCount = 0;
+  }
 
   void noSuchMethod(Invocation inv){
     if(inv.isMethod){

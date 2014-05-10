@@ -1,10 +1,10 @@
 /**
- * autho: Daniel Robinson http://github.com/0xor1
+ * author: Daniel Robinson http://github.com/0xor1
  */
 
 part of purity.local;
 
-class BiConnectionPair{
+class EndPointConnectionPair{
   
   final StreamController<String> _controllerA = new StreamController<String>();
   Stream<String> _streamAStore;
@@ -14,15 +14,15 @@ class BiConnectionPair{
   Stream<String> _streamBStore;
   Stream<String> get _streamB => _streamB != null? _streamBStore: _streamBStore = _controllerB.stream.asBroadcastStream();
   
-  core.BiConnection _a;
-  core.BiConnection get a => _a;
+  core.EndPointConnection _a;
+  core.EndPointConnection get a => _a;
   
-  core.BiConnection _b;
-  core.BiConnection get b => _b;
+  core.EndPointConnection _b;
+  core.EndPointConnection get b => _b;
   
-  BiConnectionPair(){
-    _a = new core.BiConnection(_streamB, _controllerA.add, _controllerA.close);
-    _a = new core.BiConnection(_streamA, _controllerB.add, _controllerB.close);
+  EndPointConnectionPair(){
+    _a = new core.EndPointConnection(_streamB, _controllerA.add, _controllerA.close);
+    _a = new core.EndPointConnection(_streamA, _controllerB.add, _controllerB.close);
   }
   
 }
