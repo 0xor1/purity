@@ -46,7 +46,7 @@ abstract class Host extends Source{
       };
       connection = new EndPointConnection(connection._incoming, verboseSend, connection._close);
     }
-    new SourceEndPoint(_initSrc, _closeSrc, _garbageCollectionFrequency, connection);
+    srcEndPoints.add(new SourceEndPoint(_initSrc, _closeSrc, _garbageCollectionFrequency, connection));
   }
   
   /// shuts down all hosted [SourceEndPoint]s.
