@@ -29,7 +29,7 @@ abstract class Host extends Source{
   /**
    * Creates a [SourceEndPoint] with the supplied [name] and [connection]
    */
-  void createSourceEndPoint(String name, EndPointConnection connection){
+  SourceEndPoint createSourceEndPoint(String name, EndPointConnection connection){
     SendString verboseSend = connection._send;
     SendString rootSend = connection._send;
     if(_verbose){
@@ -46,7 +46,14 @@ abstract class Host extends Source{
       };
       connection = new EndPointConnection(connection._incoming, verboseSend, connection._close);
     }
-    srcEndPoints.add(new SourceEndPoint(_initSrc, _closeSrc, _garbageCollectionFrequency, connection));
+    var srcEndPoint = new SourceEndPoint(_initSrc, _closeSrc, _garbageCollectionFrequency, connection);
+    listen(srcEndPoint, ShutdownEvent, (event){
+      _emitEndPointMessageEvent(name, false, 'Source end-point shutdown');
+      srcEndPoints.remove(event.emitter);
+      Timer.run((){ ignoreAllEventsFrom(event.emitter); });
+    });
+    srcEndPoints.add(srcEndPoint);
+    return srcEndPoint;
   }
   
   /// shuts down all hosted [SourceEndPoint]s.
@@ -54,7 +61,6 @@ abstract class Host extends Source{
     srcEndPoints.forEach((srcEndPoint){
       srcEndPoint.shutdown();
     });
-    srcEndPoints.clear();
   }
   
   void _emitEndPointMessageEvent(String name, bool isProxyToSource, String str){

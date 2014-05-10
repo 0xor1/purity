@@ -11,8 +11,8 @@ import 'package:purity/core.dart' as core;
 import 'dart:async';
 import 'dart:math';
 
-part 'end_to_end_test.dart';
-part 'error_test.dart';
+part 'end_to_end.dart';
+part 'error.dart';
 
 class TestSource extends Source{
   void doStuff(int x){

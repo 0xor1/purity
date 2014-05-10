@@ -13,3 +13,5 @@ part 'src/local/host.dart';
 part 'src/local/proxy_end_point.dart';
 
 part 'src/local/tran/proxy_end_point_created_event.dart';
+
+part 'src/local/error/consumer_settings_uninitialised_error.dart';
