@@ -47,12 +47,32 @@ void _registerPurityTestTranTypes(){
   });
 }
 
-local.Host host;
-local.ProxyEndPoint proxyEndPoint;
+local.Host currentHost;
+local.ProxyEndPoint currentproxyEndPoint;
 TestSource currentTestSrc;
 TestConsumer currentTestConsumer;
 dynamic srcPassedToConsumer;
 TestEvent lastEventCaughtByConsumer;
+
+void executeWhenReadyOrTimeout(bool readyCheck(), void execute(), [int timeout = 1, void onTimeout() = null]){
+  DateTime start = new DateTime.now();
+  Duration limit = new Duration(seconds: timeout);
+  var inner;
+  inner = (){
+    if(readyCheck()){
+      execute();
+    }else if(new DateTime.now().subtract(limit).isAfter(start)){
+      if(onTimeout == null){
+        throw 'execute timed out.';
+      }else{
+        onTimeout();
+      }
+    }else{
+      Timer.run(inner);
+    }
+  };
+  inner();
+}
 
 void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int timeout = 1, void onTimeout() = null]){
   DateTime start = new DateTime.now();
@@ -63,7 +83,7 @@ void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int 
       expect();
     }else if(new DateTime.now().subtract(limit).isAfter(start)){
       if(onTimeout == null){
-        throw 'async test timed out';
+        throw 'async test timed out.';
       }else{
         onTimeout();
       }
@@ -76,25 +96,25 @@ void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int 
 
 void _setUp(){
   
-  host = new local.Host(
+  currentHost = new local.Host(
     (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestSource()),
     (src) => new Future.delayed(new Duration(), (){}),
     2);
   
   local.initConsumerSettings(
     (src, proxyEndPoint){
-      proxyEndPoint = proxyEndPoint;
+      currentproxyEndPoint = proxyEndPoint;
       currentTestConsumer = new TestConsumer(src);
     },
     (){}
   );
   
-  host.createEndPointPair();
+  currentHost.createEndPointPair();
 }
 
 void _tearDown(){
-  host.shutdown();
-  host = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventCaughtByConsumer = null;
+  currentHost.shutdown();
+  currentHost = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventCaughtByConsumer = null;
 }
 
 void main(){  

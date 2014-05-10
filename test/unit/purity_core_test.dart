@@ -8,9 +8,9 @@ void _runCoreTests(){
   
   group('Purity Core Tests: ', (){
     
-    test('The proxy can make calls to the source and receive events back.', (){
+    test('A proxy can make calls to its source and receive events back.', (){
       int x = new Random().nextInt(100);
-      Timer.run(() => currentTestConsumer.doStuff(x));
+      executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.doStuff(x));
       expectAsyncWithReadyCheckAndTimeout(
         () => lastEventCaughtByConsumer != null,
         (){
