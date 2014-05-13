@@ -60,9 +60,11 @@ class ProxyEndPoint extends EndPoint{
       var proxiesCollected = new Set<_Proxy>();
       _proxies.forEach((purityId, proxy){
         if(proxy._usageCount == 0){
-          _proxies.remove(purityId);
           proxiesCollected.add(proxy);
         }
+      });
+      proxiesCollected.forEach((proxy){
+        _proxies.remove(proxy._purityId);
       });
       _sendTran(new _GarbageCollectionReport().._proxies = proxiesCollected);
     }

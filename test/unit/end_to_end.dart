@@ -6,7 +6,7 @@ part of purity.test;
 
 void _runEndToEndTests(){
   
-  group('End-to-end: ', (){
+  group('End-to-end:', (){
     
     test('A proxy can make calls to its source and receive events back.', (){
       int x = new Random().nextInt(100);
