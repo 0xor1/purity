@@ -5,27 +5,29 @@
 part of purity.client;
 
 class _LocalClientView extends core.Consumer{
-  
+
   static const String CLASS = 'purity-client-window';
-  
+
   final DivElement html = new DivElement();
-  
+
   final StackPanel _containerStack =
     new StackPanel.vertical()
     ..style.width = '100%'
     ..style.height = '100%';
-  final StackPanel _headerStack = 
+  final StackPanel _headerStack =
     new StackPanel.horizontal()
     ..style.width = '100%'
     ..style.height = '30px'
     ..style.background = LocalHostView.color;
-  final SizerPanel _clientContainer = 
-    new SizerPanel('100%', 'calc(100% - 30px)')
+  final StackPanel _clientContainer =
+    new StackPanel.vertical()
+    ..style.width = '100%'
+    ..style.height = 'calc(100% - 30px)'
     ..style.overflow = 'auto';
-  
-  
+
+
   _LocalClientView(local.ProxyEndPoint proxyEndPoint, Element el)
-      :super(proxyEndPoint){
+  :super(proxyEndPoint){
     _clientWindowStyle.insert();
     html.classes.add(CLASS);
     html.append(_containerStack.html);
@@ -43,7 +45,7 @@ class _LocalClientView extends core.Consumer{
       dispose();
     });
   }
-  
+
   static final Style _clientWindowStyle = new Style('''
 
     .$CLASS
