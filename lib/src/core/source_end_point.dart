@@ -30,7 +30,7 @@ class SourceEndPoint extends EndPoint{
    */
   SourceEndPoint(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
   super(connection){
-    _setRestrictedMethods();
+    _registerCoreRestrictedMethods();
     _setGarbageCollectionTimer();
     _initSrc(this).then((src){
       _rootSrc = src;

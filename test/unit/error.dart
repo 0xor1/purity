@@ -7,11 +7,11 @@ part of purity.test;
 void _runErrorTests(){
 
   group('Error:', (){
-    
-    test('', (){
-      
+
+    test('calling initConsumerSettings more than once is an error', (){
+      expect(() => core.initConsumerSettings((_, __){}, (){}), throwsA(new isInstanceOf<core.ConsumerSettingsAlreadyInitialisedError>()));
     });
-    
+
   });
-  
+
 }

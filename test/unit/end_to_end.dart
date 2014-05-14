@@ -5,9 +5,9 @@
 part of purity.test;
 
 void _runEndToEndTests(){
-  
-  group('End-to-end:', (){
-    
+
+  group('End-to-End:', (){
+
     test('A proxy can make calls to its source and receive events back.', (){
       int x = new Random().nextInt(100);
       executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.doStuff(x));
@@ -17,7 +17,7 @@ void _runEndToEndTests(){
           expect(lastEventCaughtByConsumer.aFakeTestProp, equals(x));
         });
     });
-    
+
   });
-  
+
 }

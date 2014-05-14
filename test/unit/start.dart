@@ -10,11 +10,17 @@ import 'package:purity/local.dart' as local;
 import 'package:purity/core.dart' as core;
 import 'dart:async';
 import 'dart:math';
+import 'dart:mirrors';
 
 part 'end_to_end.dart';
 part 'error.dart';
 
 class TestSource extends Source{
+
+  void toBeRestricted(){
+    restrictedAccessMethodCalled = true;
+  }
+
   void doStuff(int x){
     emitEvent(
       new TestEvent()
@@ -28,7 +34,11 @@ class TestConsumer extends Consumer{
       lastEventCaughtByConsumer = event;
     });
   }
-  
+
+  void toBeRestricted(){
+    source.toBeRestricted();
+  }
+
   doStuff(int x){
     source.doStuff(x);
   }
@@ -48,6 +58,7 @@ void _registerPurityTestTranTypes(){
   });
 }
 
+bool restrictedAccessMethodCalled = false;
 local.Host currentHost;
 local.ProxyEndPoint currentproxyEndPoint;
 TestSource currentTestSrc;
@@ -96,12 +107,12 @@ void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int 
 }
 
 void _setUp(){
-  
+
   currentHost = new local.Host(
     (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestSource()),
     (src) => new Future.delayed(new Duration(), (){}),
     2);
-  
+
   local.initConsumerSettings(
     (src, proxyEndPoint){
       currentproxyEndPoint = proxyEndPoint;
@@ -109,7 +120,7 @@ void _setUp(){
     },
     (){}
   );
-  
+
   currentHost.createEndPointPair();
 }
 
@@ -119,7 +130,7 @@ void _tearDown(){
   currentHost = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventCaughtByConsumer = null;
 }
 
-void main(){  
+void main(){
   _registerPurityTestTranTypes();
   setUp(_setUp);
   tearDown(_tearDown);

@@ -45,11 +45,20 @@ const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
 
 Set<Symbol> _restrictedMethods = new Set<Symbol>();
 
-void _setRestrictedMethods(){
-  if(_restrictedMethods.isEmpty){
-    _restrictedMethods.addAll(reflectClass(EventEmitter).instanceMembers.keys);
-    _restrictedMethods.addAll(reflectClass(EventDetector).instanceMembers.keys);
-  }
+/**
+ * adds methods to a restricted access list preventing those methods from being called
+ * remotely over an [EndPointConnection].
+ */
+void registerRestrictedMethods(Iterable<Symbol> toRestrict){
+  _restrictedMethods.addAll(toRestrict);
+}
+
+bool _coreRestrictedMethodsRegistered = false;
+void _registerCoreRestrictedMethods(){
+  if(_coreRestrictedMethodsRegistered){ return; }
+  _coreRestrictedMethodsRegistered = true;
+  registerRestrictedMethods(reflectClass(EventDetector).instanceMembers.keys);
+  registerRestrictedMethods(reflectClass(EventEmitter).instanceMembers.keys);
 }
 
 bool _consumerSettingsInitialised = false;
@@ -63,7 +72,7 @@ Action get hanleConnectionClose => _handleConnectionClose;
 /**
  * Stores the [initConsumer] and [handleConnectionClose] to be called when the [SourceEndPoint] is ready,
  * and when the [EndPointConnection] to the [SourceEndPoint] is closed, respectively.
- * 
+ *
  * Throws [ConsumerSettingsAlreadyInitialisedError] if called more than once.
  */
 void initConsumerSettings(InitConsumer initConsumer, Action handleConnectionClose){
@@ -77,7 +86,7 @@ void initConsumerSettings(InitConsumer initConsumer, Action handleConnectionClos
 
 /**
  * Clears the current set of consumer initialisation settings.
- * 
+ *
  * This is only expected to be used in the unit testing of the purity.core library.
  */
 void clearConsumerSettings(){
