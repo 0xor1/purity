@@ -66,7 +66,7 @@ class ProxyEndPoint extends EndPoint{
       proxiesCollected.forEach((proxy){
         _proxies.remove(proxy.purityId);
       });
-      _sendTran(new GarbageCollectionReport().._proxies = proxiesCollected);
+      _sendTran(new GarbageCollectionReport()..proxies = proxiesCollected);
     }
   }
 }

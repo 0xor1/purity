@@ -5,6 +5,7 @@
 library purity.core.test;
 
 import 'dart:mirrors';
+import 'dart:async';
 import 'package:unittest/unittest.dart';
 import 'package:purity/core.dart';
 

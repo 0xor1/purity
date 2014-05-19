@@ -73,7 +73,7 @@ class SourceEndPoint extends EndPoint{
   void receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
     if(tran is GarbageCollectionReport){
-      _runGarbageCollectionSequence(tran._proxies);
+      _runGarbageCollectionSequence(tran.proxies);
     }else if(tran is ProxyInvocation){
       _srcs[tran.src.purityId].invoke(tran);
     }else{

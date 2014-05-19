@@ -19,6 +19,16 @@ void _runSourceTests(){
       });
     });
 
+    test('when events are emitted the data becomes locked', (){
+      Source src = new Source();
+      Event<Transmittable> caughtEvent = null;
+      src.addEventAction(Transmittable, (Event<Transmittable> event){
+        caughtEvent = event;
+      });
+      src.emitEvent(new Transmittable()..pi = 3.142);
+      Timer.run(expectAsync(() => expect(() => caughtEvent.data.pi = 2.178, throwsA(new isInstanceOf<TransmittableLockedError>()))));
+    });
+
   });
 
 }
