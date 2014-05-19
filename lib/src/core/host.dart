@@ -30,11 +30,11 @@ abstract class Host extends Source{
    * Creates a [SourceEndPoint] with the supplied [name] and [connection]
    */
   SourceEndPoint createSourceEndPoint(String name, EndPointConnection connection){
-    SendString verboseSend = connection._send;
-    SendString rootSend = connection._send;
+    SendString verboseSend = connection.send;
+    SendString rootSend = connection.send;
     if(_verbose){
       _emitEndPointMessageEvent(name, true, 'New end-point connected to host');
-      connection._incoming.listen(
+      connection.incoming.listen(
         (str){
           _emitEndPointMessageEvent(name, true, str);
         },
@@ -44,10 +44,10 @@ abstract class Host extends Source{
         _emitEndPointMessageEvent(name, false, str);
         rootSend(str);
       };
-      connection = new EndPointConnection(connection._incoming, verboseSend, connection._close);
+      connection = new EndPointConnection(connection.incoming, verboseSend, connection.close);
     }
     var srcEndPoint = new SourceEndPoint(_initSrc, _closeSrc, _garbageCollectionFrequency, connection);
-    listen(srcEndPoint, ShutdownEvent, (event){
+    listen(srcEndPoint, Shutdown, (event){
       _emitEndPointMessageEvent(name, false, 'Source end-point shutdown');
       srcEndPoints.remove(event.emitter);
       Timer.run((){ ignoreAllEventsFrom(event.emitter); });
@@ -65,7 +65,7 @@ abstract class Host extends Source{
   
   void _emitEndPointMessageEvent(String name, bool isProxyToSource, String str){
     emitEvent(
-      new EndPointMessageEvent()
+      new EndPointMessage()
       ..endPointName = name
       ..isProxyToSource = isProxyToSource
       ..message = str);

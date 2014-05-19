@@ -4,10 +4,10 @@
 
 part of purity.core;
 
-class _ProxyInvocation extends _Transmission implements _IProxyInvocation{}
-abstract class _IProxyInvocation{
-  _Base _src;
-  Symbol _method;
-  List<dynamic> _posArgs;
-  Map<Symbol, dynamic> _namArgs;
+class ProxyInvocation extends Transmission implements IProxyInvocation{}
+abstract class IProxyInvocation{
+  Base src;
+  Symbol method;
+  List<dynamic> posArgs;
+  Map<Symbol, dynamic> namArgs;
 }

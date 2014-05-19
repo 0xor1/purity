@@ -11,16 +11,16 @@ part of purity.client;
  * can be made to replace it.
  */
 class LocalHostView extends core.Consumer{
-  
+
   local.Host get host => source;
   static const String color = '#9AF';
   static const String background = '#000';
-  
+
   final StackPanel _root =
     new StackPanel.horizontal()
     ..style.width = '100%'
     ..style.height = '100%';
-  
+
   final StackPanel _serverStack =
     new StackPanel.vertical()
     ..style.width = '50%'
@@ -45,9 +45,9 @@ class LocalHostView extends core.Consumer{
     ..style.width = '50%'
     ..style.height = '100%'
     ..style.overflow = 'auto';
-  
+
   DivElement get html => _root.html;
-  
+
   LocalHostView(server):super(server){
     _root
     ..add(
@@ -58,28 +58,29 @@ class LocalHostView extends core.Consumer{
         ..add(_newClientButton))
       ..add(_serverMessageStack))
     ..add(_clientStack);
-    
+
     _hookUpEvents();
   }
- 
+
   void _hookUpEvents(){
-    listen(host, core.EndPointMessageEvent, (core.EndPointMessageEvent event){
-      String msg;
-      if(event.isProxyToSource){
-        msg = '${event.endPointName} -> Host: ${event.message}';
+    listen(host, core.EndPointMessage, (core.Event<core.EndPointMessage> event){
+      var msg = event.data;
+      String str;
+      if(msg.isProxyToSource){
+        str = '${msg.endPointName} -> Host: ${msg.message}';
       }else{
-        msg = 'Host -> ${event.endPointName}: ${event.message}';
+        str = 'Host -> ${msg.endPointName}: ${msg.message}';
       }
-      _writeMessage(msg);
+      _writeMessage(str);
     });
     _newClientButton.onClick.listen((_){ host.createEndPointPair(); });
   }
-  
+
   void addNewClientView(local.ProxyEndPoint proxyEndPoint, Element appHtmlRoot){
     _clientStack.add(new _LocalClientView(proxyEndPoint, appHtmlRoot));
     _clientStack.items.last.html.scrollIntoView(ScrollAlignment.BOTTOM);
-  } 
-  
+  }
+
   void _writeMessage(String msg){
     var label = new Label(msg);
     _serverMessageStack.add(label);

@@ -65,5 +65,8 @@ class _LocalClientView extends core.Consumer{
 class _ClientControlWrapper extends Base{
   _ClientControlWrapper(Element el){
     html.append(el);
+    html
+    ..style.width = '100%'
+    ..style.height = '100%';
   }
 }

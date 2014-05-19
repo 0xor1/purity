@@ -35,8 +35,8 @@ class SourceEndPoint extends EndPoint{
     _initSrc(this).then((src){
       _rootSrc = src;
       _sendTran(
-        new _Ready()
-        .._src = src);
+        new SourceReady()
+        ..src = src);
     });
   }
 
@@ -52,34 +52,37 @@ class SourceEndPoint extends EndPoint{
 
   dynamic _preprocessTran(dynamic v){
     if(v is Source){
-      if(!_srcs.containsKey(v._purityId)){
-        _srcs[v._purityId] = v;
-        listen(v, Omni, (Event e){
+      if(!_srcs.containsKey(v.purityId)){
+        _srcs[v.purityId] = v;
+        listen(v, Omni, (Event<Transmittable> e){
+          var srcEvent = new SourceEvent()
+          ..proxy = e.emitter
+          ..data = e.data;
           if(_garbageCollectionInProgress){
-            _messageQueue.add(e);
+            _messageQueue.add(srcEvent);
           }else{
-            _sendTran(e);
+            _sendTran(srcEvent);
           }
         });
       }
-      return new _Proxy(v._purityId);
+      return new Proxy(v.purityId);
     }
     return v;
   }
 
   void receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
-    if(tran is _GarbageCollectionReport){
+    if(tran is GarbageCollectionReport){
       _runGarbageCollectionSequence(tran._proxies);
-    }else if(tran is _ProxyInvocation){
-      _srcs[tran._src._purityId]._invoke(tran);
+    }else if(tran is ProxyInvocation){
+      _srcs[tran.src.purityId].invoke(tran);
     }else{
       throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
     }
   }
 
   void _sendTran(Transmittable tran){
-    _connection._send(tran.toTranString(_preprocessTran));
+    _connection.send(tran.toTranString(_preprocessTran));
   }
 
   void _setGarbageCollectionTimer(){
@@ -92,13 +95,13 @@ class SourceEndPoint extends EndPoint{
     }
     _garbageCollectionTimer = new Timer(new Duration(seconds: _garbageCollectionFrequency), (){
       _garbageCollectionInProgress = true;
-      _sendTran(new _GarbageCollectionStart());
+      _sendTran(new GarbageCollectionStart());
     });
   }
 
-  void _runGarbageCollectionSequence(Set<_Proxy> proxies){
+  void _runGarbageCollectionSequence(Set<Proxy> proxies){
     proxies.forEach((proxy){
-      var src = _srcs.remove(proxy._purityId);
+      var src = _srcs.remove(proxy.purityId);
       ignoreAllEventsFrom(src);
     });
     for(var i = 0; i < _messageQueue.length; i++){

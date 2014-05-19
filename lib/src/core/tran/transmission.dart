@@ -4,4 +4,4 @@
 
 part of purity.core;
 
-abstract class _Transmission extends Transmittable{}
+abstract class Transmission extends Transmittable{}

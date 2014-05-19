@@ -2,13 +2,17 @@
  * Author:  Daniel Robinson http://github.com/0xor1
  */
 
-part of purity.test;
+library purity.error.test;
 
-void _runErrorTests(){
+import 'package:unittest/unittest.dart';
+import 'package:purity/core.dart' as core;
 
-  group('Error:', (){
+void runErrorTests(){
+
+  group('error:', (){
 
     test('calling initConsumerSettings more than once is an error', (){
+      core.initConsumerSettings((_, __){}, (){});
       expect(() => core.initConsumerSettings((_, __){}, (){}), throwsA(new isInstanceOf<core.ConsumerSettingsAlreadyInitialisedError>()));
     });
 

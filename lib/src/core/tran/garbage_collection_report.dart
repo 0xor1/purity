@@ -4,7 +4,7 @@
 
 part of purity.core;
 
-class _GarbageCollectionReport extends _Transmission implements _IGarbageCollectionReport{}
-abstract class _IGarbageCollectionReport{
-  Set<_Proxy> _proxies;
+class GarbageCollectionReport extends Transmission implements IGarbageCollectionReport{}
+abstract class IGarbageCollectionReport{
+  Set<Proxy> _proxies;
 }
