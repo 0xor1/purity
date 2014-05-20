@@ -5,9 +5,9 @@
 part of purity.core;
 
 /**
- * A down-stream [EndPoint] to route [Event]s from [Source]s to their proxies for re-emitting to any listening [Consumer]s.
+ * A down-stream [_EndPoint] to route [Event]s from [Source]s to their proxies for re-emitting to any listening [Consumer]s.
  */
-class ProxyEndPoint extends EndPoint{
+class ProxyEndPoint extends _EndPoint{
   final InitConsumer _initConsumption;
   final Action _onConnectionClose;
   final Map<ObjectId, Proxy> _proxies = new Map<ObjectId, Proxy>();
@@ -22,7 +22,7 @@ class ProxyEndPoint extends EndPoint{
     super.shutdown();
   }
 
-  void receiveString(String str){
+  void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
     if(tran is Transmission){
       if(tran is SourceReady){

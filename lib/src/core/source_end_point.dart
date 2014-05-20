@@ -5,10 +5,10 @@
 part of purity.core;
 
 /**
- * An up-stream [EndPoint] to route proxy method invocations to their underlying
+ * An up-stream [_EndPoint] to route proxy method invocations to their underlying
  * [Source] and pass [Event]s from all relevant [Source]s down to the connected [ProxyEndPoint].
  */
-class SourceEndPoint extends EndPoint{
+class SourceEndPoint extends _EndPoint{
 
   Source _rootSrc;
   final InitSource _initSrc;
@@ -70,7 +70,7 @@ class SourceEndPoint extends EndPoint{
     return v;
   }
 
-  void receiveString(String str){
+  void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
     if(tran is GarbageCollectionReport){
       _runGarbageCollectionSequence(tran.proxies);

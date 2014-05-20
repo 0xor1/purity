@@ -5,7 +5,7 @@
 part of purity.core;
 
 /**
- * Thrown when an [EndPoint] doesn't know how to handle a particular type of message.
+ * Thrown when an [_EndPoint] doesn't know how to handle a particular type of message.
  */
 class UnsupportedMessageTypeError{
   String get message => 'Purity does not support $type of messages.';

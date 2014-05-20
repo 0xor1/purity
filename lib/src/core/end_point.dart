@@ -7,14 +7,14 @@ part of purity.core;
 /**
  * An end-point for an [EndPointConnection].
  */
-abstract class EndPoint extends Source{
+abstract class _EndPoint extends Source{
 
   final EndPointConnection _connection;
 
-  /// Constructs a new [EndPoint] instance with the supplied [EndPointConnection].
-  EndPoint(this._connection){
+  /// Constructs a new [_EndPoint] instance with the supplied [EndPointConnection].
+  _EndPoint(this._connection){
     _registerPurityCoreTranTypes();
-    _connection.incoming.listen(receiveString, onDone: shutdown, onError: (error) => shutdown());
+    _connection.incoming.listen(_receiveString, onDone: shutdown, onError: (error) => shutdown());
   }
 
   /// shuts down the [EndPointConnection].
@@ -23,5 +23,5 @@ abstract class EndPoint extends Source{
     emitEvent(new Shutdown());
   }
 
-  void receiveString(String str);
+  void _receiveString(String str);
 }

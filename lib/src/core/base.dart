@@ -9,7 +9,7 @@ part of purity.core;
  *
  * The [Base] gives each of it's subtypes a unique ID within
  * the purity framework so [ProxyInvocation]s and [Event]s can be
- * routed to their [Source] or [Proxy] on the connected [EndPoint] respectively.
+ * routed to their [Source] or [Proxy] on the connected [_EndPoint] respectively.
  */
 abstract class Base extends Object with EventEmitter, EventDetector{
   final ObjectId purityId;
