@@ -16,6 +16,18 @@ void _runProxyTests(){
       expect(src.doStuffCalled, equals(true));
     });
 
+    test('does not support getters', (){
+      var src = new _TestSource();
+      var proxy = new Proxy(src.purityId);
+      expect(() => proxy.aGetter, throwsA(new isInstanceOf<UnsupportedProxyInvocationError>()));
+    });
+
+    test('does not support setters', (){
+      var src = new _TestSource();
+      var proxy = new Proxy(src.purityId);
+      expect(() => proxy.aSetter = 3.142, throwsA(new isInstanceOf<UnsupportedProxyInvocationError>()));
+    });
+
   });
 
 }
