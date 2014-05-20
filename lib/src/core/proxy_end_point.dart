@@ -43,6 +43,8 @@ class ProxyEndPoint extends _EndPoint{
       v.sendTran = _sendTran;
       if(!_proxies.containsKey(v.purityId)){
         _proxies[v.purityId] = v;
+      }else{
+        return _proxies[v.purityId];
       }
     }
     return v;
