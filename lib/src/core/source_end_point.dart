@@ -30,7 +30,7 @@ class SourceEndPoint extends EndPoint{
    */
   SourceEndPoint(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
   super(connection){
-    open(_receiveString);
+    _registerCoreRestrictedMethods();
     _setGarbageCollectionTimer();
     _initSrc(this).then((src){
       _rootSrc = src;
@@ -70,7 +70,7 @@ class SourceEndPoint extends EndPoint{
     return v;
   }
 
-  void _receiveString(String str){
+  void receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
     if(tran is GarbageCollectionReport){
       _runGarbageCollectionSequence(tran.proxies);

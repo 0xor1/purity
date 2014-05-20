@@ -34,7 +34,6 @@ part 'src/core/tran/garbage_collection_start.dart';
 part 'src/core/error/unsupported_proxy_invocation_error.dart';
 part 'src/core/error/unsupported_message_type_error.dart';
 part 'src/core/error/consumer_settings_already_initialised_error.dart';
-part 'src/core/error/end_point_already_open_error.dart';
 part 'src/core/error/restricted_method_error.dart';
 
 typedef void Action();

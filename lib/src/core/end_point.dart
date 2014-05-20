@@ -10,10 +10,11 @@ part of purity.core;
 abstract class EndPoint extends Source{
 
   final EndPointConnection _connection;
-  bool _isOpen = false;
+
   /// Constructs a new [EndPoint] instance with the supplied [EndPointConnection].
   EndPoint(this._connection){
     _registerPurityCoreTranTypes();
+    _connection.incoming.listen(receiveString, onDone: shutdown, onError: (error) => shutdown());
   }
 
   /// shuts down the [EndPointConnection].
@@ -22,12 +23,5 @@ abstract class EndPoint extends Source{
     emitEvent(new Shutdown());
   }
 
-  /// opens the end-point such that it can start receiving [String] messages
-  void open(void receiveString(String str)){
-    if(_isOpen){
-      throw new EndPointAlreadyOpenError(this);
-    }
-    _connection.incoming.listen(receiveString, onDone: shutdown, onError: (error) => shutdown());
-    _isOpen = true;
-  }
+  void receiveString(String str);
 }
