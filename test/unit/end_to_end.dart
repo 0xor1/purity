@@ -9,7 +9,7 @@ import 'utility.dart';
 import 'package:purity/purity.dart';
 import 'package:purity/local.dart' as local;
 import 'dart:async';
-import 'dart:math';
+import 'dart:mirrors';
 
 void runEndToEndTests(){
 
@@ -20,7 +20,7 @@ void runEndToEndTests(){
     setUp(_setUp);
     tearDown(_tearDown);
 
-    test('A proxy can make calls to its source and receive events back.', (){
+    test('A consumer can make calls to its source by proxy and receive events back by proxy', (){
       var pi = 3.142;
       executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.doStuff(pi));
       expectAsyncWithReadyCheckAndTimeout(
@@ -29,6 +29,7 @@ void runEndToEndTests(){
           expect(lastEventDataCaughtByConsumer.prop, equals(pi));
         });
     });
+
   });
 
 }
@@ -62,8 +63,8 @@ class TestConsumer extends Consumer{
     source.doStuff(x);
   }
 
-  void callSourceMethod(){
-
+  void callSourceMethod(Symbol name){
+    reflect(source).invoke(name, []);
   }
 }
 
@@ -111,4 +112,5 @@ void _tearDown(){
   currentHost.shutdown();
   local.clearConsumerSettings();
   currentHost = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventDataCaughtByConsumer = null;
+  restrictedAccessMethodCalled = false;
 }
