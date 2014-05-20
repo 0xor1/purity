@@ -24,6 +24,13 @@ void _runConsumerTests(){
       Timer.run(expectAsync(() => expect(src.doStuffCalled, equals(true))));
     });
 
+    test('dispose() removes the reference to the source', (){
+      var src = new _TestSource();
+      var con = new _TestConsumer(src);
+      con.dispose();
+      expect(con.source, equals(null));
+    });
+
   });
 
 }
