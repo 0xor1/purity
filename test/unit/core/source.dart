@@ -8,7 +8,7 @@ void _runSourceTests(){
 
   group('source:', (){
 
-    test('it is not possible to invoke any members of EventEmiiter / EventDetector / Source.', (){
+    test('it is not possible to invoke any members of EventEmiiter / EventDetector / Source', (){
       var restrictedSet = new Set<Symbol>();
       restrictedSet.addAll(reflectClass(EventDetector).instanceMembers.keys);
       restrictedSet.addAll(reflectClass(EventEmitter).instanceMembers.keys);

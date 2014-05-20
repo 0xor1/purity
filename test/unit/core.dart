@@ -10,6 +10,8 @@ import 'package:unittest/unittest.dart';
 import 'package:purity/core.dart';
 
 part 'core/source.dart';
+part 'core/consumer.dart';
+part 'core/proxy.dart';
 part 'core/error.dart';
 
 class _TestSource extends Source{
@@ -21,6 +23,9 @@ class _TestSource extends Source{
 
 class _TestConsumer extends Consumer{
   _TestConsumer(src):super(src);
+  void doStuff(){
+    source.doStuff();
+  }
 }
 
 void _tearDown(){
@@ -32,6 +37,8 @@ void runCoreTests(){
   group('core:', (){
     tearDown(_tearDown);
     _runSourceTests();
+    _runConsumerTests();
+    _runProxyTests();
     _runErrorTests();
   });
 
