@@ -12,6 +12,17 @@ import 'package:purity/core.dart';
 part 'core/source.dart';
 part 'core/error.dart';
 
+class _TestSource extends Source{
+  bool doStuffCalled = false;
+  void doStuff(){
+    doStuffCalled = true;
+  }
+}
+
+class _TestConsumer extends Consumer{
+  _TestConsumer(src):super(src);
+}
+
 void _tearDown(){
   clearConsumerSettings();
 }

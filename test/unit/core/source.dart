@@ -34,6 +34,15 @@ void _runSourceTests(){
       Timer.run(expectAsync(() => expect(() => caughtEvent.data.pi = 2.178, throwsA(new isInstanceOf<TransmittableLockedError>()))));
     });
 
+    test('can invoke public methods', (){
+      _TestSource testSrc = new _TestSource();
+      testSrc.invoke(
+        new ProxyInvocation()
+        ..method = #doStuff
+        ..posArgs = []);
+      expect(testSrc.doStuffCalled, equals(true));
+    });
+
   });
 
 }
