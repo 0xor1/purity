@@ -7,6 +7,7 @@ library purity.end_to_end.test;
 import 'package:unittest/unittest.dart';
 import 'utility.dart';
 import 'package:purity/purity.dart';
+import 'package:purity/core.dart' as core;
 import 'package:purity/local.dart' as local;
 import 'dart:async';
 import 'dart:mirrors';
@@ -27,6 +28,23 @@ void runEndToEndTests(){
         () => lastEventDataCaughtByConsumer != null,
         (){
           expect(lastEventDataCaughtByConsumer.prop, equals(pi));
+        });
+    });
+
+    test('A Source may not have #emitEvent invoked on it', (){
+      var error;
+      expectAsyncWithReadyCheckAndTimeout(
+        () => error != null,
+        (){
+          expect(error is core.RestrictedMethodError, equals(true));
+        });
+
+      runZoned(
+        (){
+          executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.callSourceMethod(#emitEvent));
+        },
+        onError: (e){
+          error = e;
         });
     });
 
