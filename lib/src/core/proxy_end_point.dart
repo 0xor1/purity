@@ -15,6 +15,7 @@ class ProxyEndPoint extends EndPoint{
 
   ProxyEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
     super(connection){
+    open(_receiveString);
   }
 
   void shutdown(){
@@ -22,7 +23,7 @@ class ProxyEndPoint extends EndPoint{
     super.shutdown();
   }
 
-  void receiveString(String str){
+  void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
     if(tran is Transmission){
       if(tran is SourceReady){
