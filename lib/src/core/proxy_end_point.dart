@@ -10,7 +10,7 @@ part of purity.core;
 class ProxyEndPoint extends _EndPoint{
   final InitConsumer _initConsumption;
   final Action _onConnectionClose;
-  final Map<ObjectId, Proxy> _proxies = new Map<ObjectId, Proxy>();
+  final Map<ObjectId, _Proxy> _proxies = new Map<ObjectId, _Proxy>();
   bool _proxyEventInProgress = false;
 
   ProxyEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
@@ -24,14 +24,14 @@ class ProxyEndPoint extends _EndPoint{
 
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
-    if(tran is Transmission){
-      if(tran is SourceReady){
+    if(tran is _Transmission){
+      if(tran is _SourceReady){
         _initConsumption(tran.src, this);
-      }else if(tran is GarbageCollectionStart){
+      }else if(tran is _GarbageCollectionStart){
         _runGarbageCollectionSequence();
-      }else if(tran is SourceEvent){
+      }else if(tran is _SourceEvent){
         _proxyEventInProgress = true;
-        _proxies[tran.proxy.purityId].emitEvent(tran.data).then((_){ _proxyEventInProgress = false; });
+        _proxies[tran.proxy._purityId].emitEvent(tran.data).then((_){ _proxyEventInProgress = false; });
       }
     }else{
       throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
@@ -39,12 +39,12 @@ class ProxyEndPoint extends _EndPoint{
   }
 
   dynamic _postprocessTran(dynamic v){
-    if(v is Proxy){
+    if(v is _Proxy){
       v.sendTran = _sendTran;
-      if(!_proxies.containsKey(v.purityId)){
-        _proxies[v.purityId] = v;
+      if(!_proxies.containsKey(v._purityId)){
+        _proxies[v._purityId] = v;
       }else{
-        return _proxies[v.purityId];
+        return _proxies[v._purityId];
       }
     }
     return v;
@@ -59,16 +59,16 @@ class ProxyEndPoint extends _EndPoint{
       new Future.delayed(new Duration(), _runGarbageCollectionSequence);
       return;
     }else{
-      var proxiesCollected = new Set<Proxy>();
+      var proxiesCollected = new Set<_Proxy>();
       _proxies.forEach((purityId, proxy){
         if(proxy._usageCount == 0){
           proxiesCollected.add(proxy);
         }
       });
       proxiesCollected.forEach((proxy){
-        _proxies.remove(proxy.purityId);
+        _proxies.remove(proxy._purityId);
       });
-      _sendTran(new GarbageCollectionReport()..proxies = proxiesCollected);
+      _sendTran(new _GarbageCollectionReport()..proxies = proxiesCollected);
     }
   }
 }

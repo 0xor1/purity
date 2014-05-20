@@ -35,7 +35,7 @@ class SourceEndPoint extends _EndPoint{
     _initSrc(this).then((src){
       _rootSrc = src;
       _sendTran(
-        new SourceReady()
+        new _SourceReady()
         ..src = src);
     });
   }
@@ -52,10 +52,10 @@ class SourceEndPoint extends _EndPoint{
 
   dynamic _preprocessTran(dynamic v){
     if(v is Source){
-      if(!_srcs.containsKey(v.purityId)){
-        _srcs[v.purityId] = v;
+      if(!_srcs.containsKey(v._purityId)){
+        _srcs[v._purityId] = v;
         listen(v, Omni, (Event<Transmittable> e){
-          var srcEvent = new SourceEvent()
+          var srcEvent = new _SourceEvent()
           ..proxy = e.emitter
           ..data = e.data;
           if(_garbageCollectionInProgress){
@@ -65,17 +65,17 @@ class SourceEndPoint extends _EndPoint{
           }
         });
       }
-      return new Proxy(v.purityId);
+      return new _Proxy(v._purityId);
     }
     return v;
   }
 
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
-    if(tran is GarbageCollectionReport){
+    if(tran is _GarbageCollectionReport){
       _runGarbageCollectionSequence(tran.proxies);
-    }else if(tran is ProxyInvocation){
-      _srcs[tran.src.purityId].invoke(tran);
+    }else if(tran is _ProxyInvocation){
+      _srcs[tran.src._purityId]._invoke(tran);
     }else{
       throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
     }
@@ -95,13 +95,13 @@ class SourceEndPoint extends _EndPoint{
     }
     _garbageCollectionTimer = new Timer(new Duration(seconds: _garbageCollectionFrequency), (){
       _garbageCollectionInProgress = true;
-      _sendTran(new GarbageCollectionStart());
+      _sendTran(new _GarbageCollectionStart());
     });
   }
 
-  void _runGarbageCollectionSequence(Set<Proxy> proxies){
+  void _runGarbageCollectionSequence(Set<_Proxy> proxies){
     proxies.forEach((proxy){
-      var src = _srcs.remove(proxy.purityId);
+      var src = _srcs.remove(proxy._purityId);
       ignoreAllEventsFrom(src);
     });
     for(var i = 0; i < _messageQueue.length; i++){

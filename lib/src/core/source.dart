@@ -11,12 +11,12 @@ part of purity.core;
  * A [Source] should communicate internal state changes with other entities
  * solely by emitting [Event]s.
  */
-class Source extends Base{
+class Source extends _Base{
   InstanceMirror _this;
 
   Source():super(new ObjectId());
 
-  void invoke(ProxyInvocation inv){
+  void _invoke(_ProxyInvocation inv){
     if(_this == null){
       _this = reflect(this);
       _registerCoreRestrictedMethods();

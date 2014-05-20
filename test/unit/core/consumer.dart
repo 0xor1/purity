@@ -15,15 +15,6 @@ void _runConsumerTests(){
       expect(src.doStuffCalled, equals(true));
     });
 
-    test('can consume a source by proxy', (){
-      var src = new _TestSource();
-      var proxy = new Proxy(src.purityId);
-      var con = new _TestConsumer(proxy);
-      proxy.sendTran = (ProxyInvocation inv){ src.invoke(inv); };
-      con.doStuff();
-      Timer.run(expectAsync(() => expect(src.doStuffCalled, equals(true))));
-    });
-
     test('dispose() removes the reference to the source', (){
       var src = new _TestSource();
       var con = new _TestConsumer(src);

@@ -41,7 +41,7 @@ typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
 typedef Future<Source> InitSource(_EndPoint srcEndPoint);
 typedef Future CloseSource(Source src);
-typedef void InitConsumer(Proxy proxy, _EndPoint proxyEndPoint);
+typedef void InitConsumer(_Proxy proxy, _EndPoint proxyEndPoint);
 
 const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
 
@@ -103,13 +103,13 @@ void _registerPurityCoreTranTypes(){
   if(_purityCoreTranTypesRegistered){ return; }
   _purityCoreTranTypesRegistered = true;
   registerTranTypes('purity.core', 'pc', (){
-    registerTranCodec('a', Proxy, (Proxy p) => p.purityId.toHexString(), (String s) => new Proxy(new ObjectId.fromHexString(s)));
-    registerTranSubtype('b', ProxyInvocation);
-    registerTranSubtype('d', SourceReady);
-    registerTranSubtype('e', GarbageCollectionReport);
-    registerTranSubtype('f', GarbageCollectionStart);
+    registerTranCodec('a', _Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s)));
+    registerTranSubtype('b', _ProxyInvocation);
+    registerTranSubtype('d', _SourceReady);
+    registerTranSubtype('e', _GarbageCollectionReport);
+    registerTranSubtype('f', _GarbageCollectionStart);
     registerTranSubtype('g', Shutdown);
     registerTranSubtype('h', EndPointMessage);
-    registerTranSubtype('i', SourceEvent);
+    registerTranSubtype('i', _SourceEvent);
   });
 }

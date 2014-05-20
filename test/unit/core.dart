@@ -8,11 +8,12 @@ import 'dart:mirrors';
 import 'dart:async';
 import 'package:unittest/unittest.dart';
 import 'package:purity/core.dart';
+import 'package:purity/local.dart' as local;
+import 'utility.dart';
 
-part 'core/source.dart';
 part 'core/consumer.dart';
-part 'core/proxy.dart';
 part 'core/error.dart';
+part 'core/proxy_end_point.dart';
 
 class _TestSource extends Source{
   bool doStuffCalled = false;
@@ -36,9 +37,8 @@ void runCoreTests(){
 
   group('core:', (){
     tearDown(_tearDown);
-    _runSourceTests();
     _runConsumerTests();
-    _runProxyTests();
+    _runProxyEndPointTests();
     _runErrorTests();
   });
 

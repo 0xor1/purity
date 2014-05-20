@@ -5,18 +5,18 @@
 part of purity.core;
 
 @proxy
-class Proxy extends Base{
+class _Proxy extends _Base{
 
   int _usageCount;
   SendTran sendTran;
 
-  Proxy(ObjectId id):super(id){
+  _Proxy(ObjectId id):super(id){
     _usageCount = 0;
   }
 
   void noSuchMethod(Invocation inv){
     if(inv.isMethod){
-      var invTran = new ProxyInvocation()
+      var invTran = new _ProxyInvocation()
       ..method = inv.memberName
       ..posArgs = inv.positionalArguments
       ..namArgs = inv.namedArguments

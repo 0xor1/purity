@@ -12,7 +12,7 @@ part of purity.core;
  * not emit its own [Event]s.
  */
 class Consumer extends Object with EventDetector{
-  Base _src;
+  _Base _src;
   /// The [Source] being consumed.
   dynamic get source => _src;
 
@@ -20,16 +20,16 @@ class Consumer extends Object with EventDetector{
    * Constructs a [Consumer] instance with the only [Source] it will consume for its lifetime.
    */
   Consumer(this._src){
-    if(_src is Proxy){
-      (_src as Proxy)._usageCount++;
+    if(_src is _Proxy){
+      (_src as _Proxy)._usageCount++;
     }
   }
 
   /// Disposes the [Consumer] and frees the underlying [Source].
   void dispose(){
     ignoreAllEvents();
-    if(_src is Proxy){
-      (_src as Proxy)._usageCount--;
+    if(_src is _Proxy){
+      (_src as _Proxy)._usageCount--;
     }
     _src = null;
   }

@@ -4,11 +4,8 @@
 
 part of purity.core;
 
-/**
- * Transmits [Event]s from [Source]s over to [Proxy]s.
- */
-class SourceEvent extends Transmission implements ISourceEvent{}
-abstract class ISourceEvent{
-  Proxy proxy;
+class _SourceEvent extends _Transmission implements _ISourceEvent{}
+abstract class _ISourceEvent{
+  _Proxy proxy;
   Transmittable data;
 }

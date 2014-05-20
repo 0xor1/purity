@@ -4,4 +4,4 @@
 
 part of purity.core;
 
-class GarbageCollectionStart extends Transmission{}
+class _GarbageCollectionStart extends _Transmission{}

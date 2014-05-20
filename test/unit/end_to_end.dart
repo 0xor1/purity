@@ -21,12 +21,12 @@ void runEndToEndTests(){
     tearDown(_tearDown);
 
     test('A proxy can make calls to its source and receive events back.', (){
-      int x = new Random().nextInt(100);
-      executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.doStuff(x));
+      var pi = 3.142;
+      executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.doStuff(pi));
       expectAsyncWithReadyCheckAndTimeout(
-        () => lastEventCaughtByConsumer != null,
+        () => lastEventDataCaughtByConsumer != null,
         (){
-          expect(lastEventCaughtByConsumer.aFakeTestProp, equals(x));
+          expect(lastEventDataCaughtByConsumer.prop, equals(pi));
         });
     });
   });
@@ -40,18 +40,17 @@ class TestSource extends Source{
     restrictedAccessMethodCalled = true;
   }
 
-  void doStuff(int x){
+  void doStuff(x){
     emitEvent(
       new TestEvent()
-      ..aFakeTestProp = x);
+      ..prop = x);
   }
 }
 
 class TestConsumer extends Consumer{
   TestConsumer(src):super(src){
     listen(src, Omni, (Event event){
-
-      lastEventCaughtByConsumer = event.data;
+      lastEventDataCaughtByConsumer = event.data;
     });
   }
 
@@ -59,14 +58,18 @@ class TestConsumer extends Consumer{
     source.toBeRestricted();
   }
 
-  doStuff(int x){
+  void doStuff(x){
     source.doStuff(x);
+  }
+
+  void callSourceMethod(){
+
   }
 }
 
 class TestEvent extends Transmittable implements ITestEvent{}
 abstract class ITestEvent{
-  String doingStuffMessage;
+  dynamic prop;
 }
 
 bool _purityTestTranTypesRegistered = false;
@@ -84,7 +87,7 @@ local.ProxyEndPoint currentproxyEndPoint;
 TestSource currentTestSrc;
 TestConsumer currentTestConsumer;
 dynamic srcPassedToConsumer;
-TestEvent lastEventCaughtByConsumer;
+TestEvent lastEventDataCaughtByConsumer;
 
 void _setUp(){
 
@@ -107,5 +110,5 @@ void _setUp(){
 void _tearDown(){
   currentHost.shutdown();
   local.clearConsumerSettings();
-  currentHost = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventCaughtByConsumer = null;
+  currentHost = currentTestSrc = currentTestConsumer = srcPassedToConsumer = lastEventDataCaughtByConsumer = null;
 }
