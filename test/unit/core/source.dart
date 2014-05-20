@@ -8,7 +8,7 @@ void _runSourceTests(){
 
   group('source:', (){
 
-    test('it is not possible to invoke any memebers of EventEmiiter / EventDetector / Source.', (){
+    test('it is not possible to invoke any members of EventEmiiter / EventDetector / Source.', (){
       var restrictedSet = new Set<Symbol>();
       restrictedSet.addAll(reflectClass(EventDetector).instanceMembers.keys);
       restrictedSet.addAll(reflectClass(EventEmitter).instanceMembers.keys);
@@ -19,7 +19,12 @@ void _runSourceTests(){
       });
     });
 
-    test('when events are emitted the data becomes locked', (){
+    test('it is not possible to invoke any members that start with _', (){
+      Source src = new Source();
+      expect(() => src.invoke(new ProxyInvocation()..method = #_privateMember), throwsA(new isInstanceOf<RestrictedMethodError>()));
+    });
+
+    test('when events are emitted the transmittable data becomes locked', (){
       Source src = new Source();
       Event<Transmittable> caughtEvent = null;
       src.addEventAction(Transmittable, (Event<Transmittable> event){

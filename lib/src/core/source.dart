@@ -21,7 +21,7 @@ class Source extends Base{
       _this = reflect(this);
       _registerCoreRestrictedMethods();
     }
-    if(_restrictedMethods.contains(inv.method)){ //Check whether we need to explitily stop invoking members that start with _ character or if it does that by default
+    if(_restrictedMethods.contains(inv.method) || MirrorSystem.getName(inv.method).startsWith('_')){
       throw new RestrictedMethodError(inv.method);
     }else{
       _this.invoke(inv.method, inv.posArgs, inv.namArgs);

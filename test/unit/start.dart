@@ -5,12 +5,10 @@
 library purity.test;
 
 import 'core.dart';
-import 'error.dart';
 import 'end_to_end.dart';
 
 
 void main(){
   runCoreTests();
   runEndToEndTests();
-  runErrorTests();
 }
