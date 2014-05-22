@@ -45,25 +45,6 @@ typedef void InitConsumer(_Proxy proxy, _EndPoint proxyEndPoint);
 
 const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
 
-Set<Symbol> _restrictedMethods = new Set<Symbol>();
-
-/**
- * adds methods to a restricted access list preventing those methods from being called
- * remotely over an [EndPointConnection].
- */
-void registerRestrictedMethods(Iterable<Symbol> toRestrict){
-  _restrictedMethods.addAll(toRestrict);
-}
-
-bool _coreRestrictedMethodsRegistered = false;
-void _registerCoreRestrictedMethods(){
-  if(_coreRestrictedMethodsRegistered){ return; }
-  _coreRestrictedMethodsRegistered = true;
-  registerRestrictedMethods(reflectClass(EventDetector).instanceMembers.keys);
-  registerRestrictedMethods(reflectClass(EventEmitter).instanceMembers.keys);
-  registerRestrictedMethods(reflectClass(Source).instanceMembers.keys);
-}
-
 bool _consumerSettingsInitialised = false;
 InitConsumer _initConsumer;
 Action _handleConnectionClose;

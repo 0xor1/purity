@@ -32,20 +32,16 @@ void runEndToEndTests(){
     });
 
     test('A Source may not have #emitEvent invoked on it', (){
-      var error;
       expectAsyncWithReadyCheckAndTimeout(
-        () => error != null,
+        () => lastErrorCaughtDuringTest != null,
         (){
-          expect(error is core.RestrictedMethodError, equals(true));
+          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
         });
-
-      runZoned(
-        (){
-          executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.callSourceMethod(#emitEvent));
-        },
-        onError: (e){
-          error = e;
-        });
+        executeWhenReadyOrTimeout(
+          () => currentTestConsumer != null,
+          (){
+            currentTestConsumer.callSourceMethod(#emitEvent);
+          });
     });
 
   });
@@ -106,24 +102,30 @@ local.ProxyEndPoint currentproxyEndPoint;
 TestSource currentTestSrc;
 TestConsumer currentTestConsumer;
 dynamic srcPassedToConsumer;
+dynamic lastErrorCaughtDuringTest;
 TestEvent lastEventDataCaughtByConsumer;
 
 void _setUp(){
 
-  currentHost = new local.Host(
-    (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestSource()),
-    (src) => new Future.delayed(new Duration(), (){}),
-    2);
+  runZoned((){
+    currentHost = new local.Host(
+      (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestSource()),
+      (src) => new Future.delayed(new Duration(), (){}),
+      2);
 
-  local.initConsumerSettings(
-    (src, proxyEndPoint){
-      currentproxyEndPoint = proxyEndPoint;
-      currentTestConsumer = new TestConsumer(src);
+    local.initConsumerSettings(
+      (src, proxyEndPoint){
+        currentproxyEndPoint = proxyEndPoint;
+        currentTestConsumer = new TestConsumer(src);
+      },
+      (){}
+    );
+
+    currentHost.createEndPointPair();
     },
-    (){}
-  );
-
-  currentHost.createEndPointPair();
+    onError:(error){
+      lastErrorCaughtDuringTest = error;
+    });
 }
 
 void _tearDown(){

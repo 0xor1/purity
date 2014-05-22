@@ -12,6 +12,19 @@ part of purity.core;
  * solely by emitting [Event]s.
  */
 class Source extends _Base{
+
+  static final Set<Symbol> _restrictedMethods = new Set<Symbol>()
+  ..addAll([
+    #emitEvent,
+    #addEventAction,
+    #removeEventAction,
+    #listen,
+    #ignoreSpecificEventBinding,
+    #ignoreAllEventsOfType,
+    #ignoreAllEventsFrom,
+    #ignoreAllEvents
+  ]);
+
   InstanceMirror _this;
 
   Source():super(new ObjectId());
@@ -19,7 +32,6 @@ class Source extends _Base{
   void _invoke(_ProxyInvocation inv){
     if(_this == null){
       _this = reflect(this);
-      _registerCoreRestrictedMethods();
     }
     if(_restrictedMethods.contains(inv.method) || MirrorSystem.getName(inv.method).startsWith('_')){
       throw new RestrictedMethodError(inv.method);
