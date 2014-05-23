@@ -28,13 +28,12 @@ void executeWhenReadyOrTimeout(bool readyCheck(), void execute(), [int timeout =
 }
 
 void expectAsyncWithReadyCheckAndTimeout(bool readyCheck(), void expect(), [int timeout = 1, void onTimeout() = null]){
-  DateTime start = new DateTime.now();
-  Duration limit = new Duration(seconds: timeout);
+  DateTime end = new DateTime.now().add(new Duration(seconds: timeout));
   var inner;
   inner = (){
     if(readyCheck()){
       expect();
-    }else if(new DateTime.now().subtract(limit).isAfter(start)){
+    }else if(new DateTime.now().isAfter(end)){
       if(onTimeout == null){
         throw 'async test timed out.';
       }else{
