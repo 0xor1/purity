@@ -143,19 +143,6 @@ void runEndToEndTests(){
         });
     });
 
-    test('A Source may not have a private method invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is ArgumentError, equals(true));
-        });
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#_aPrivateMethod);
-        });
-    });
-
     test('A Source may not have #ignoreAllEvents invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         (){
@@ -167,6 +154,19 @@ void runEndToEndTests(){
         () => currentTestConsumer != null,
         (){
           currentTestConsumer.callSourceMethod(#ignoreAllEvents, [null]);
+        });
+    });
+
+    test('A Source may not have a private method invoked on it', (){
+      expectAsyncWithReadyCheckAndTimeout(
+        () => lastErrorCaughtDuringTest != null,
+        (){
+          expect(lastErrorCaughtDuringTest is ArgumentError, equals(true));
+        });
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        (){
+          currentTestConsumer.callSourceMethod(#_aPrivateMethod);
         });
     });
 
