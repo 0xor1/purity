@@ -29,6 +29,8 @@ class _TestConsumer extends Consumer{
   }
 }
 
+class _TestEvent extends Transmittable{}
+
 void _tearDown(){
   clearConsumerSettings();
 }

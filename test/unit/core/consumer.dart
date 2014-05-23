@@ -22,6 +22,16 @@ void _runConsumerTests(){
       expect(con.source, equals(null));
     });
 
+    test('dispose() removes all the consumers event listeners', (){
+      var src = new _TestSource();
+      var con = new _TestConsumer(src);
+      _TestEvent event;
+      con.listen(src, _TestEvent, (Event<_TestEvent> e){ event = e.data; });
+      con.dispose();
+      src.emitEvent( new _TestEvent());
+      Timer.run(expectAsync(() => expect(event, equals(null))));
+    });
+
   });
 
 }
