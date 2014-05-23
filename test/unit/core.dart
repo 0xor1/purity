@@ -13,6 +13,7 @@ import 'utility.dart';
 part 'core/consumer.dart';
 part 'core/error.dart';
 part 'core/proxy_end_point.dart';
+part 'core/source_end_point.dart';
 
 class _TestSource extends Source{
   bool doStuffCalled = false;
@@ -40,6 +41,7 @@ void runCoreTests(){
     tearDown(_tearDown);
     _runConsumerTests();
     _runProxyEndPointTests();
+    _runProxySourcePointTests();
     _runErrorTests();
   });
 

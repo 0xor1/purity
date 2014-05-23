@@ -4,30 +4,36 @@
 
 part of purity.core.test;
 
-void _runProxyEndPointTests(){
+void _runProxySourcePointTests(){
 
-  group('proxy_end_point:', (){
+  group('source_end_point:', (){
 
     test('emits Event<Shutdown> on shutdown', (){
       Event<Shutdown> caughtEvent;
-      var connectionPair = new local.EndPointConnectionPair();
-      var proxyEndPoint = new ProxyEndPoint(
-        (_, __){},
-        (){},
-        connectionPair.a);
-      proxyEndPoint.addEventAction(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
-      proxyEndPoint.shutdown();
-      Timer.run(expectAsync(() => expect(caughtEvent.data is Shutdown, equals(true))));
+      expectAsyncWithReadyCheckAndTimeout(
+        () => caughtEvent != null,
+        () => expect(caughtEvent is Event<Shutdown>, equals(true)));
+      runZoned((){
+        var connectionPair = new local.EndPointConnectionPair();
+        var srcEndPoint = new SourceEndPoint(
+          (_) => new Future(() => new Source()),
+          (_) => new Future((){}),
+          2,
+          connectionPair.a);
+        srcEndPoint.addEventAction(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
+        srcEndPoint.shutdown();
+      });
     });
 
     test('shuts down when the incoming stream is closed', (){
       Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
-      var proxyEndPoint = new ProxyEndPoint(
-        (_, __){},
-        (){},
+      var srcEndPoint = new SourceEndPoint(
+        (_) => new Future(() => new Source()),
+        (_) => new Future((){}),
+        2,
         connectionPair.a);
-      proxyEndPoint.addEventAction(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
+      srcEndPoint.addEventAction(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       connectionPair.b.close();
       expectAsyncWithReadyCheckAndTimeout(
         () => caughtEvent != null,
@@ -37,12 +43,13 @@ void _runProxyEndPointTests(){
     test('closes the outgoing stream on shutdown', (){
       var outgoingStreamClosed = false;
       var connectionPair = new local.EndPointConnectionPair();
-      var proxyEndPoint = new ProxyEndPoint(
-        (_, __){},
-        (){},
+      var srcEndPoint = new SourceEndPoint(
+        (_) => new Future(() => new Source()),
+        (_) => new Future((){}),
+        2,
         connectionPair.a);
       connectionPair.b.incoming.listen((event){}, onDone: (){ outgoingStreamClosed = true; });
-      proxyEndPoint.shutdown();
+      srcEndPoint.shutdown();
       expectAsyncWithReadyCheckAndTimeout(
         () => outgoingStreamClosed,
         () => expect(outgoingStreamClosed, equals(true)));
@@ -55,9 +62,10 @@ void _runProxyEndPointTests(){
         () => expect(error is UnsupportedMessageTypeError, equals(true)));
       runZoned((){
         var connectionPair = new local.EndPointConnectionPair();
-        var proxyEndPoint = new ProxyEndPoint(
-          (_, __){},
-          (){},
+        var srcEndPoint = new SourceEndPoint(
+          (_) => new Future(() => new Source()),
+          (_) => new Future((){}),
+          2,
           connectionPair.a);
         connectionPair.b.send(new Transmittable().toTranString());
       }, onError: (e){ error = e; });
