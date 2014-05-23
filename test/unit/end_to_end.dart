@@ -170,6 +170,42 @@ void runEndToEndTests(){
         });
     });
 
+    test('calling a getter on a proxy results in an UnsupportedProxyInvocationError', (){
+      var error;
+      expectAsyncWithReadyCheckAndTimeout(
+        () => error != null,
+        (){
+          expect(error is core.UnsupportedProxyInvocationError, equals(true));
+        });
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        (){
+          try{
+            currentTestConsumer.callGetter();
+          }catch(e){
+            error = e;
+          }
+        });
+    });
+
+    test('calling a setter on a proxy results in an UnsupportedProxyInvocationError', (){
+      var error;
+      expectAsyncWithReadyCheckAndTimeout(
+        () => error != null,
+        (){
+          expect(error is core.UnsupportedProxyInvocationError, equals(true));
+        });
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        (){
+          try{
+            currentTestConsumer.callGetter();
+          }catch(e){
+            error = e;
+          }
+        });
+    });
+
   });
 
 }
@@ -198,6 +234,14 @@ class TestConsumer extends Consumer{
   void callSourceMethod(Symbol name, [List<dynamic> posArgs]){
     posArgs = posArgs == null? []: posArgs;
     reflect(source).invoke(name, posArgs);
+  }
+
+  void callGetter(){
+    return source.aGetter;
+  }
+
+  void callSetter(){
+    source.aSetter = 1;
   }
 }
 
