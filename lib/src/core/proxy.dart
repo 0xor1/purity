@@ -8,8 +8,8 @@ part of purity.core;
 class _Proxy extends _Base{
 
   int _usageCount;
-  SendTran _send;
-  
+  SendTran sendTran;
+
   _Proxy(ObjectId id):super(id){
     _usageCount = 0;
   }
@@ -17,11 +17,11 @@ class _Proxy extends _Base{
   void noSuchMethod(Invocation inv){
     if(inv.isMethod){
       var invTran = new _ProxyInvocation()
-      .._method = inv.memberName
-      .._posArgs = inv.positionalArguments
-      .._namArgs = inv.namedArguments
-      .._src = this;
-      _send(invTran);
+      ..method = inv.memberName
+      ..posArgs = inv.positionalArguments
+      ..namArgs = inv.namedArguments
+      ..src = this;
+      sendTran(invTran);
     }else{
       var name = MirrorSystem.getName(inv.memberName);
       throw new UnsupportedProxyInvocationError(this, name);

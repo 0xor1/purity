@@ -7,7 +7,7 @@ part of purity.core;
 /**
  * Emitted by [SourceEndPoint]s if the [Host] creating the [SourceEndPoint]s was constructed with verbose = true.
  */
-class EndPointMessageEvent extends Event implements IEndPointMessageEvent{}
+class EndPointMessage extends Transmittable implements IEndPointMessageEvent{}
 abstract class IEndPointMessageEvent{
   String endPointName;
   bool isProxyToSource;

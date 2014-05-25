@@ -4,7 +4,7 @@
 
 part of purity.local;
 
-class ProxyEndPointCreatedEvent extends core.Event implements IProxyEndPointCreatedEvent{}
-abstract class IProxyEndPointCreatedEvent{
-  ProxyEndPoint proxyEndPoint;  
+class ProxyEndPointCreated extends core.Transmittable implements IProxyEndPointCreated{}
+abstract class IProxyEndPointCreated{
+  ProxyEndPoint proxyEndPoint;
 }

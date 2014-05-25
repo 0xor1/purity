@@ -9,6 +9,8 @@ import 'dart:async';
 import 'package:bson/bson.dart' show ObjectId;
 import 'package:eventable/eventable.dart';
 import 'package:transmittable/transmittable.dart';
+export 'package:eventable/eventable.dart';
+export 'package:transmittable/transmittable.dart';
 
 part 'src/core/base.dart';
 part 'src/core/source.dart';
@@ -20,12 +22,12 @@ part 'src/core/end_point_connection.dart';
 part 'src/core/end_point.dart';
 part 'src/core/host.dart';
 
-part 'src/core/tran/event.dart';
-part 'src/core/tran/shutdown_event.dart';
-part 'src/core/tran/end_point_message_event.dart';
+part 'src/core/tran/source_event.dart';
+part 'src/core/tran/shutdown.dart';
+part 'src/core/tran/end_point_message.dart';
 part 'src/core/tran/proxy_invocation.dart';
 part 'src/core/tran/transmission.dart';
-part 'src/core/tran/ready.dart';
+part 'src/core/tran/source_ready.dart';
 part 'src/core/tran/garbage_collection_report.dart';
 part 'src/core/tran/garbage_collection_start.dart';
 
@@ -37,20 +39,11 @@ part 'src/core/error/restricted_method_error.dart';
 typedef void Action();
 typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
-typedef Future<Source> InitSource(EndPoint srcEndPoint);
+typedef Future<Source> InitSource(_EndPoint srcEndPoint);
 typedef Future CloseSource(Source src);
-typedef void InitConsumer(_Proxy proxy, EndPoint proxyEndPoint);
+typedef void InitConsumer(_Proxy proxy, _EndPoint proxyEndPoint);
 
 const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
-
-Set<Symbol> _restrictedMethods = new Set<Symbol>();
-
-void _setRestrictedMethods(){
-  if(_restrictedMethods.isEmpty){
-    _restrictedMethods.addAll(reflectClass(EventEmitter).instanceMembers.keys);
-    _restrictedMethods.addAll(reflectClass(EventDetector).instanceMembers.keys);
-  }
-}
 
 bool _consumerSettingsInitialised = false;
 InitConsumer _initConsumer;
@@ -63,7 +56,7 @@ Action get hanleConnectionClose => _handleConnectionClose;
 /**
  * Stores the [initConsumer] and [handleConnectionClose] to be called when the [SourceEndPoint] is ready,
  * and when the [EndPointConnection] to the [SourceEndPoint] is closed, respectively.
- * 
+ *
  * Throws [ConsumerSettingsAlreadyInitialisedError] if called more than once.
  */
 void initConsumerSettings(InitConsumer initConsumer, Action handleConnectionClose){
@@ -77,7 +70,7 @@ void initConsumerSettings(InitConsumer initConsumer, Action handleConnectionClos
 
 /**
  * Clears the current set of consumer initialisation settings.
- * 
+ *
  * This is only expected to be used in the unit testing of the purity.core library.
  */
 void clearConsumerSettings(){
@@ -93,10 +86,11 @@ void _registerPurityCoreTranTypes(){
   registerTranTypes('purity.core', 'pc', (){
     registerTranCodec('a', _Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s)));
     registerTranSubtype('b', _ProxyInvocation);
-    registerTranSubtype('d', _Ready);
+    registerTranSubtype('d', _SourceReady);
     registerTranSubtype('e', _GarbageCollectionReport);
     registerTranSubtype('f', _GarbageCollectionStart);
-    registerTranSubtype('g', ShutdownEvent);
-    registerTranSubtype('h', EndPointMessageEvent);
+    registerTranSubtype('g', Shutdown);
+    registerTranSubtype('h', EndPointMessage);
+    registerTranSubtype('i', _SourceEvent);
   });
 }

@@ -5,10 +5,10 @@
 part of purity.core;
 
 /**
- * An up-stream [EndPoint] to route proxy method invocations to their underlying
+ * An up-stream [_EndPoint] to route proxy method invocations to their underlying
  * [Source] and pass [Event]s from all relevant [Source]s down to the connected [ProxyEndPoint].
  */
-class SourceEndPoint extends EndPoint{
+class SourceEndPoint extends _EndPoint{
 
   Source _rootSrc;
   final InitSource _initSrc;
@@ -30,13 +30,12 @@ class SourceEndPoint extends EndPoint{
    */
   SourceEndPoint(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
   super(connection){
-    _setRestrictedMethods();
     _setGarbageCollectionTimer();
     _initSrc(this).then((src){
       _rootSrc = src;
       _sendTran(
-        new _Ready()
-        .._src = src);
+        new _SourceReady()
+        ..src = src);
     });
   }
 
@@ -54,11 +53,14 @@ class SourceEndPoint extends EndPoint{
     if(v is Source){
       if(!_srcs.containsKey(v._purityId)){
         _srcs[v._purityId] = v;
-        listen(v, Omni, (Event e){
+        listen(v, Omni, (Event<Transmittable> e){
+          var srcEvent = new _SourceEvent()
+          ..proxy = e.emitter
+          ..data = e.data;
           if(_garbageCollectionInProgress){
-            _messageQueue.add(e);
+            _messageQueue.add(srcEvent);
           }else{
-            _sendTran(e);
+            _sendTran(srcEvent);
           }
         });
       }
@@ -67,19 +69,19 @@ class SourceEndPoint extends EndPoint{
     return v;
   }
 
-  void receiveString(String str){
+  void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
     if(tran is _GarbageCollectionReport){
-      _runGarbageCollectionSequence(tran._proxies);
+      _runGarbageCollectionSequence(tran.proxies);
     }else if(tran is _ProxyInvocation){
-      _srcs[tran._src._purityId]._invoke(tran);
+      _srcs[tran.src._purityId]._invoke(tran);
     }else{
       throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
     }
   }
 
   void _sendTran(Transmittable tran){
-    _connection._send(tran.toTranString(_preprocessTran));
+    _connection.send(tran.toTranString(_preprocessTran));
   }
 
   void _setGarbageCollectionTimer(){

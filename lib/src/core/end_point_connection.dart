@@ -8,17 +8,17 @@ part of purity.core;
  * An end-point for a bi-directional [Stream] of [String]s.
  */
 class EndPointConnection{
-  final Stream<String> _incoming;
-  final SendString _send;
-  final Action _close;
+  final Stream<String> incoming;
+  final SendString send;
+  final Action close;
   
   /**
    * Constructs an [EndPointConnection] instance with:
    * 
-   * * [_incoming] as the incoming [Stream] of [String]s.
-   * * [_send] to add [String]s to an outgoing [Stream].
-   * * [_close] to close the outgoing [Stream] of [String]s.
+   * * [incoming] as the incoming [Stream] of [String]s.
+   * * [send] to add [String]s to an outgoing [Stream].
+   * * [close] to close the outgoing [Stream] of [String]s.
    *  
    */
-  EndPointConnection(this._incoming, this._send, this._close);
+  EndPointConnection(this.incoming, this.send, this.close);
 }

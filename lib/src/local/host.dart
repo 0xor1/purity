@@ -10,17 +10,17 @@ class Host extends core.Host{
 
   Host(core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = true]):
   super(initSrc, closeSrc, garbageCollectionFrequency, verbose);
-  
+
   void createEndPointPair(){
     if(!core.consumerSettingsInitialised){
       throw new ConsumerSettingsUninitialisedError();
     }
     var biConnectionPair = new EndPointConnectionPair();
-    var name = 'end-point_${_endPointIdSrc++}';
+    var name = 'E-P#${_endPointIdSrc++}';
     var proxyEndPoint = new ProxyEndPoint(name, core.initConsumer, core.hanleConnectionClose, biConnectionPair.a);
     var srcEndPoint = createSourceEndPoint(name, biConnectionPair.b);
     emitEvent(
-      new ProxyEndPointCreatedEvent()
+      new ProxyEndPointCreated()
       ..proxyEndPoint = proxyEndPoint);
   }
 }
