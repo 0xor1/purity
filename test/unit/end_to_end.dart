@@ -11,6 +11,7 @@ import 'package:purity/core.dart' as core;
 import 'package:purity/local.dart' as local;
 import 'dart:async';
 import 'dart:mirrors';
+import 'dart:math';
 
 void runEndToEndTests(){
 
@@ -21,14 +22,12 @@ void runEndToEndTests(){
     setUp(_setUp);
     tearDown(_tearDown);
 
-    test('A consumer can make calls to its source by proxy and receive events back by proxy', (){
+    test('a consumer can make calls to its source by proxy and receive events back by proxy', (){
       var pi = 3.142;
       executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.doStuff(pi));
       expectAsyncWithReadyCheckAndTimeout(
         () => lastEventDataCaughtByConsumer != null,
-        (){
-          expect(lastEventDataCaughtByConsumer.prop, equals(pi));
-        });
+        () => expect(lastEventDataCaughtByConsumer.prop, equals(pi)));
     });
 
     test('EventEmiiter and EventDetector contain the expected methods', (){
@@ -52,112 +51,79 @@ void runEndToEndTests(){
       });
     });
 
-    test('A Source may not have #emitEvent invoked on it', (){
+    test('a Source may not have #emitEvent invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#emitEvent);
-        });
+        () => currentTestConsumer.callSourceMethod(#emitEvent));
     });
 
-    test('A Source may not have #addEventAction invoked on it', (){
+    test('a Source may not have #addEventAction invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#addEventAction);
-        });
+        () => currentTestConsumer.callSourceMethod(#addEventAction));
     });
 
-    test('A Source may not have #removeEventAction invoked on it', (){
+    test('a Source may not have #removeEventAction invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#removeEventAction);
-        });
+        () => currentTestConsumer.callSourceMethod(#removeEventAction));
     });
 
-    test('A Source may not have #listen invoked on it', (){
+    test('a Source may not have #listen invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#listen);
-        });
+        () => currentTestConsumer.callSourceMethod(#listen));
     });
 
-    test('A Source may not have #ignoreSpecificEventBinding invoked on it', (){
+    test('a Source may not have #ignoreSpecificEventBinding invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#ignoreSpecificEventBinding);
-        });
+        () => currentTestConsumer.callSourceMethod(#ignoreSpecificEventBinding));
     });
 
-    test('A Source may not have #ignoreAllEventsOfType invoked on it', (){
+    test('a Source may not have #ignoreAllEventsOfType invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#ignoreAllEventsOfType);
-        });
+        () => currentTestConsumer.callSourceMethod(#ignoreAllEventsOfType));
     });
 
-    test('A Source may not have #ignoreAllEventsFrom invoked on it', (){
+    test('a Source may not have #ignoreAllEventsFrom invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#ignoreAllEventsFrom);
-        });
+        () => currentTestConsumer.callSourceMethod(#ignoreAllEventsFrom));
     });
 
-    test('A Source may not have #ignoreAllEvents invoked on it', (){
+    test('a Source may not have #ignoreAllEvents invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
-        (){
-        return lastErrorCaughtDuringTest != null;
-        },(){
-          expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true));
-        });
+        () => lastErrorCaughtDuringTest != null,
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#ignoreAllEvents, [null]);
-        });
+        () => currentTestConsumer.callSourceMethod(#ignoreAllEvents, [null]));
     });
 
-    test('A Source may not have a private method invoked on it', (){
+    test('a Source may not have a private method invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         (){
@@ -165,9 +131,7 @@ void runEndToEndTests(){
         });
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        (){
-          currentTestConsumer.callSourceMethod(#_aPrivateMethod);
-        });
+        () => currentTestConsumer.callSourceMethod(#_aPrivateMethod));
     });
 
     test('calling a getter on a proxy results in an UnsupportedProxyInvocationError', (){
@@ -206,24 +170,92 @@ void runEndToEndTests(){
         });
     });
 
+    test('unused sources are properly garbage collected', (){
+      expectAsyncWithReadyCheckAndTimeout(
+        () => memoryLeakTestComplete,
+        (){
+          expect(lastErrorCaughtDuringTest == null, equals(true));
+        },
+        20);
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        () => currentTestConsumer.runMemoryLeakSequence());
+    });
+
   });
 
 }
 
 
 class TestSource extends Source{
+  final List<Massive> _massives = new List<Massive>();
 
   void doStuff(x){
     emitEvent(
       new TestEvent()
       ..prop = x);
   }
+
+  void createAMassiveObject() {
+    var massive = new Massive();
+    _massives.add(massive);
+    emitEvent(
+      new MassiveObjectCreated()
+      ..massive = massive);
+  }
+
+  void deleteAMassiveObject() {
+    if(_massives.isNotEmpty){
+      emitEvent(
+        new MassiveObjectDeleted()
+        ..massive = _massives.removeLast());
+    }
+  }
+}
+
+class Massive extends Source{
+  final List<double> _memoryUser = new List<double>();
+  Massive(){
+    var rng = new Random();
+    try{
+      for(var i = 0; i < 1000000; i++){
+        _memoryUser.add(rng.nextDouble());
+      }
+    }on OutOfMemoryError catch(error){
+      _memoryUser.clear();
+      throw error;
+    }
+  }
 }
 
 class TestConsumer extends Consumer{
+
+  final List<MassiveConsumer> _massives = new List<MassiveConsumer>();
+  int massivesToCreateToEnsureNoMemoryLeaks = 50;
+
   TestConsumer(src):super(src){
-    listen(src, Omni, (Event event){
+    _addEventHandlers();
+  }
+
+  _addEventHandlers(){
+    listen(source, Omni, (Event event){
       lastEventDataCaughtByConsumer = event.data;
+    });
+    listen(source, MassiveObjectCreated, (Event<MassiveObjectCreated> event){
+      _massives.add(new MassiveConsumer(event.data.massive));
+      Timer.run((){
+        source.deleteAMassiveObject();
+      });
+    });
+    listen(source, MassiveObjectDeleted, (Event<MassiveObjectDeleted> event){
+      var massive = _massives.singleWhere((massive) => event.data.massive == massive.source);
+      _massives.remove(massive);
+      massive.dispose();
+      if(massivesToCreateToEnsureNoMemoryLeaks-- > 0){
+        source.createAMassiveObject();
+      }else{
+        memoryLeakTestComplete = true;
+      }
     });
   }
 
@@ -243,11 +275,26 @@ class TestConsumer extends Consumer{
   void callSetter(){
     source.aSetter = 1;
   }
+
+  void runMemoryLeakSequence(){
+    source.createAMassiveObject();
+  }
+}
+
+class MassiveConsumer extends Consumer{
+  MassiveConsumer(src):super(src);
 }
 
 class TestEvent extends Transmittable implements ITestEvent{}
 abstract class ITestEvent{
   dynamic prop;
+}
+
+
+class MassiveObjectDeleted extends Transmittable implements IMassiveObjectCreatedOrDeleted{}
+class MassiveObjectCreated extends Transmittable implements IMassiveObjectCreatedOrDeleted{}
+abstract class IMassiveObjectCreatedOrDeleted{
+  dynamic massive;
 }
 
 bool _purityTestTranTypesRegistered = false;
@@ -256,17 +303,21 @@ void _registerPurityTestTranTypes(){
   _purityTestTranTypesRegistered = true;
   registerTranTypes('purity.test', 'pt',(){
     registerTranSubtype('a', TestEvent);
+    registerTranSubtype('b', MassiveObjectDeleted);
+    registerTranSubtype('c', MassiveObjectCreated);
   });
 }
 
+const int ciriticalMassivesToCrash = 25;
 bool restrictedAccessMethodCalled = false;
+bool memoryLeakTestComplete = false;
 local.Host currentHost;
 local.ProxyEndPoint currentproxyEndPoint;
 TestSource currentTestSrc;
 TestConsumer currentTestConsumer;
 dynamic srcPassedToConsumer;
 dynamic lastErrorCaughtDuringTest;
-TestEvent lastEventDataCaughtByConsumer;
+dynamic lastEventDataCaughtByConsumer;
 
 void _setUp(){
 
