@@ -182,6 +182,25 @@ void runEndToEndTests(){
         () => currentTestConsumer.runMemoryLeakSequence());
     });
 
+    test('$massivesToCreateToEnsureCrash Massive objects is enough to cause OutOfMemoryError', (){
+      List<double> _memoryUser = new List<double>();
+      var success = false;
+      var count = massivesToCreateToEnsureCrash;
+      try{
+        var rng = new Random();
+        while(count-- > 0){
+          for(var i = 0; i < massiveSize; i++){
+            _memoryUser.add(rng.nextDouble());
+          }
+        }
+      }on OutOfMemoryError catch(error){
+        _memoryUser.clear();
+        success = true;
+      }finally{
+        expect(success, equals(true));
+      }
+    });
+
   });
 
 }
@@ -218,7 +237,7 @@ class Massive extends Source{
   Massive(){
     var rng = new Random();
     try{
-      for(var i = 0; i < 1000000; i++){
+      for(var i = 0; i < massiveSize; i++){
         _memoryUser.add(rng.nextDouble());
       }
     }on OutOfMemoryError catch(error){
@@ -231,7 +250,7 @@ class Massive extends Source{
 class TestConsumer extends Consumer{
 
   final List<MassiveConsumer> _massives = new List<MassiveConsumer>();
-  int massivesToCreateToEnsureNoMemoryLeaks = 50;
+  int massivesToCreateToEnsureNoMemoryLeaks = massivesToCreateToEnsureCrash;
 
   TestConsumer(src):super(src){
     _addEventHandlers();
@@ -308,7 +327,8 @@ void _registerPurityTestTranTypes(){
   });
 }
 
-const int ciriticalMassivesToCrash = 25;
+const int massivesToCreateToEnsureCrash = 50;
+const int massiveSize = 1000000;
 bool restrictedAccessMethodCalled = false;
 bool memoryLeakTestComplete = false;
 local.Host currentHost;
