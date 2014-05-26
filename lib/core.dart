@@ -6,11 +6,9 @@ library purity.core;
 
 @MirrorsUsed(targets: const[
   EndPointMessage,
-  Shutdown,
   _ProxyInvocation,
   _SourceEvent,
   _GarbageCollectionReport,
-  _GarbageCollectionStart,
   _SourceReady,
   ], override: '*')
 import 'dart:mirrors';
