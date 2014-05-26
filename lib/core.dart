@@ -4,6 +4,15 @@
 
 library purity.core;
 
+@MirrorsUsed(targets: const[
+  EndPointMessage,
+  Shutdown,
+  _ProxyInvocation,
+  _SourceEvent,
+  _GarbageCollectionReport,
+  _GarbageCollectionStart,
+  _SourceReady,
+  ], override: '*')
 import 'dart:mirrors';
 import 'dart:async';
 import 'package:bson/bson.dart' show ObjectId;
@@ -85,12 +94,12 @@ void _registerPurityCoreTranTypes(){
   _purityCoreTranTypesRegistered = true;
   registerTranTypes('purity.core', 'pc', (){
     registerTranCodec('a', _Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s)));
-    registerTranSubtype('b', _ProxyInvocation);
-    registerTranSubtype('d', _SourceReady);
-    registerTranSubtype('e', _GarbageCollectionReport);
-    registerTranSubtype('f', _GarbageCollectionStart);
-    registerTranSubtype('g', Shutdown);
-    registerTranSubtype('h', EndPointMessage);
-    registerTranSubtype('i', _SourceEvent);
+    registerTranSubtype('b', _ProxyInvocation, () => new _ProxyInvocation());
+    registerTranSubtype('d', _SourceReady, () => new _SourceReady());
+    registerTranSubtype('e', _GarbageCollectionReport, () => new _GarbageCollectionReport());
+    registerTranSubtype('f', _GarbageCollectionStart, () => new _GarbageCollectionStart());
+    registerTranSubtype('g', Shutdown, () => new Shutdown());
+    registerTranSubtype('h', EndPointMessage, () => new EndPointMessage());
+    registerTranSubtype('i', _SourceEvent, () => new _SourceEvent());
   });
 }
