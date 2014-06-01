@@ -91,13 +91,13 @@ void _registerPurityCoreTranTypes(){
   if(_purityCoreTranTypesRegistered){ return; }
   _purityCoreTranTypesRegistered = true;
   registerTranTypes('purity.core', 'pc', (){
-    registerTranCodec('a', _Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s)));
-    registerTranSubtype('b', _ProxyInvocation, () => new _ProxyInvocation());
-    registerTranSubtype('d', _SourceReady, () => new _SourceReady());
-    registerTranSubtype('e', _GarbageCollectionReport, () => new _GarbageCollectionReport());
-    registerTranSubtype('f', _GarbageCollectionStart, () => new _GarbageCollectionStart());
-    registerTranSubtype('g', Shutdown, () => new Shutdown());
-    registerTranSubtype('h', EndPointMessage, () => new EndPointMessage());
-    registerTranSubtype('i', _SourceEvent, () => new _SourceEvent());
+    registerTranCodec(_Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s)));
+    registerTranSubtype(_ProxyInvocation, () => new _ProxyInvocation());
+    registerTranSubtype(_SourceReady, () => new _SourceReady());
+    registerTranSubtype(_GarbageCollectionReport, () => new _GarbageCollectionReport());
+    registerTranSubtype(_GarbageCollectionStart, () => new _GarbageCollectionStart());
+    registerTranSubtype(Shutdown, () => new Shutdown());
+    registerTranSubtype(EndPointMessage, () => new EndPointMessage());
+    registerTranSubtype(_SourceEvent, () => new _SourceEvent());
   });
 }
