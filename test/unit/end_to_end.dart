@@ -321,9 +321,9 @@ void _registerPurityTestTranTypes(){
   if(_purityTestTranTypesRegistered){ return; }
   _purityTestTranTypesRegistered = true;
   registerTranTypes('purity.test', 'pt',(){
-    registerTranSubtype('a', TestEvent, () => new TestEvent());
-    registerTranSubtype('b', MassiveObjectDeleted, () => new MassiveObjectDeleted());
-    registerTranSubtype('c', MassiveObjectCreated, () => new MassiveObjectCreated());
+    registerTranSubtype(TestEvent, () => new TestEvent());
+    registerTranSubtype(MassiveObjectDeleted, () => new MassiveObjectDeleted());
+    registerTranSubtype(MassiveObjectCreated, () => new MassiveObjectCreated());
   });
 }
 
