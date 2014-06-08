@@ -1,5 +1,5 @@
 name: purity
-version: 0.7.0
+version: 0.7.1
 author: Daniel Robinson <daniel.robinson.dart@gmail.com>
 description: Purity is a framework which allows objects to be consumed remotely over a stream of strings.
 homepage: http://github.com/0xor1/purity
@@ -13,6 +13,6 @@ dependencies:
   http_server: '>=0.9.0 <0.10.0'
   logging: '>=0.9.0 <0.10.0'
   route: '>=0.4.0 <0.5.0'
-  transmittable: '>=0.3.1 <0.4.0'
+  transmittable: '>=0.3.3 <0.4.0'
 dev_dependencies:
   unittest: any
