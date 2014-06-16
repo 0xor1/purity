@@ -24,7 +24,7 @@ role isn't to serve web pages but to actually host running instances of the
 application itself. A **Model** is called a **Source** because it is a source of
 **Events** by which it broadcasts information about its internal state changes. 
 A **View** is called a **Consumer** because it consumes a **Source** by 
-listening for its *Events** and updates itself accordingly.
+listening for its **Events** and updates itself accordingly.
 
 In order for Purity to work each client is connected to its server side session
 via a single persistant **WebSocket**. When a **Source** emits an **Event**, if 
@@ -45,7 +45,7 @@ values other than void. This is so when a **Consumer** on the client side makes
 a method call to a **Source** it doesn't lock up the client side waiting for a 
 direct return value from the method call.
 
-The princiles of how Purity works are nicely illustrated in the simple 
+The principles of how Purity works are nicely illustrated in the simple 
 **Stopwatch** example application (links below). The "Local test with Purity"
 demonstrates the host running in a web page, serving instances of the client 
 side end-points to the same page. the strings that appear in the host view are 
