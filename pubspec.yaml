@@ -1,7 +1,7 @@
 name: purity
-version: 0.7.1
+version: 0.7.3
 author: Daniel Robinson <daniel.robinson.dart@gmail.com>
-description: Purity is a framework which allows objects to be consumed remotely over a stream of strings.
+description: Purity is a web framework designed to make the task of creating complex, realtime web apps simple by encouraging coding patterns that promote code reuse, unit testing and rapid manual testing cycles.
 homepage: http://github.com/0xor1/purity
 environment:
   sdk: '>=1.3.0+6 <2.0.0'
