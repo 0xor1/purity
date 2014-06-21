@@ -16,7 +16,7 @@ class Host extends core.Host{
       throw new ConsumerSettingsUninitialisedError();
     }
     var biConnectionPair = new EndPointConnectionPair();
-    var name = 'E-P#${_endPointIdSrc++}';
+    var name = '${_endPointIdSrc++}';
     var proxyEndPoint = new ProxyEndPoint(name, core.initConsumer, core.hanleConnectionClose, biConnectionPair.a);
     var srcEndPoint = createSourceEndPoint(name, biConnectionPair.b);
     emitEvent(
