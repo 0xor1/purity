@@ -1,5 +1,5 @@
 name: purity
-version: 0.8.1
+version: 0.8.2
 author: Daniel Robinson <daniel.robinson.dart@gmail.com>
 description: Purity is a web framework designed to make the task of creating complex, realtime web apps simple by encouraging coding patterns that promote code reuse, unit testing and rapid manual testing cycles.
 homepage: http://github.com/0xor1/purity

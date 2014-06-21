@@ -60,7 +60,7 @@ class LocalHostView extends core.Consumer{
         }),
       new cnp.CommandLineBinding(
         'closeClient',
-        'Simulates the specified client closing the page, example close client 1: > closeClient EP#1',
+        'Simulates the specified client closing the page, example close client 1: > closeClient 1',
         (cnp.CommandLine cmdLn, List<String> posArgs, Map<String, String> namArgs){
           if(posArgs.length > 0 && _clientWindows.containsKey(posArgs[0])){
             _clientWindows.remove(posArgs[0]).hide();
