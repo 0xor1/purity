@@ -48,7 +48,7 @@ direct return value from the method call.
 The principles of how Purity works are nicely illustrated in the simple 
 **Stopwatch** example application (links below). The "Local test with Purity"
 demonstrates the host running in a web page, serving instances of the client 
-side end-points to the same page. the strings that appear in the host view are 
+side end-points to the same page. the strings that appear in the Host_Coms window are 
 the communications that you would see in the browser network tab if it was 
 running in full production mode. The "Local test without Purity" shows that the 
 design of a Purity application even enables it to be run without the Purity host
