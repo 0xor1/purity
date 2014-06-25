@@ -82,14 +82,14 @@ class LocalHostView extends core.Consumer{
     ]);
   }
 
-  void addNewClientView(local.ProxyEndPoint proxyEndPoint, Element appHtmlRoot){
+  void addNewClientView(local.ProxyEndPoint proxyEndPoint, Element appHtmlRoot, [int width = 200, int height = 200, int top = 0, int left = 0]){
     _clientEndPoints[proxyEndPoint.name] = proxyEndPoint;
     _clientWindows[proxyEndPoint.name] =
       new cnp.Window(
         new cnp.Wrapper.ForElement(appHtmlRoot)
         ..fill()
         ..style.overflow = 'auto',
-        proxyEndPoint.name, 200, 200, 0, 0)..show();
+        proxyEndPoint.name, width, height, top, left)..show();
   }
 
   static final cnp.Style _localHostViewStyle = new cnp.Style('''
