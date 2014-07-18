@@ -57,6 +57,6 @@ there at all, and instead simply have the **Consumers** consume their
 
 * Stopwatch
     * [Repo](http://github.com/0xor1/purity_stopwatch_example)
-    * [Local test with Purity](http://0xor1.net/purity_stopwatch_example/index_with_purity.html)
-    * [Local test without Purity](http://0xor1.net/purity_stopwatch_example/index_without_purity.html)
+    * [Local test with Purity](http://0xor1.github.io/purity_stopwatch_example/)
+    * [Local test without Purity](http://0xor1.github.io/purity_stopwatch_example/without_purity/)
 
