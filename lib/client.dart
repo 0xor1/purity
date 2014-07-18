@@ -8,10 +8,9 @@ import 'dart:html';
 export 'dart:html';
 import 'core.dart' as core;
 import 'local.dart' as local;
-import 'package:controls_and_panels/controls_and_panels.dart';
+import 'package:controls_and_panels/controls_and_panels.dart' as cnp;
 
 part 'src/client/local_host_view.dart';
-part 'src/client/local_client_view.dart';
 
 void initConsumerSettings(core.InitConsumer initCon, core.Action onConnectionClose, String protocol){
   core.initConsumerSettings(initCon, onConnectionClose);

@@ -12,53 +12,28 @@ part of purity.client;
  */
 class LocalHostView extends core.Consumer{
 
+  static const String COMMUNICATIONS = 'purity-local-host-view-communications';
+
   local.Host get host => source;
-  static const String color = '#9AF';
-  static const String background = '#000';
 
-  final StackPanel _root =
-    new StackPanel.horizontal()
-    ..style.width = '100%'
-    ..style.height = '100%';
+  cnp.CommandLine _cmdLn;
+  cnp.CommandLineInputBinder _binder;
+  cnp.PagePanel _page;
+  cnp.CommandLine _coms;
+  cnp.Window _comsWindow;
+  final Map<String, cnp.Window> _clientWindows = new Map<String, cnp.Window>();
+  final Map<String, local.ProxyEndPoint> _clientEndPoints = new Map<String, local.ProxyEndPoint>();
 
-  final StackPanel _serverStack =
-    new StackPanel.vertical()
-    ..style.width = '50%'
-    ..style.height = '100%';
-  final StackPanel _serverHeaderStack =
-    new StackPanel.horizontal()
-    ..style.width = '100%'
-    ..style.height = '30px'
-    ..style.background = color;
-  final Label _serverLabel = new Label('Host: ');
-  final Button _newClientButton =
-    new Button.text('New Client');
-  final StackPanel _serverMessageStack =
-    new StackPanel.vertical()
-    ..style.width = '100%'
-    ..style.height = 'calc(100% - 30px)'
-    ..style.overflow = 'auto'
-    ..style.background = background
-    ..style.color = color;
-  final StackPanel _clientStack =
-    new StackPanel.vertical()
-    ..style.width = '50%'
-    ..style.height = '100%'
-    ..style.overflow = 'auto';
+  DivElement get html => _page.html;
 
-  DivElement get html => _root.html;
-
-  LocalHostView(server):super(server){
-    _root
-    ..add(
-      _serverStack
-      ..add(
-        _serverHeaderStack
-        ..add(_serverLabel)
-        ..add(_newClientButton))
-      ..add(_serverMessageStack))
-    ..add(_clientStack);
-
+  LocalHostView(local.Host host):super(host){
+    _localHostViewStyle.insert();
+    _cmdLn = new cnp.CommandLine()..fill();
+    _binder = new cnp.CommandLineInputBinder(_cmdLn);
+    _page = new cnp.PagePanel(_cmdLn);
+    _coms = new cnp.CommandLine()..fill()..disableUserInput()..addClass(COMMUNICATIONS);
+    _comsWindow = new cnp.Window(_coms, 'Host_Coms', 200, 200, 0, 0);
+    _addCommandBindings();
     _hookUpEvents();
   }
 
@@ -67,28 +42,66 @@ class LocalHostView extends core.Consumer{
       var msg = event.data;
       String str;
       if(msg.isProxyToSource){
-        str = '${msg.endPointName} -> Host: ${msg.message}';
+        str = 'EP#${msg.endPointName} -> Host: ${msg.message}';
       }else{
-        str = 'Host -> ${msg.endPointName}: ${msg.message}';
+        str = 'Host -> EP#${msg.endPointName}: ${msg.message}';
       }
-      _writeMessage(str);
+      _coms.enterText(str);
     });
-    _newClientButton.onClick.listen((_){ host.createEndPointPair(); });
   }
 
-  void addNewClientView(local.ProxyEndPoint proxyEndPoint, Element appHtmlRoot){
-    _clientStack.add(new _LocalClientView(proxyEndPoint, appHtmlRoot));
-    _clientStack.items.last.html.scrollIntoView(ScrollAlignment.BOTTOM);
+  void _addCommandBindings(){
+    _binder.addAll([
+      new cnp.CommandLineBinding(
+        'newClient',
+        'Simulates a new client browsing to the Host',
+        (cnp.CommandLine cmdLn, List<String> posArgs, Map<String, String> namArgs){
+          host.createEndPointPair();
+        }),
+      new cnp.CommandLineBinding(
+        'closeClient',
+        'Simulates the specified client closing the page, example close client 1: > closeClient 1',
+        (cnp.CommandLine cmdLn, List<String> posArgs, Map<String, String> namArgs){
+          if(posArgs.length > 0 && _clientWindows.containsKey(posArgs[0])){
+            _clientWindows.remove(posArgs[0]).hide();
+            _clientEndPoints.remove(posArgs[0]).shutdown();
+          }
+        }),
+      new cnp.CommandLineBinding(
+        'showComs',
+        'Shows the communications window',
+        (cnp.CommandLine cmdLn, List<String> posArgs, Map<String, String> namArgs){
+          _comsWindow.show();
+        }),
+      new cnp.CommandLineBinding(
+        'hideComs',
+        'Hides the communications window',
+        (cnp.CommandLine cmdLn, List<String> posArgs, Map<String, String> namArgs){
+          _comsWindow.hide();
+        }),
+    ]);
   }
 
-  void _writeMessage(String msg){
-    var label = new Label(msg);
-    _serverMessageStack.add(label);
-    label.html.scrollIntoView(ScrollAlignment.BOTTOM);
-    _serverMessageStack.addSplitter(lineColor: background, beforeMargin: 5, afterMargin: 5);
-    if(_serverMessageStack.items.length >= 300){
-      _serverMessageStack.remove(_serverMessageStack.items[0]);
-      _serverMessageStack.remove(_serverMessageStack.items[0]);
+  void addNewClientView(local.ProxyEndPoint proxyEndPoint, Element appHtmlRoot, [int width = 200, int height = 200, int top = 0, int left = 0]){
+    _clientEndPoints[proxyEndPoint.name] = proxyEndPoint;
+    _clientWindows[proxyEndPoint.name] =
+      new cnp.Window(
+        new cnp.Wrapper.ForElement(appHtmlRoot)
+        ..fill()
+        ..style.overflow = 'auto',
+        proxyEndPoint.name, width, height, top, left)..show();
+  }
+
+  static final cnp.Style _localHostViewStyle = new cnp.Style('''
+
+    .${cnp.CommandLine.CLASS}.${COMMUNICATIONS}
+      > .${cnp.StackPanel.CLASS} *
+    {
+      background: #fff;
+      color: #000;
+      font-family: "Lucida Console", Monaco, monospace;
+      font-size: 14px;
     }
-  }
+    
+  ''');
 }

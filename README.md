@@ -48,7 +48,7 @@ direct return value from the method call.
 The principles of how Purity works are nicely illustrated in the simple 
 **Stopwatch** example application (links below). The "Local test with Purity"
 demonstrates the host running in a web page, serving instances of the client 
-side end-points to the same page. the strings that appear in the host view are 
+side end-points to the same page. the strings that appear in the Host_Coms window are 
 the communications that you would see in the browser network tab if it was 
 running in full production mode. The "Local test without Purity" shows that the 
 design of a Purity application even enables it to be run without the Purity host
@@ -57,6 +57,6 @@ there at all, and instead simply have the **Consumers** consume their
 
 * Stopwatch
     * [Repo](http://github.com/0xor1/purity_stopwatch_example)
-    * [Local test with Purity](http://0xor1.net/purity_stopwatch_example/index_with_purity.html)
-    * [Local test without Purity](http://0xor1.net/purity_stopwatch_example/index_without_purity.html)
+    * [Local test with Purity](http://0xor1.github.io/purity_stopwatch_example/)
+    * [Local test without Purity](http://0xor1.github.io/purity_stopwatch_example/without_purity/)
 
