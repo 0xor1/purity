@@ -4,6 +4,8 @@ Purity is a web framework and coding pattern designed to make building complex
 realtime web apps as simple and pain free as possible. It encourages the 
 development of code that promotes code reuse, unit testing and rapid manual 
 testing cycles with minimal system setup required to test code changes quickly.
+Purity apps are written in Dart which enables the same code to be shared 
+between client side and server side.
 
 The Purity core server has two thin wrappers allowing it to be run in production
 mode in the standalone Dart VM as a real application server, or to be run in a 

@@ -5,6 +5,7 @@
 library purity.host;
 
 import 'dart:io';
+import 'dart:async';
 import 'core.dart' as core;
 import 'package:http_server/http_server.dart' as http_server;
 import 'package:route/server.dart' show Router;
@@ -14,8 +15,14 @@ final Logger _log = new Logger('Purity Host');
 
 class Host extends core.Host{
 
-  Host(dynamic address, int port, String staticFileDirectory, core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = false]):
-    super(initSrc, closeSrc, garbageCollectionFrequency, verbose){
+  final dynamic address;
+  final int port;
+  final String staticFileDirectory;
+
+  Host(dynamic this.address, int this.port, String this.staticFileDirectory, core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = false]):
+    super(initSrc, closeSrc, garbageCollectionFrequency, verbose);
+
+  Future<Router> start(){
 
     Logger.root.level = Level.ALL;
     Logger.root.onRecord.listen((LogRecord rec) {
@@ -23,11 +30,10 @@ class Host extends core.Host{
     });
 
     if(!new Directory(staticFileDirectory).existsSync()) {
-      _log.severe('The specified static file directory was not found: $staticFileDirectory');
-      return;
+      throw new Exception('The specified static file directory was not found: $staticFileDirectory');
     }
 
-    HttpServer.bind(address, port).then((server) {
+    return HttpServer.bind(address, port).then((server) {
 
       _log.info("Server is running on "
                "'http://${server.address.address}:$port/'");
@@ -67,6 +73,8 @@ class Host extends core.Host{
 
       // Serve everything not routed elsewhere through the virtual directory.
       virDir.serve(router.defaultStream);
+
+      return router;
     });
 
   }
