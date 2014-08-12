@@ -40,7 +40,7 @@ class Source extends _Base{
     }
   }
 
-  Future<Event> emitEvent(Transmittable data){
+  Future<Event<Transmittable>> emitEvent(Transmittable data){
     data.lock();
     return super.emitEvent(data);
   }
