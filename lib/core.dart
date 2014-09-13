@@ -5,11 +5,11 @@
 library purity.core;
 
 @MirrorsUsed(targets: const[
-  EndPointMessage,
-  _ProxyInvocation,
-  _SourceEvent,
-  _GarbageCollectionReport,
-  _SourceReady,
+  IEndPointMessage,
+  _IProxyInvocation,
+  _ISourceEvent,
+  _IGarbageCollectionReport,
+  _ISourceReady,
   ], override: '*')
 import 'dart:mirrors';
 import 'dart:async';

@@ -5,7 +5,7 @@
 library purity.local;
 
 @MirrorsUsed(targets: const[
-  ProxyEndPointCreated,
+  IProxyEndPointCreated,
   ], override: '*')
 import 'dart:mirrors';
 import 'dart:async';
