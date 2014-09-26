@@ -28,7 +28,11 @@ class LocalHostView extends core.Consumer{
 
   LocalHostView(local.Host host):super(host){
     _localHostViewStyle.insert();
-    _cmdLn = new cnp.CommandLine()..fill();
+    _cmdLn = new cnp.CommandLine()
+    ..enterText('Enter showComs to display a window showing all communications to/from the Purity Host.')
+    ..enterText('Enter newClient to simulate a new client connecting to the host.')
+    ..enterText('Enter closeClient # to simulate the client with id # closing down.')
+    ..fill();
     _binder = new cnp.CommandLineInputBinder(_cmdLn);
     _page = new cnp.PagePanel(_cmdLn);
     _coms = new cnp.CommandLine()..fill()..disableUserInput()..addClass(COMMUNICATIONS);
