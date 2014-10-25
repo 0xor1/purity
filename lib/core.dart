@@ -86,18 +86,14 @@ void clearConsumerSettings(){
   _consumerSettingsInitialised = false;
 }
 
-bool _purityCoreTranTypesRegistered = false;
-void _registerPurityCoreTranTypes(){
-  if(_purityCoreTranTypesRegistered){ return; }
-  _purityCoreTranTypesRegistered = true;
-  registerTranTypes('purity.core', 'pc', (){
-    registerTranCodec(_Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s)));
-    registerTranSubtype(_ProxyInvocation, () => new _ProxyInvocation());
-    registerTranSubtype(_SourceReady, () => new _SourceReady());
-    registerTranSubtype(_GarbageCollectionReport, () => new _GarbageCollectionReport());
-    registerTranSubtype(_GarbageCollectionStart, () => new _GarbageCollectionStart());
-    registerTranSubtype(Shutdown, () => new Shutdown());
-    registerTranSubtype(EndPointMessage, () => new EndPointMessage());
-    registerTranSubtype(_SourceEvent, () => new _SourceEvent());
-  });
-}
+final Registrar _registerPurityCoreTranTypes = generateRegistrar(
+    'purity.core', 'pc', [
+    new TranRegistration.codec(_Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s))),
+    new TranRegistration.subtype(_ProxyInvocation, () => new _ProxyInvocation()),
+    new TranRegistration.subtype(_SourceReady, () => new _SourceReady()),
+    new TranRegistration.subtype(_GarbageCollectionReport, () => new _GarbageCollectionReport()),
+    new TranRegistration.subtype(_GarbageCollectionStart, () => new _GarbageCollectionStart()),
+    new TranRegistration.subtype(Shutdown, () => new Shutdown()),
+    new TranRegistration.subtype(EndPointMessage, () => new EndPointMessage()),
+    new TranRegistration.subtype(_SourceEvent, () => new _SourceEvent())
+  ]);

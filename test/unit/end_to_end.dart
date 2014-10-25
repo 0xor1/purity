@@ -316,16 +316,12 @@ abstract class IMassiveObjectCreatedOrDeleted{
   dynamic massive;
 }
 
-bool _purityTestTranTypesRegistered = false;
-void _registerPurityTestTranTypes(){
-  if(_purityTestTranTypesRegistered){ return; }
-  _purityTestTranTypesRegistered = true;
-  registerTranTypes('purity.test', 'pt',(){
-    registerTranSubtype(TestEvent, () => new TestEvent());
-    registerTranSubtype(MassiveObjectDeleted, () => new MassiveObjectDeleted());
-    registerTranSubtype(MassiveObjectCreated, () => new MassiveObjectCreated());
-  });
-}
+final Registrar _registerPurityTestTranTypes = generateRegistrar(
+    'purity.test', 'pt', [
+    new TranRegistration.subtype(TestEvent, () => new TestEvent()),
+    new TranRegistration.subtype(MassiveObjectDeleted, () => new MassiveObjectDeleted()),
+    new TranRegistration.subtype(MassiveObjectCreated, () => new MassiveObjectCreated()),
+  ]);
 
 const int massivesToCreateToEnsureCrash = 50;
 const int massiveSize = 1000000;
