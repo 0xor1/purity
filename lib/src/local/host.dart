@@ -8,8 +8,8 @@ class Host extends core.Host{
 
   static int _endPointIdSrc = 0;
 
-  Host(core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = true]):
-  super(initSrc, closeSrc, garbageCollectionFrequency, verbose);
+  Host(core.SeedApplication seedApplication, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = true]):
+  super(seedApplication, closeSrc, garbageCollectionFrequency, verbose);
 
   void createEndPointPair(){
     if(!core.consumerSettingsInitialised){

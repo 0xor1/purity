@@ -18,9 +18,13 @@ class Host extends core.Host{
   final dynamic address;
   final int port;
   final String staticFileDirectory;
+  final int backlog;
+  final String certificateName;
+  final bool requestClientCertificate;
 
-  Host(dynamic this.address, int this.port, String this.staticFileDirectory, core.InitSource initSrc, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = false]):
-    super(initSrc, closeSrc, garbageCollectionFrequency, verbose);
+
+  Host(dynamic this.address, int this.port, String this.staticFileDirectory, core.SeedApplication seedApplication, core.CloseSource closeSrc, int garbageCollectionFrequency, {bool verbose: false, this.backlog: 0, this.certificateName: null, this.requestClientCertificate: false}):
+    super(seedApplication, closeSrc, garbageCollectionFrequency, verbose);
 
   Future<Router> start(){
 
@@ -33,10 +37,10 @@ class Host extends core.Host{
       throw new Exception('The specified static file directory was not found: $staticFileDirectory');
     }
 
-    return HttpServer.bind(address, port).then((server) {
+    var serverFutureHandler = (server) {
 
       _log.info("Server is running on "
-               "'http://${server.address.address}:$port/'");
+               "'http(s)://${server.address.address}:$port/'");
 
       var router = new Router(server);
 
@@ -75,8 +79,13 @@ class Host extends core.Host{
       virDir.serve(router.defaultStream);
 
       return router;
-    });
+    };
 
+    if(certificateName == null){
+      return HttpServer.bind(address, port, backlog: backlog).then(serverFutureHandler);
+    }else{
+      return HttpServer.bindSecure(address, port, backlog: backlog, certificateName: certificateName, requestClientCertificate: requestClientCertificate).then(serverFutureHandler);
+    }
   }
 }
 

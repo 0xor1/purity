@@ -10,8 +10,8 @@ part of purity.core;
  */
 class SourceEndPoint extends _EndPoint{
 
-  Source _rootSrc;
-  final InitSource _initSrc;
+  Source _seed;
+  final SeedApplication _seedApplication;
   final CloseSource _closeSrc;
   final List<Transmittable> _messageQueue = new List<Transmittable>();
   final Map<ObjectId, Source> _srcs = new Map<ObjectId, Source>();
@@ -22,22 +22,22 @@ class SourceEndPoint extends _EndPoint{
   /**
    * Constructs a new [SourceEndPoint] instance with:
    *
-   * * [_initSrc] as the [InitSource] function for the application.
+   * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
    * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
    * * [connection] as the bi-directional connection to the paired down-stream [ProxyEndPoint].
    *
    */
-  SourceEndPoint(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
+  SourceEndPoint(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
   super(connection){
     _setGarbageCollectionTimer();
-    var initSrcVal = _initSrc(this);
-    if(initSrcVal is Future<Source>){
-      initSrcVal.then(_processInitialSource);
-    }else if(initSrcVal is Source){
-      _processInitialSource(initSrcVal);
+    var seed = _seedApplication(this);
+    if(seed is Future<Source>){
+      seed.then(_processSeed);
+    }else if(seed is Source){
+      _processSeed(seed);
     }else{
-      throw new InvalidInitSourceReturnTypeError(initSrcVal);
+      throw new InvalidInitSourceReturnTypeError(seed);
     }
   }
 
@@ -46,9 +46,15 @@ class SourceEndPoint extends _EndPoint{
     if(_garbageCollectionTimer != null){
       _garbageCollectionTimer.cancel();
     }
-    _closeSrc(_rootSrc).then((_){
+    var closeSrcVal = _closeSrc(_seed);
+    _seed = null;
+    if(closeSrcVal is Future){
+      closeSrcVal.then((_){
+        super.shutdown();
+      });
+    }else{
       super.shutdown();
-    });
+    }
   }
 
   dynamic _preprocessTran(dynamic v){
@@ -112,10 +118,10 @@ class SourceEndPoint extends _EndPoint{
     _setGarbageCollectionTimer();
   }
 
-  void _processInitialSource(rootSrc){
-    _rootSrc = rootSrc;
+  void _processSeed(seed){
+    _seed = seed;
     _sendTran(
     new _SourceReady()
-    ..src = _rootSrc);
+    ..seed = _seed);
   }
 }

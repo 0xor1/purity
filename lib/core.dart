@@ -49,8 +49,8 @@ part 'src/core/error/restricted_method_error.dart';
 typedef void Action();
 typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
-typedef dynamic InitSource(_EndPoint srcEndPoint);
-typedef Future CloseSource(Source src);
+typedef dynamic SeedApplication(_EndPoint srcEndPoint);
+typedef dynamic CloseSource(Source seed);
 typedef void InitConsumer(_Proxy proxy, _EndPoint proxyEndPoint);
 
 const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
