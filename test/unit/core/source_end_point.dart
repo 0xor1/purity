@@ -34,7 +34,7 @@ void _runProxySourcePointTests(){
       runZoned((){
         var connectionPair = new local.EndPointConnectionPair();
         connectionPair.b.incoming.listen((str){
-          reTranSeed = new Transmittable.fromTranString(str).src;
+          reTranSeed = new Transmittable.fromTranString(str).seed;
         });
         var srcEndPoint = new SourceEndPoint(
           (_) => initSeed = new Source(),
@@ -61,8 +61,8 @@ void _runProxySourcePointTests(){
       Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
       var srcEndPoint = new SourceEndPoint(
-        (_) => new Future(() => new Source()),
-        (_) => new Future((){}),
+        (_) => new Source(),
+        (_){},
         2,
         connectionPair.a);
       srcEndPoint.addEventAction(Shutdown, (Event<Shutdown> event) => caughtEvent = event);

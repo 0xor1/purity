@@ -9,7 +9,7 @@ part of purity.core;
  */
 abstract class Host extends Source{
 
-  final InitSource _initSrc;
+  final SeedApplication _seedApplication;
   final CloseSource _closeSrc;
   final int _garbageCollectionFrequency;
   final Set<SourceEndPoint> srcEndPoints = new Set<SourceEndPoint>();
@@ -18,13 +18,13 @@ abstract class Host extends Source{
   /**
    * Constructs a new [Host] instance with:
    * 
-   * * [_initSrc] as the [InitSource] function for the application.
+   * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
    * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
    * * [_verbose] as an optional argument to emit events for each message sent and received from all hosted [SourceEndPoint]s.
    * 
    */
-  Host(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
+  Host(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
 
   /**
    * Creates a [SourceEndPoint] with the supplied [name] and [connection]
@@ -46,7 +46,7 @@ abstract class Host extends Source{
       };
       connection = new EndPointConnection(connection.incoming, verboseSend, connection.close);
     }
-    var srcEndPoint = new SourceEndPoint(_initSrc, _closeSrc, _garbageCollectionFrequency, connection);
+    var srcEndPoint = new SourceEndPoint(_seedApplication, _closeSrc, _garbageCollectionFrequency, connection);
     listen(srcEndPoint, Shutdown, (event){
       _emitEndPointMessageEvent(name, false, 'Source end-point shutdown');
       srcEndPoints.remove(event.emitter);

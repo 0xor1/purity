@@ -26,7 +26,7 @@ class ProxyEndPoint extends _EndPoint{
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
     if(tran is _Transmission){
       if(tran is _SourceReady){
-        _initConsumption(tran.src, this);
+        _initConsumption(tran.seed, this);
       }else if(tran is _GarbageCollectionStart){
         _runGarbageCollectionSequence();
       }else if(tran is _SourceEvent){

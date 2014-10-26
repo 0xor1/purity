@@ -6,5 +6,5 @@ part of purity.core;
 
 class _SourceReady extends _Transmission implements _ISourceReady{}
 abstract class _ISourceReady{
-  _Base src;
+  _Base seed;
 }
