@@ -31,12 +31,14 @@ class SourceEndPoint extends _EndPoint{
   SourceEndPoint(this._initSrc, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
   super(connection){
     _setGarbageCollectionTimer();
-    _initSrc(this).then((src){
-      _rootSrc = src;
-      _sendTran(
-        new _SourceReady()
-        ..src = src);
-    });
+    var initSrcVal = _initSrc(this);
+    if(initSrcVal is Future<Source>){
+      initSrcVal.then(_processInitialSource);
+    }else if(initSrcVal is Source){
+      _processInitialSource(initSrcVal);
+    }else{
+      throw new InvalidInitSourceReturnTypeError(initSrcVal);
+    }
   }
 
   void shutdown(){
@@ -108,5 +110,12 @@ class SourceEndPoint extends _EndPoint{
     }
     _messageQueue.clear();
     _setGarbageCollectionTimer();
+  }
+
+  void _processInitialSource(rootSrc){
+    _rootSrc = rootSrc;
+    _sendTran(
+    new _SourceReady()
+    ..src = _rootSrc);
   }
 }

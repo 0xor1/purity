@@ -41,6 +41,7 @@ part 'src/core/tran/garbage_collection_report.dart';
 part 'src/core/tran/garbage_collection_start.dart';
 
 part 'src/core/error/unsupported_proxy_invocation_error.dart';
+part 'src/core/error/invalid_init_source_return_type_error.dart';
 part 'src/core/error/unsupported_message_type_error.dart';
 part 'src/core/error/consumer_settings_already_initialised_error.dart';
 part 'src/core/error/restricted_method_error.dart';
@@ -48,7 +49,7 @@ part 'src/core/error/restricted_method_error.dart';
 typedef void Action();
 typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
-typedef Future<Source> InitSource(_EndPoint srcEndPoint);
+typedef dynamic InitSource(_EndPoint srcEndPoint);
 typedef Future CloseSource(Source src);
 typedef void InitConsumer(_Proxy proxy, _EndPoint proxyEndPoint);
 
