@@ -2,6 +2,8 @@
  * Author:  Daniel Robinson http://github.com/0xor1
  */
 
+/// Contains the core Purity types to implement a single page web app
+/// in the Purity pattern.
 library purity.core;
 
 @MirrorsUsed(targets: const[
