@@ -4,9 +4,7 @@
 
 part of purity.core;
 
-/**
- * Thrown if [initConsumerSettings] is called more than once.
- */
-class ConsumerSettingsAlreadyInitialisedError{
+/// Thrown if [initConsumerSettings] is called more than once.
+class ConsumerSettingsAlreadyInitialisedError extends Error{
   String get message => 'Consumer settings may only be initialised once.';
 }
