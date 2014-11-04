@@ -20,7 +20,7 @@ abstract class _EndPoint extends Source{
   /// shuts down the [EndPointConnection].
   void shutdown(){
     _connection.close();
-    emitEvent(new Shutdown());
+    emit(new Shutdown());
   }
 
   void _receiveString(String str);

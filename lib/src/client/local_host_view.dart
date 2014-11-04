@@ -42,7 +42,7 @@ class LocalHostView extends core.Consumer{
   }
 
   void _hookUpEvents(){
-    listen(host, core.EndPointMessage, (core.Event<core.EndPointMessage> event){
+    listen(host, core.EndPointMessage, (core.Emission<core.EndPointMessage> event){
       var msg = event.data;
       String str;
       if(msg.isProxyToSource){

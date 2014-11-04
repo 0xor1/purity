@@ -24,58 +24,71 @@ void runEndToEndTests(){
 
     test('a consumer can make calls to its source by proxy and receive events back by proxy', (){
       var pi = 3.142;
-      executeWhenReadyOrTimeout(() => currentTestConsumer != null, () => currentTestConsumer.doStuff(pi));
       expectAsyncWithReadyCheckAndTimeout(
         () => lastEventDataCaughtByConsumer != null,
         () => expect(lastEventDataCaughtByConsumer.prop, equals(pi)));
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        () => currentTestConsumer.doStuff(pi));
     });
 
-    test('EventEmiiter and EventDetector contain the expected methods', (){
+    test('Emiiter and Receiver contain the expected methods', (){
       //this test is to check we are still blocking the expected methods, it's not full proof but it's better than nothing.
       var expectedMethods = [
-        #emitEvent,
-        #addEventAction,
-        #removeEventAction,
+        #emit,
+        #on,
+        #once,
+        #off,
         #listen,
-        #ignoreSpecificEventBinding,
-        #ignoreAllEventsOfType,
-        #ignoreAllEventsFrom,
-        #ignoreAllEvents
+        #listenOnce,
+        #ignoreTypeFromEmitter,
+        #ignoreType,
+        #ignoreFrom,
+        #ignoreAll
       ];
 
-      var eventEmitterMembers = reflectClass(EventEmitter).instanceMembers.keys;
-      var eventDetectorMembers = reflectClass(EventDetector).instanceMembers.keys;
+      var eventEmitterMembers = reflectClass(Emitter).instanceMembers.keys;
+      var eventDetectorMembers = reflectClass(Receiver).instanceMembers.keys;
 
       expectedMethods.forEach((symbol){
         expect(eventEmitterMembers.contains(symbol) || eventDetectorMembers.contains(symbol), equals(true));
       });
     });
 
-    test('a Source may not have #emitEvent invoked on it', (){
+    test('a Source may not have #emit invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#emitEvent));
+        () => currentTestConsumer.callSourceMethod(#emit));
     });
 
-    test('a Source may not have #addEventAction invoked on it', (){
+    test('a Source may not have #on invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#addEventAction));
+        () => currentTestConsumer.callSourceMethod(#on));
     });
 
-    test('a Source may not have #removeEventAction invoked on it', (){
+    test('a Source may not have #once invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#removeEventAction));
+        () => currentTestConsumer.callSourceMethod(#once));
+    });
+
+    test('a Source may not have #off invoked on it', (){
+      expectAsyncWithReadyCheckAndTimeout(
+        () => lastErrorCaughtDuringTest != null,
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        () => currentTestConsumer.callSourceMethod(#off));
     });
 
     test('a Source may not have #listen invoked on it', (){
@@ -87,40 +100,49 @@ void runEndToEndTests(){
         () => currentTestConsumer.callSourceMethod(#listen));
     });
 
-    test('a Source may not have #ignoreSpecificEventBinding invoked on it', (){
+    test('a Source may not have #listenOnce invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreSpecificEventBinding));
+        () => currentTestConsumer.callSourceMethod(#listenOnce));
     });
 
-    test('a Source may not have #ignoreAllEventsOfType invoked on it', (){
+    test('a Source may not have #ignoreTypeFromEmitter invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreAllEventsOfType));
+        () => currentTestConsumer.callSourceMethod(#ignoreTypeFromEmitter));
     });
 
-    test('a Source may not have #ignoreAllEventsFrom invoked on it', (){
+    test('a Source may not have #ignoreType invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreAllEventsFrom));
+        () => currentTestConsumer.callSourceMethod(#ignoreType));
     });
 
-    test('a Source may not have #ignoreAllEvents invoked on it', (){
+    test('a Source may not have #ignoreFrom invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreAllEvents, [null]));
+        () => currentTestConsumer.callSourceMethod(#ignoreFrom));
+    });
+
+    test('a Source may not have #ignoreAll invoked on it', (){
+      expectAsyncWithReadyCheckAndTimeout(
+        () => lastErrorCaughtDuringTest != null,
+        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        () => currentTestConsumer.callSourceMethod(#ignoreAll, [null]));
     });
 
     test('a Source may not have a private method invoked on it', (){
@@ -210,7 +232,7 @@ class TestSource extends Source{
   final List<Massive> _massives = new List<Massive>();
 
   void doStuff(x){
-    emitEvent(
+    emit(
       new TestEvent()
       ..prop = x);
   }
@@ -218,14 +240,14 @@ class TestSource extends Source{
   void createAMassiveObject() {
     var massive = new Massive();
     _massives.add(massive);
-    emitEvent(
+    emit(
       new MassiveObjectCreated()
       ..massive = massive);
   }
 
   void deleteAMassiveObject() {
     if(_massives.isNotEmpty){
-      emitEvent(
+      emit(
         new MassiveObjectDeleted()
         ..massive = _massives.removeLast());
     }
@@ -257,17 +279,17 @@ class TestConsumer extends Consumer{
   }
 
   _addEventHandlers(){
-    listen(source, Omni, (Event event){
-      lastEventDataCaughtByConsumer = event.data;
+    listen(source, All, (Emission em){
+      lastEventDataCaughtByConsumer = em.data;
     });
-    listen(source, MassiveObjectCreated, (Event<MassiveObjectCreated> event){
-      _massives.add(new MassiveConsumer(event.data.massive));
+    listen(source, MassiveObjectCreated, (Emission<MassiveObjectCreated> em){
+      _massives.add(new MassiveConsumer(em.data.massive));
       Timer.run((){
         source.deleteAMassiveObject();
       });
     });
-    listen(source, MassiveObjectDeleted, (Event<MassiveObjectDeleted> event){
-      var massive = _massives.singleWhere((massive) => event.data.massive == massive.source);
+    listen(source, MassiveObjectDeleted, (Emission<MassiveObjectDeleted> em){
+      var massive = _massives.singleWhere((massive) => em.data.massive == massive.source);
       _massives.remove(massive);
       massive.dispose();
       if(massivesToCreateToEnsureNoMemoryLeaks-- > 0){

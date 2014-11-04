@@ -6,12 +6,12 @@ part of purity.core;
 
 /**
  * An end-point object, a [Consumer] exists solely to provide representation for a single [Source].
- * 
+ *
  * A [Consumer] has a single underlying [Source], it should only be concerned with calling public
- * methods on its [Source] and listening to [Event]s coming from its [Source]. a [Consumer] should
- * not emit its own [Event]s.
+ * methods on its [Source] and listening to [Emission]s coming from its [Source]. a [Consumer] should
+ * not emit its own [Emission]s.
  */
-class Consumer extends Object with EventDetector{
+class Consumer extends Object with Receiver{
   _Base _src;
   /// The [Source] being consumed.
   dynamic get source => _src;
@@ -27,7 +27,7 @@ class Consumer extends Object with EventDetector{
 
   /// Disposes the [Consumer] and frees the underlying [Source].
   void dispose(){
-    ignoreAllEvents();
+    ignoreAll();
     if(_src is _Proxy){
       (_src as _Proxy)._usageCount--;
     }

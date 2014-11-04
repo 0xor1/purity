@@ -6,7 +6,7 @@ part of purity.core;
 
 /**
  * An up-stream [_EndPoint] to route proxy method invocations to their underlying
- * [Source] and pass [Event]s from all relevant [Source]s down to the connected [ProxyEndPoint].
+ * [Source] and pass [Emission]s from all relevant [Source]s down to the connected [ProxyEndPoint].
  */
 class SourceEndPoint extends _EndPoint{
 
@@ -42,7 +42,7 @@ class SourceEndPoint extends _EndPoint{
   }
 
   void shutdown(){
-    ignoreAllEvents();
+    ignoreAll();
     if(_garbageCollectionTimer != null){
       _garbageCollectionTimer.cancel();
     }
@@ -61,7 +61,7 @@ class SourceEndPoint extends _EndPoint{
     if(v is Source){
       if(!_srcs.containsKey(v._purityId)){
         _srcs[v._purityId] = v;
-        listen(v, Omni, (Event<Transmittable> e){
+        listen(v, All, (Emission<Transmittable> e){
           var srcEvent = new _SourceEvent()
           ..proxy = e.emitter
           ..data = e.data;
@@ -109,7 +109,7 @@ class SourceEndPoint extends _EndPoint{
   void _runGarbageCollectionSequence(Set<_Proxy> proxies){
     proxies.forEach((proxy){
       var src = _srcs.remove(proxy._purityId);
-      ignoreAllEventsFrom(src);
+      ignoreFrom(src);
     });
     for(var i = 0; i < _messageQueue.length; i++){
       _sendTran(_messageQueue[i]);
