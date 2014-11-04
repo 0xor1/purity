@@ -5,24 +5,26 @@
 part of purity.core;
 
 /**
- * An identifiable source of [Event]s.
+ * An identifiable source of [Emission]s.
  *
  * It is critical that all public methods on a [Source] always return void.
  * A [Source] should communicate internal state changes with other entities
- * solely by emitting [Event]s.
+ * solely by emitting objects.
  */
 class Source extends _Base{
 
   static final Set<Symbol> _restrictedMethods = new Set<Symbol>()
   ..addAll([
-    #emitEvent,
-    #addEventAction,
-    #removeEventAction,
+    #emit,
+    #on,
+    #once,
+    #off,
     #listen,
-    #ignoreSpecificEventBinding,
-    #ignoreAllEventsOfType,
-    #ignoreAllEventsFrom,
-    #ignoreAllEvents
+    #listenOnce,
+    #ignoreTypeFromEmitter,
+    #ignoreType,
+    #ignoreFrom,
+    #ignoreAll
   ]);
 
   InstanceMirror _this;
@@ -40,8 +42,8 @@ class Source extends _Base{
     }
   }
 
-  Future<Event<Transmittable>> emitEvent(Transmittable data){
+  Future<Emission<Transmittable>> emit(Transmittable data){
     data.lock();
-    return super.emitEvent(data);
+    return super.emit(data);
   }
 }

@@ -16,9 +16,9 @@ library purity.core;
 import 'dart:mirrors';
 import 'dart:async';
 import 'package:bson/bson.dart' show ObjectId;
-import 'package:eventable/eventable.dart';
+import 'package:emitters/emitters.dart';
 import 'package:transmittable/transmittable.dart';
-export 'package:eventable/eventable.dart';
+export 'package:emitters/emitters.dart';
 export 'package:transmittable/transmittable.dart';
 
 part 'src/core/base.dart';

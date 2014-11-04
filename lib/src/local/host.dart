@@ -19,7 +19,7 @@ class Host extends core.Host{
     var name = '${_endPointIdSrc++}';
     var proxyEndPoint = new ProxyEndPoint(name, core.initConsumer, core.hanleConnectionClose, biConnectionPair.a);
     var srcEndPoint = createSourceEndPoint(name, biConnectionPair.b);
-    emitEvent(
+    emit(
       new ProxyEndPointCreated()
       ..proxyEndPoint = proxyEndPoint);
   }

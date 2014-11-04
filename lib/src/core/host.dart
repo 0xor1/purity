@@ -14,15 +14,15 @@ abstract class Host extends Source{
   final int _garbageCollectionFrequency;
   final Set<SourceEndPoint> srcEndPoints = new Set<SourceEndPoint>();
   final bool _verbose;
-  
+
   /**
    * Constructs a new [Host] instance with:
-   * 
+   *
    * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
    * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
    * * [_verbose] as an optional argument to emit events for each message sent and received from all hosted [SourceEndPoint]s.
-   * 
+   *
    */
   Host(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
 
@@ -50,21 +50,21 @@ abstract class Host extends Source{
     listen(srcEndPoint, Shutdown, (event){
       _emitEndPointMessageEvent(name, false, 'Source end-point shutdown');
       srcEndPoints.remove(event.emitter);
-      Timer.run((){ ignoreAllEventsFrom(event.emitter); });
+      Timer.run((){ ignoreFrom(event.emitter); });
     });
     srcEndPoints.add(srcEndPoint);
     return srcEndPoint;
   }
-  
+
   /// shuts down all hosted [SourceEndPoint]s.
   void shutdown(){
     srcEndPoints.forEach((srcEndPoint){
       srcEndPoint.shutdown();
     });
   }
-  
+
   void _emitEndPointMessageEvent(String name, bool isProxyToSource, String str){
-    emitEvent(
+    emit(
       new EndPointMessage()
       ..endPointName = name
       ..isProxyToSource = isProxyToSource

@@ -5,7 +5,7 @@
 part of purity.core;
 
 /**
- * A down-stream [_EndPoint] to route [Event]s from [Source]s to their proxies for re-emitting to any listening [Consumer]s.
+ * A down-stream [_EndPoint] to route [Emission]s from [Source]s to their proxies for re-emitting to any listening [Consumer]s.
  */
 class ProxyEndPoint extends _EndPoint{
   final InitConsumer _initConsumption;
@@ -31,7 +31,7 @@ class ProxyEndPoint extends _EndPoint{
         _runGarbageCollectionSequence();
       }else if(tran is _SourceEvent){
         _proxyEventInProgress = true;
-        _proxies[tran.proxy._purityId].emitEvent(tran.data).then((_){ _proxyEventInProgress = false; });
+        _proxies[tran.proxy._purityId].emit(tran.data).then((_){ _proxyEventInProgress = false; });
       }
     }else{
       throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);

@@ -5,7 +5,7 @@
 library purity;
 
 export 'package:transmittable/transmittable.dart';
-export 'package:eventable/eventable.dart';
+export 'package:emitters/emitters.dart';
 export 'core.dart'
   show
     Source,
