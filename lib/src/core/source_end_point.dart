@@ -109,7 +109,7 @@ class SourceEndPoint extends _EndPoint{
   void _runGarbageCollectionSequence(Set<_Proxy> proxies){
     proxies.forEach((proxy){
       var src = _srcs.remove(proxy._purityId);
-      ignoreFrom(src);
+      ignoreEmitter(src);
     });
     for(var i = 0; i < _messageQueue.length; i++){
       _sendTran(_messageQueue[i]);

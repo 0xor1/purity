@@ -50,7 +50,7 @@ abstract class Host extends Source{
     listen(srcEndPoint, Shutdown, (event){
       _emitEndPointMessageEvent(name, false, 'Source end-point shutdown');
       srcEndPoints.remove(event.emitter);
-      Timer.run((){ ignoreFrom(event.emitter); });
+      Timer.run((){ ignoreEmitter(event.emitter); });
     });
     srcEndPoints.add(srcEndPoint);
     return srcEndPoint;

@@ -23,7 +23,7 @@ class Source extends _Base{
     #listenOnce,
     #ignoreTypeFromEmitter,
     #ignoreType,
-    #ignoreFrom,
+    #ignoreEmitter,
     #ignoreAll
   ]);
 
