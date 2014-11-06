@@ -43,7 +43,7 @@ void runEndToEndTests(){
         #listenOnce,
         #ignoreTypeFromEmitter,
         #ignoreType,
-        #ignoreFrom,
+        #ignoreEmitter,
         #ignoreAll
       ];
 
@@ -127,13 +127,13 @@ void runEndToEndTests(){
         () => currentTestConsumer.callSourceMethod(#ignoreType));
     });
 
-    test('a Source may not have #ignoreFrom invoked on it', (){
+    test('a Source may not have #ignoreEmitter invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
         () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreFrom));
+        () => currentTestConsumer.callSourceMethod(#ignoreEmitter));
     });
 
     test('a Source may not have #ignoreAll invoked on it', (){
