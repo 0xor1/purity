@@ -8,8 +8,8 @@ part of purity.core;
  * An end-point object, a [Consumer] exists solely to provide representation for a single [Source].
  *
  * A [Consumer] has a single underlying [Source], it should only be concerned with calling public
- * methods on its [Source] and listening to [Emission]s coming from its [Source]. a [Consumer] should
- * not emit its own [Emission]s.
+ * methods on its [Source] and listening to [Event]s coming from its [Source]. a [Consumer] should
+ * not emit its own [Event]s.
  */
 class Consumer extends Object with Receiver{
   _Base _src;

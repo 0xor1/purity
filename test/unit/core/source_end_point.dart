@@ -9,10 +9,10 @@ void _runProxySourcePointTests(){
   group('source_end_point:', (){
 
     test('emits Event<Shutdown> on shutdown', (){
-      Emission<Shutdown> caughtEvent;
+      Event<Shutdown> caughtEvent;
       expectAsyncWithReadyCheckAndTimeout(
         () => caughtEvent != null,
-        () => expect(caughtEvent is Emission<Shutdown>, equals(true)));
+        () => expect(caughtEvent is Event<Shutdown>, equals(true)));
       runZoned((){
         var connectionPair = new local.EndPointConnectionPair();
         var srcEndPoint = new SourceEndPoint(
@@ -20,7 +20,7 @@ void _runProxySourcePointTests(){
           (_) => new Future((){}),
           2,
           connectionPair.a);
-        srcEndPoint.on(Shutdown, (Emission<Shutdown> event) => caughtEvent = event);
+        srcEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
         srcEndPoint.shutdown();
       });
     });
@@ -58,14 +58,14 @@ void _runProxySourcePointTests(){
     });
 
     test('shuts down when the incoming stream is closed', (){
-      Emission<Shutdown> caughtEvent;
+      Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
       var srcEndPoint = new SourceEndPoint(
         (_) => new Source(),
         (_){},
         2,
         connectionPair.a);
-      srcEndPoint.on(Shutdown, (Emission<Shutdown> event) => caughtEvent = event);
+      srcEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       connectionPair.b.close();
       expectAsyncWithReadyCheckAndTimeout(
         () => caughtEvent != null,

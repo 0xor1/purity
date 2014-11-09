@@ -26,7 +26,7 @@ void _runConsumerTests(){
       var src = new _TestSource();
       var con = new _TestConsumer(src);
       _TestEvent event;
-      con.listen(src, _TestEvent, (Emission<_TestEvent> e){ event = e.data; });
+      con.listen(src, _TestEvent, (Event<_TestEvent> e){ event = e.data; });
       con.dispose();
       src.emit( new _TestEvent());
       Timer.run(expectAsync(() => expect(event, equals(null))));

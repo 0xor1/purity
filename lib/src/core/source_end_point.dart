@@ -61,9 +61,9 @@ class SourceEndPoint extends _EndPoint{
     if(v is Source){
       if(!_srcs.containsKey(v._purityId)){
         _srcs[v._purityId] = v;
-        listen(v, All, (Emission<Transmittable> e){
+        listen(v, All, (Event<Transmittable> e){
           var srcEvent = new _SourceEvent()
-          ..proxy = e.emitter
+          ..proxy = new _Proxy(v._purityId)
           ..data = e.data;
           if(_garbageCollectionInProgress){
             _messageQueue.add(srcEvent);
@@ -84,7 +84,7 @@ class SourceEndPoint extends _EndPoint{
     }else if(tran is _ProxyInvocation){
       _srcs[tran.src._purityId]._invoke(tran);
     }else{
-      throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
+      throw new UnsupportedMessageTypeError(tran.runtimeType);
     }
   }
 

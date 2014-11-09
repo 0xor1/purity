@@ -4,10 +4,6 @@
 
 library purity.local;
 
-@MirrorsUsed(targets: const[
-  IProxyEndPointCreated,
-  ], override: '*')
-import 'dart:mirrors';
 import 'dart:async';
 import 'core.dart' as core;
 export 'core.dart' show initConsumerSettings, clearConsumerSettings;

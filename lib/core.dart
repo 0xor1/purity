@@ -6,13 +6,6 @@
 /// in the Purity pattern.
 library purity.core;
 
-@MirrorsUsed(targets: const[
-  IEndPointMessage,
-  _IProxyInvocation,
-  _ISourceEvent,
-  _IGarbageCollectionReport,
-  _ISourceReady,
-  ], override: '*')
 import 'dart:mirrors';
 import 'dart:async';
 import 'package:bson/bson.dart' show ObjectId;

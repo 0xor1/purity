@@ -35,14 +35,14 @@ class Source extends _Base{
     if(_this == null){
       _this = reflect(this);
     }
-    if(_restrictedMethods.contains(inv.method) || MirrorSystem.getName(inv.method).startsWith('_')){
+    if(_restrictedMethods.contains(inv.method)){
       throw new RestrictedMethodError(inv.method);
     }else{
       _this.invoke(inv.method, inv.posArgs, inv.namArgs);
     }
   }
 
-  Future<Emission<Transmittable>> emit(Transmittable data){
+  Future<Event<Transmittable>> emit(Transmittable data){
     data.lock();
     return super.emit(data);
   }

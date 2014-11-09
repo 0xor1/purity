@@ -4,7 +4,5 @@
 
 part of purity.core;
 
-/**
- * Emmited when an [_EndPoint] is shutdown.
- */
+/// Emmited when an [_EndPoint] is shutdown.
 class Shutdown extends Transmittable{}
