@@ -11,8 +11,12 @@ part of purity.core;
  * A [Source] should communicate internal state changes with other entities
  * solely by emitting objects.
  */
-class Source extends _Base{
+@proxy
+class Source extends Object with Emitter, Receiver{
 
+  final ObjectId _purityId;
+  int get hashCode => _purityId.hashCode;
+  bool operator ==(other) => other is Source && _purityId == other._purityId;
   static final Set<Symbol> _restrictedMethods = new Set<Symbol>()
   ..addAll([
     #emit,
@@ -29,7 +33,7 @@ class Source extends _Base{
 
   InstanceMirror _this;
 
-  Source():super(new ObjectId());
+  Source(): this._purityId = new ObjectId(), _isProxy = true;
 
   void _invoke(_ProxyInvocation inv){
     if(_this == null){
@@ -45,5 +49,30 @@ class Source extends _Base{
   Future<Event<Transmittable>> emit(Transmittable data){
     data.lock();
     return super.emit(data);
+  }
+
+  ///proxy members
+  final bool _isProxy;
+  int _usageCount = 0;
+  SendTran _sendTran;
+
+  Source._proxy(this._purityId): _isProxy = true;
+
+  void noSuchMethod(Invocation inv){
+    if(this._isProxy){
+      if(inv.isMethod){
+        var invTran = new _ProxyInvocation()
+        ..method = inv.memberName
+        ..posArgs = inv.positionalArguments
+        ..namArgs = inv.namedArguments
+        ..src = this;
+        _sendTran(invTran);
+      }else{
+        var name = MirrorSystem.getName(inv.memberName);
+        throw new UnsupportedProxyInvocationError(this, name);
+      }
+    }else{
+      return super.noSuchMethod(inv);
+    }
   }
 }

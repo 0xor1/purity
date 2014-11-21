@@ -63,16 +63,16 @@ class SourceEndPoint extends _EndPoint{
         _srcs[v._purityId] = v;
         listen(v, All, (Event<Transmittable> e){
           var srcEvent = new _SourceEvent()
-          ..proxy = new _Proxy(v._purityId)
+          ..proxy = new Source._proxy(v._purityId)
           ..data = e.data;
           if(_garbageCollectionInProgress){
             _messageQueue.add(srcEvent);
           }else{
-            _sendTran(srcEvent);
+            _sendTransmittable(srcEvent);
           }
         });
       }
-      return new _Proxy(v._purityId);
+      return new Source._proxy(v._purityId);
     }
     return v;
   }
@@ -88,7 +88,7 @@ class SourceEndPoint extends _EndPoint{
     }
   }
 
-  void _sendTran(Transmittable tran){
+  void _sendTransmittable(Transmittable tran){
     _connection.send(tran.toTranString(_preprocessTran));
   }
 
@@ -102,17 +102,17 @@ class SourceEndPoint extends _EndPoint{
     }
     _garbageCollectionTimer = new Timer(new Duration(seconds: _garbageCollectionFrequency), (){
       _garbageCollectionInProgress = true;
-      _sendTran(new _GarbageCollectionStart());
+      _sendTransmittable(new _GarbageCollectionStart());
     });
   }
 
-  void _runGarbageCollectionSequence(Set<_Proxy> proxies){
+  void _runGarbageCollectionSequence(Set<Source> proxies){
     proxies.forEach((proxy){
       var src = _srcs.remove(proxy._purityId);
       ignoreEmitter(src);
     });
     for(var i = 0; i < _messageQueue.length; i++){
-      _sendTran(_messageQueue[i]);
+      _sendTransmittable(_messageQueue[i]);
     }
     _messageQueue.clear();
     _setGarbageCollectionTimer();
@@ -120,8 +120,8 @@ class SourceEndPoint extends _EndPoint{
 
   void _processSeed(seed){
     _seed = seed;
-    _sendTran(
-    new _SourceReady()
-    ..seed = _seed);
+    _sendTransmittable(
+      new _SourceReady()
+      ..seed = _seed);
   }
 }

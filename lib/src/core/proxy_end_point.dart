@@ -10,7 +10,7 @@ part of purity.core;
 class ProxyEndPoint extends _EndPoint{
   final InitConsumer _initConsumption;
   final Action _onConnectionClose;
-  final Map<ObjectId, _Proxy> _proxies = new Map<ObjectId, _Proxy>();
+  final Map<ObjectId, Source> _proxies = new Map<ObjectId, Source>();
   bool _proxyEventInProgress = false;
 
   ProxyEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
@@ -39,8 +39,8 @@ class ProxyEndPoint extends _EndPoint{
   }
 
   dynamic _postprocessTran(dynamic v){
-    if(v is _Proxy){
-      v.sendTran = _sendTran;
+    if(v is Source){
+      v._sendTran = _sendTransmittable;
       if(!_proxies.containsKey(v._purityId)){
         _proxies[v._purityId] = v;
       }else{
@@ -50,7 +50,7 @@ class ProxyEndPoint extends _EndPoint{
     return v;
   }
 
-  void _sendTran(Transmittable tran){
+  void _sendTransmittable(Transmittable tran){
     _connection.send(tran.toTranString());
   }
 
@@ -59,7 +59,7 @@ class ProxyEndPoint extends _EndPoint{
       new Future.delayed(new Duration(), _runGarbageCollectionSequence);
       return;
     }else{
-      var proxiesCollected = new Set<_Proxy>();
+      var proxiesCollected = new Set<Source>();
       _proxies.forEach((purityId, proxy){
         if(proxy._usageCount == 0){
           proxiesCollected.add(proxy);
@@ -68,7 +68,7 @@ class ProxyEndPoint extends _EndPoint{
       proxiesCollected.forEach((proxy){
         _proxies.remove(proxy._purityId);
       });
-      _sendTran(new _GarbageCollectionReport()..proxies = proxiesCollected);
+      _sendTransmittable(new _GarbageCollectionReport()..proxies = proxiesCollected);
     }
   }
 }

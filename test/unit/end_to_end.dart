@@ -386,8 +386,7 @@ void _setUp(){
         currentproxyEndPoint = proxyEndPoint;
         currentTestConsumer = new TestConsumer(src);
       },
-      (){}
-    );
+      (){});
 
     currentHost.createEndPointPair();
     },

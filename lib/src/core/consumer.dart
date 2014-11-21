@@ -12,25 +12,19 @@ part of purity.core;
  * not emit its own [Event]s.
  */
 class Consumer extends Object with Receiver{
-  _Base _src;
+  Source _src;
   /// The [Source] being consumed.
-  dynamic get source => _src;
+  Source get source => _src;
 
-  /**
-   * Constructs a [Consumer] instance with the only [Source] it will consume for its lifetime.
-   */
+  /// Constructs a [Consumer] instance with the only [Source] it will consume for its lifetime.
   Consumer(this._src){
-    if(_src is _Proxy){
-      (_src as _Proxy)._usageCount++;
-    }
+    _src._usageCount++;
   }
 
   /// Disposes the [Consumer] and frees the underlying [Source].
   void dispose(){
     ignoreAll();
-    if(_src is _Proxy){
-      (_src as _Proxy)._usageCount--;
-    }
+    _src._usageCount--;
     _src = null;
   }
 

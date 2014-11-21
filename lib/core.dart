@@ -14,10 +14,8 @@ import 'package:transmittable/transmittable.dart';
 export 'package:emitters/emitters.dart';
 export 'package:transmittable/transmittable.dart';
 
-part 'src/core/base.dart';
 part 'src/core/source.dart';
 part 'src/core/source_end_point.dart';
-part 'src/core/proxy.dart';
 part 'src/core/proxy_end_point.dart';
 part 'src/core/consumer.dart';
 part 'src/core/end_point_connection.dart';
@@ -44,7 +42,7 @@ typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
 typedef dynamic SeedApplication(_EndPoint srcEndPoint);
 typedef dynamic CloseSource(Source seed);
-typedef void InitConsumer(_Proxy proxy, _EndPoint proxyEndPoint);
+typedef void InitConsumer(Source proxy, _EndPoint proxyEndPoint);
 
 const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
 
@@ -84,7 +82,7 @@ void clearConsumerSettings(){
 
 final Registrar _registerPurityCoreTranTypes = generateRegistrar(
     'purity.core', 'pc', [
-    new TranRegistration.codec(_Proxy, (_Proxy p) => p._purityId.toHexString(), (String s) => new _Proxy(new ObjectId.fromHexString(s))),
+    new TranRegistration.codec(Source, (Source p) => p._purityId.toHexString(), (String s) => new Source._proxy(new ObjectId.fromHexString(s))),
     new TranRegistration.subtype(_ProxyInvocation, () => new _ProxyInvocation()),
     new TranRegistration.subtype(_SourceReady, () => new _SourceReady()),
     new TranRegistration.subtype(_GarbageCollectionReport, () => new _GarbageCollectionReport()),

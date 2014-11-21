@@ -48,7 +48,7 @@ a method call to a **Source** it doesn't lock up the client side waiting for a
 direct return value from the method call.
 
 The principles of how Purity works are nicely illustrated in the simple 
-**Stopwatch** example application (links below). The "Local test with Purity"
+example applications (links below). The "Local test with Purity"
 demonstrates the host running in a web page, serving instances of the client 
 side end-points to the same page. the strings that appear in the Host_Coms window are 
 the communications that you would see in the browser network tab if it was 
@@ -57,8 +57,14 @@ design of a Purity application even enables it to be run without the Purity host
 there at all, and instead simply have the **Consumers** consume their 
 **Sources** directly.
 
+##Examples
+
 * Stopwatch
     * [Repo](http://github.com/0xor1/purity_stopwatch_example)
     * [Local test with Purity](http://0xor1.github.io/purity_stopwatch_example/)
     * [Local test without Purity](http://0xor1.github.io/purity_stopwatch_example/without_purity/)
 
+* Chat
+    * [Repo](http://github.com/0xor1/purity_chat_example)
+    * [Local test with Purity](http://0xor1.github.io/purity_chat_example/)
+    * [Local test without Purity](http://0xor1.github.io/purity_chat_example/without_purity/)

@@ -5,6 +5,6 @@
 part of purity.core;
 
 class _GarbageCollectionReport extends _Transmission{
-  Set<_Proxy> get proxies => get('proxies');
-  void set proxies (Set<_Proxy> o) => set('proxies', o);
+  Set<Source> get proxies => get('proxies');
+  void set proxies (Set<Source> o) => set('proxies', o);
 }

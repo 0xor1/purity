@@ -5,8 +5,8 @@
 part of purity.core;
 
 class _ProxyInvocation extends _Transmission{
-  _Base get src => get('src');
-  void set src (_Base o) => set('src', o);
+  Source get src => get('src');
+  void set src (Source o) => set('src', o);
   Symbol get method => get('method');
   void set method (Symbol o) => set('method', o);
   List<dynamic> get posArgs => get('posArgs');

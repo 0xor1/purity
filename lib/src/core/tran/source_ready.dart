@@ -5,6 +5,6 @@
 part of purity.core;
 
 class _SourceReady extends _Transmission{
-  _Base get seed => get('seed');
-  void set seed (_Base o) => set('seed', o);
+  Source get seed => get('seed');
+  void set seed (Source o) => set('seed', o);
 }
