@@ -40,8 +40,8 @@ class ProxyEndPoint extends _EndPoint{
 
   dynamic _postprocessTran(dynamic v){
     if(v is Source){
-      v._sendTran = _sendTransmittable;
       if(!_proxies.containsKey(v._purityId)){
+        v._sendTran = _sendTransmittable;
         _proxies[v._purityId] = v;
       }else{
         return _proxies[v._purityId];
