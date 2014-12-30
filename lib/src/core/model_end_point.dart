@@ -6,35 +6,35 @@ part of purity.core;
 
 /**
  * An up-stream [_EndPoint] to route proxy method invocations to their underlying
- * [Source] and pass [Emission]s from all relevant [Source]s down to the connected [ProxyEndPoint].
+ * [Model] and pass [Emission]s from all relevant [Model]s down to the connected [ViewEndPoint].
  */
-class SourceEndPoint extends _EndPoint{
+class ModelEndPoint extends _EndPoint{
 
-  Source _seed;
+  Model _seed;
   final SeedApplication _seedApplication;
   final CloseSource _closeSrc;
   final List<Transmittable> _messageQueue = new List<Transmittable>();
-  final Map<ObjectId, Source> _srcs = new Map<ObjectId, Source>();
+  final Map<ObjectId, Model> _srcs = new Map<ObjectId, Model>();
   final int _garbageCollectionFrequency;
   bool _garbageCollectionInProgress = false;
   Timer _garbageCollectionTimer;
 
   /**
-   * Constructs a new [SourceEndPoint] instance with:
+   * Constructs a new [ModelEndPoint] instance with:
    *
    * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
    * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
-   * * [connection] as the bi-directional connection to the paired down-stream [ProxyEndPoint].
+   * * [connection] as the bi-directional connection to the paired down-stream [ViewEndPoint].
    *
    */
-  SourceEndPoint(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
+  ModelEndPoint(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
   super(connection){
     _setGarbageCollectionTimer();
     var seed = _seedApplication(this);
-    if(seed is Future<Source>){
+    if(seed is Future<Model>){
       seed.then(_processSeed);
-    }else if(seed is Source){
+    }else if(seed is Model){
       _processSeed(seed);
     }else{
       throw new InvalidInitSourceReturnTypeError(seed);
@@ -58,13 +58,13 @@ class SourceEndPoint extends _EndPoint{
   }
 
   dynamic _preprocessTran(dynamic v){
-    if(v is Source){
+    if(v is Model){
       if(!_srcs.containsKey(v._purityId)){
         _srcs[v._purityId] = v;
         listen(v, All, (Event<Transmittable> e){
-          var srcEvent = new _SourceEvent()
-          ..proxy = new Source._proxy(v._purityId)
-          ..data = e.data;
+          var srcEvent = new _ModelEvent()
+          ..model = v
+          ..eventData = e.data;
           if(_garbageCollectionInProgress){
             _messageQueue.add(srcEvent);
           }else{
@@ -72,7 +72,6 @@ class SourceEndPoint extends _EndPoint{
           }
         });
       }
-      return new Source._proxy(v._purityId);
     }
     return v;
   }
@@ -80,7 +79,7 @@ class SourceEndPoint extends _EndPoint{
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str);
     if(tran is _GarbageCollectionReport){
-      _runGarbageCollectionSequence(tran.proxies);
+      _runGarbageCollectionSequence(tran.models);
     }else if(tran is _ProxyInvocation){
       _srcs[tran.src._purityId]._invoke(tran);
     }else{
@@ -106,7 +105,7 @@ class SourceEndPoint extends _EndPoint{
     });
   }
 
-  void _runGarbageCollectionSequence(Set<Source> proxies){
+  void _runGarbageCollectionSequence(Set<Model> proxies){
     proxies.forEach((proxy){
       var src = _srcs.remove(proxy._purityId);
       ignoreEmitter(src);
@@ -121,7 +120,7 @@ class SourceEndPoint extends _EndPoint{
   void _processSeed(seed){
     _seed = seed;
     _sendTransmittable(
-      new _SourceReady()
+      new _AppReady()
       ..seed = _seed);
   }
 }

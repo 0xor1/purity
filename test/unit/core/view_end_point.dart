@@ -4,30 +4,30 @@
 
 part of purity.core.test;
 
-void _runProxyEndPointTests(){
+void _runViewEndPointTests(){
 
-  group('proxy_end_point:', (){
+  group('view_end_point:', (){
 
     test('emits Event<Shutdown> on shutdown', (){
       Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
-      var proxyEndPoint = new ProxyEndPoint(
+      var viewEndPoint = new ViewEndPoint(
         (_, __){},
         (){},
         connectionPair.a);
-      proxyEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
-      proxyEndPoint.shutdown();
+      viewEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
+      viewEndPoint.shutdown();
       Timer.run(expectAsync(() => expect(caughtEvent.data is Shutdown, equals(true))));
     });
 
     test('shuts down when the incoming stream is closed', (){
       Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
-      var proxyEndPoint = new ProxyEndPoint(
+      var viewEndPoint = new ViewEndPoint(
         (_, __){},
         (){},
         connectionPair.a);
-      proxyEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
+      viewEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       connectionPair.b.close();
       expectAsyncWithReadyCheckAndTimeout(
         () => caughtEvent != null,
@@ -37,12 +37,12 @@ void _runProxyEndPointTests(){
     test('closes the outgoing stream on shutdown', (){
       var outgoingStreamClosed = false;
       var connectionPair = new local.EndPointConnectionPair();
-      var proxyEndPoint = new ProxyEndPoint(
+      var viewEndPoint = new ViewEndPoint(
         (_, __){},
         (){},
         connectionPair.a);
       connectionPair.b.incoming.listen((event){}, onDone: (){ outgoingStreamClosed = true; });
-      proxyEndPoint.shutdown();
+      viewEndPoint.shutdown();
       expectAsyncWithReadyCheckAndTimeout(
         () => outgoingStreamClosed,
         () => expect(outgoingStreamClosed, equals(true)));
@@ -55,7 +55,7 @@ void _runProxyEndPointTests(){
         () => expect(error is UnsupportedMessageTypeError, equals(true)));
       runZoned((){
         var connectionPair = new local.EndPointConnectionPair();
-        var proxyEndPoint = new ProxyEndPoint(
+        var viewEndPoint = new ViewEndPoint(
           (_, __){},
           (){},
           connectionPair.a);

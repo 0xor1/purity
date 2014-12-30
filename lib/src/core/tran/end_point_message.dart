@@ -4,12 +4,12 @@
 
 part of purity.core;
 
-/// Emitted by [SourceEndPoint]s if the [Host] creating the [SourceEndPoint]s was constructed with verbose = true.
-class EndPointMessage extends Transmittable{
+/// Emitted by [ModelEndPoint]s if the [Host] creating the [ModelEndPoint]s was constructed with verbose = true.
+class EndPointMessage extends EventData{
   String get endPointName => get('endPointName');
-  void set endPointName (String o) => set('endPointName', o);
-  bool get isProxyToSource => get('isProxyToSource');
-  void set isProxyToSource (bool o) => set('isProxyToSource', o);
+  void set endPointName (String o){set('endPointName', o);}
+  bool get isClientToServer => get('isClientToServer');
+  void set isClientToServer (bool o){set('isClientToServer', o);}
   String get message => get('message');
-  void set message (String o) => set('message', o);
+  void set message (String o){set('message', o);}
 }

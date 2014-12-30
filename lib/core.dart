@@ -3,9 +3,10 @@
  */
 
 /// Contains the core Purity types to implement a single page web app
-/// in the Purity pattern.
+/// using the Purity pattern.
 library purity.core;
 
+@MirrorsUsed(targets: const[], override: '*')
 import 'dart:mirrors';
 import 'dart:async';
 import 'package:bson/bson.dart' show ObjectId;
@@ -14,35 +15,39 @@ import 'package:transmittable/transmittable.dart';
 export 'package:emitters/emitters.dart';
 export 'package:transmittable/transmittable.dart';
 
-part 'src/core/source.dart';
-part 'src/core/source_end_point.dart';
-part 'src/core/proxy_end_point.dart';
-part 'src/core/consumer.dart';
+part 'src/core/model.dart';
+part 'src/core/model_end_point.dart';
+part 'src/core/view_end_point.dart';
+part 'src/core/view.dart';
 part 'src/core/end_point_connection.dart';
 part 'src/core/end_point.dart';
+part 'src/core/event_data.dart';
 part 'src/core/host.dart';
+part 'src/core/annotation.dart';
 
-part 'src/core/tran/source_event.dart';
+part 'src/core/tran/model_event.dart';
 part 'src/core/tran/shutdown.dart';
 part 'src/core/tran/end_point_message.dart';
 part 'src/core/tran/proxy_invocation.dart';
 part 'src/core/tran/transmission.dart';
-part 'src/core/tran/source_ready.dart';
+part 'src/core/tran/app_ready.dart';
 part 'src/core/tran/garbage_collection_report.dart';
 part 'src/core/tran/garbage_collection_start.dart';
 
-part 'src/core/error/unsupported_proxy_invocation_error.dart';
 part 'src/core/error/invalid_init_source_return_type_error.dart';
 part 'src/core/error/unsupported_message_type_error.dart';
 part 'src/core/error/consumer_settings_already_initialised_error.dart';
-part 'src/core/error/restricted_method_error.dart';
+part 'src/core/error/event_data_locked_error.dart';
+part 'src/core/error/duplicated_purity_model_identifier_error.dart';
+part 'src/core/error/duplicated_purity_method_identifier_error.dart';
 
 typedef void Action();
 typedef void SendString(String str);
 typedef void SendTran(Transmittable tran);
 typedef dynamic SeedApplication(_EndPoint srcEndPoint);
-typedef dynamic CloseSource(Source seed);
-typedef void InitConsumer(Source proxy, _EndPoint proxyEndPoint);
+typedef dynamic CloseSource(Model seed);
+typedef void InitConsumer(Model proxy, _EndPoint proxyEndPoint);
+typedef void Adapter(List<dynamic> posArgs, Map<String, dynamic> namArgs);
 
 const String PURITY_WEB_SOCKET_ROUTE_PATH = '/purity_socket';
 
@@ -55,8 +60,8 @@ InitConsumer get initConsumer => _initConsumer;
 Action get hanleConnectionClose => _handleConnectionClose;
 
 /**
- * Stores the [initConsumer] and [handleConnectionClose] to be called when the [SourceEndPoint] is ready,
- * and when the [EndPointConnection] to the [SourceEndPoint] is closed, respectively.
+ * Stores the [initConsumer] and [handleConnectionClose] to be called when the [ModelEndPoint] is ready,
+ * and when the [EndPointConnection] to the [ModelEndPoint] is closed, respectively.
  *
  * Throws [ConsumerSettingsAlreadyInitialisedError] if called more than once.
  */
@@ -81,13 +86,12 @@ void clearConsumerSettings(){
 }
 
 final Registrar _registerPurityCoreTranTypes = generateRegistrar(
-    'purity.core', 'pc', [
-    new TranRegistration.codec(Source, (Source p) => p._purityId.toHexString(), (String s) => new Source._proxy(new ObjectId.fromHexString(s))),
+    'purity/purity.core', 'p', [
     new TranRegistration.subtype(_ProxyInvocation, () => new _ProxyInvocation()),
-    new TranRegistration.subtype(_SourceReady, () => new _SourceReady()),
+    new TranRegistration.subtype(_AppReady, () => new _AppReady()),
     new TranRegistration.subtype(_GarbageCollectionReport, () => new _GarbageCollectionReport()),
     new TranRegistration.subtype(_GarbageCollectionStart, () => new _GarbageCollectionStart()),
     new TranRegistration.subtype(Shutdown, () => new Shutdown()),
     new TranRegistration.subtype(EndPointMessage, () => new EndPointMessage()),
-    new TranRegistration.subtype(_SourceEvent, () => new _SourceEvent())
+    new TranRegistration.subtype(_ModelEvent, () => new _ModelEvent())
   ]);

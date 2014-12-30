@@ -4,7 +4,7 @@
 
 part of purity.core;
 
-/// Thrown when an [SourceEndPoint] or [ProxyEndPoint] doesn't know how to handle a particular type of message.
+/// Thrown when an [ModelEndPoint] or [ViewEndPoint] doesn't know how to handle a particular type of message.
 class UnsupportedMessageTypeError extends Error{
   String get message => 'Purity does not support $type of messages.';
   final Type type;

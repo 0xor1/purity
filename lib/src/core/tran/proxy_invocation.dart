@@ -5,12 +5,12 @@
 part of purity.core;
 
 class _ProxyInvocation extends _Transmission{
-  Source get src => get('src');
-  void set src (Source o) => set('src', o);
-  Symbol get method => get('method');
-  void set method (Symbol o) => set('method', o);
+  Model get src => get('src');
+  void set src (Model o){set('src', o);}
+  String get method => get('method');
+  void set method (String o){set('method', o);}
   List<dynamic> get posArgs => get('posArgs');
-  void set posArgs (List<dynamic> o) => set('posArgs', o);
-  Map<Symbol, dynamic> get namArgs => get('namArgs');
-  void set namArgs (Map<Symbol, dynamic> o) => set('namArgs', o);
+  void set posArgs (List<dynamic> o){set('posArgs', o);}
+  Map<String, dynamic> get namArgs => get('namArgs');
+  void set namArgs (Map<String, dynamic> o){set('namArgs', o);}
 }

@@ -4,9 +4,9 @@
 
 part of purity.core.test;
 
-void _runProxySourcePointTests(){
+void _runModelEndPointTests(){
 
-  group('source_end_point:', (){
+  group('model_end_point:', (){
 
     test('emits Event<Shutdown> on shutdown', (){
       Event<Shutdown> caughtEvent;
@@ -15,8 +15,8 @@ void _runProxySourcePointTests(){
         () => expect(caughtEvent is Event<Shutdown>, equals(true)));
       runZoned((){
         var connectionPair = new local.EndPointConnectionPair();
-        var srcEndPoint = new SourceEndPoint(
-          (_) => new Future(() => new Source()),
+        var srcEndPoint = new ModelEndPoint(
+          (_) => new Future(() => new _TestModel()),
           (_) => new Future((){}),
           2,
           connectionPair.a);
@@ -26,7 +26,7 @@ void _runProxySourcePointTests(){
     });
 
     test('sends a _SourceReady when the InitSource method returns a source', (){
-      Source initSeed;
+      Model initSeed;
       dynamic reTranSeed;
       expectAsyncWithReadyCheckAndTimeout(
         () => reTranSeed != null,
@@ -34,10 +34,10 @@ void _runProxySourcePointTests(){
       runZoned((){
         var connectionPair = new local.EndPointConnectionPair();
         connectionPair.b.incoming.listen((str){
-          reTranSeed = new Transmittable.fromTranString(str).seed;
+          reTranSeed = new Transmittable.fromTranString(str).get('seed');
         });
-        var srcEndPoint = new SourceEndPoint(
-          (_) => initSeed = new Source(),
+        var srcEndPoint = new ModelEndPoint(
+          (_) => initSeed = new _TestModel(),
           (_) => new Future((){}),
           2,
           connectionPair.a);
@@ -47,7 +47,7 @@ void _runProxySourcePointTests(){
     test('throws a InvalidInitSourceReturnTypeError if initSource doesn\'t return a Source or Fututre<Source>', (){
       var connectionPair = new local.EndPointConnectionPair();
       try{
-        var srcEndPoint = new SourceEndPoint(
+        var srcEndPoint = new ModelEndPoint(
           (_) => 1, //not a Source or Future<Source>
           (_) => new Future((){}),
           2,
@@ -60,8 +60,8 @@ void _runProxySourcePointTests(){
     test('shuts down when the incoming stream is closed', (){
       Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
-      var srcEndPoint = new SourceEndPoint(
-        (_) => new Source(),
+      var srcEndPoint = new ModelEndPoint(
+        (_) => new _TestModel(),
         (_){},
         2,
         connectionPair.a);
@@ -75,8 +75,8 @@ void _runProxySourcePointTests(){
     test('closes the outgoing stream on shutdown', (){
       var outgoingStreamClosed = false;
       var connectionPair = new local.EndPointConnectionPair();
-      var srcEndPoint = new SourceEndPoint(
-        (_) => new Future(() => new Source()),
+      var srcEndPoint = new ModelEndPoint(
+        (_) => new Future(() => new _TestModel()),
         (_) => new Future((){}),
         2,
         connectionPair.a);
@@ -94,8 +94,8 @@ void _runProxySourcePointTests(){
         () => expect(error is UnsupportedMessageTypeError, equals(true)));
       runZoned((){
         var connectionPair = new local.EndPointConnectionPair();
-        var srcEndPoint = new SourceEndPoint(
-          (_) => new Future(() => new Source()),
+        var srcEndPoint = new ModelEndPoint(
+          (_) => new Future(() => new _TestModel()),
           (_) => new Future((){}),
           2,
           connectionPair.a);

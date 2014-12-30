@@ -5,14 +5,14 @@
 part of purity.core;
 
 /**
- * Hosts multiple [SourceEndPoint]s.
+ * Hosts multiple [ModelEndPoint]s.
  */
-abstract class Host extends Source{
+abstract class Host extends Model{
 
   final SeedApplication _seedApplication;
   final CloseSource _closeSrc;
   final int _garbageCollectionFrequency;
-  final Set<SourceEndPoint> srcEndPoints = new Set<SourceEndPoint>();
+  final Set<ModelEndPoint> srcEndPoints = new Set<ModelEndPoint>();
   final bool _verbose;
 
   /**
@@ -21,15 +21,15 @@ abstract class Host extends Source{
    * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
    * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
-   * * [_verbose] as an optional argument to emit events for each message sent and received from all hosted [SourceEndPoint]s.
+   * * [_verbose] as an optional argument to emit events for each message sent and received from all hosted [ModelEndPoint]s.
    *
    */
   Host(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
 
   /**
-   * Creates a [SourceEndPoint] with the supplied [name] and [connection]
+   * Creates a [ModelEndPoint] with the supplied [name] and [connection]
    */
-  SourceEndPoint createSourceEndPoint(String name, EndPointConnection connection){
+  ModelEndPoint createSourceEndPoint(String name, EndPointConnection connection){
     SendString verboseSend = connection.send;
     SendString rootSend = connection.send;
     if(_verbose){
@@ -46,7 +46,7 @@ abstract class Host extends Source{
       };
       connection = new EndPointConnection(connection.incoming, verboseSend, connection.close);
     }
-    var srcEndPoint = new SourceEndPoint(_seedApplication, _closeSrc, _garbageCollectionFrequency, connection);
+    var srcEndPoint = new ModelEndPoint(_seedApplication, _closeSrc, _garbageCollectionFrequency, connection);
     listen(srcEndPoint, Shutdown, (event){
       _emitEndPointMessageEvent(name, false, 'Source end-point shutdown');
       srcEndPoints.remove(event.emitter);
@@ -56,7 +56,7 @@ abstract class Host extends Source{
     return srcEndPoint;
   }
 
-  /// shuts down all hosted [SourceEndPoint]s.
+  /// shuts down all hosted [ModelEndPoint]s.
   void shutdown(){
     srcEndPoints.forEach((srcEndPoint){
       srcEndPoint.shutdown();
@@ -67,7 +67,7 @@ abstract class Host extends Source{
     emit(
       new EndPointMessage()
       ..endPointName = name
-      ..isProxyToSource = isProxyToSource
+      ..isClientToServer = isProxyToSource
       ..message = str);
   }
 }

@@ -1,7 +1,7 @@
 /**
  * Author:  Daniel Robinson http://github.com/0xor1
  */
-
+@PurityLib('purity/purity.end_to_end.test', 'pet')
 library purity.end_to_end.test;
 
 import 'package:unittest/unittest.dart';
@@ -17,12 +17,10 @@ void runEndToEndTests(){
 
   group('end-to-end:', (){
 
-    _registerPurityTestTranTypes();
-
     setUp(_setUp);
     tearDown(_tearDown);
 
-    test('a consumer can make calls to its source by proxy and receive events back by proxy', (){
+    test('a view can make calls to its model by proxy and receive events back by proxy', (){
       var pi = 3.142;
       expectAsyncWithReadyCheckAndTimeout(
         () => lastEventDataCaughtByConsumer != null,
@@ -30,177 +28,6 @@ void runEndToEndTests(){
       executeWhenReadyOrTimeout(
         () => currentTestConsumer != null,
         () => currentTestConsumer.doStuff(pi));
-    });
-
-    test('Emiiter and Receiver contain the expected methods', (){
-      //this test is to check we are still blocking the expected methods, it's not full proof but it's better than nothing.
-      var expectedMethods = [
-        #emit,
-        #on,
-        #once,
-        #off,
-        #listen,
-        #listenOnce,
-        #ignoreTypeFromEmitter,
-        #ignoreType,
-        #ignoreEmitter,
-        #ignoreAll
-      ];
-
-      var eventEmitterMembers = reflectClass(Emitter).instanceMembers.keys;
-      var eventDetectorMembers = reflectClass(Receiver).instanceMembers.keys;
-
-      expectedMethods.forEach((symbol){
-        expect(eventEmitterMembers.contains(symbol) || eventDetectorMembers.contains(symbol), equals(true));
-      });
-    });
-
-    test('a Source may not have #emit invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#emit));
-    });
-
-    test('a Source may not have #on invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#on));
-    });
-
-    test('a Source may not have #once invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#once));
-    });
-
-    test('a Source may not have #off invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#off));
-    });
-
-    test('a Source may not have #listen invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#listen));
-    });
-
-    test('a Source may not have #listenOnce invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#listenOnce));
-    });
-
-    test('a Source may not have #ignoreTypeFromEmitter invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreTypeFromEmitter));
-    });
-
-    test('a Source may not have #ignoreType invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreType));
-    });
-
-    test('a Source may not have #ignoreEmitter invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreEmitter));
-    });
-
-    test('a Source may not have #ignoreAll invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        () => expect(lastErrorCaughtDuringTest is core.RestrictedMethodError, equals(true)));
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#ignoreAll, [null]));
-    });
-
-    test('a Source may not have #_invoke invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is ArgumentError, equals(true));
-        });
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#_invoke));
-    });
-
-    test('a Source may not have a private method invoked on it', (){
-      expectAsyncWithReadyCheckAndTimeout(
-        () => lastErrorCaughtDuringTest != null,
-        (){
-          expect(lastErrorCaughtDuringTest is ArgumentError, equals(true));
-        });
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        () => currentTestConsumer.callSourceMethod(#_aPrivateMethod));
-    });
-
-    test('calling a getter on a proxy results in an UnsupportedProxyInvocationError', (){
-      var error;
-      expectAsyncWithReadyCheckAndTimeout(
-        () => error != null,
-        (){
-          expect(error is core.UnsupportedProxyInvocationError, equals(true));
-        });
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        (){
-          try{
-            currentTestConsumer.callGetter();
-          }catch(e){
-            error = e;
-          }
-        });
-    });
-
-    test('calling a setter on a proxy results in an UnsupportedProxyInvocationError', (){
-      var error;
-      expectAsyncWithReadyCheckAndTimeout(
-        () => error != null,
-        (){
-          expect(error is core.UnsupportedProxyInvocationError, equals(true));
-        });
-      executeWhenReadyOrTimeout(
-        () => currentTestConsumer != null,
-        (){
-          try{
-            currentTestConsumer.callGetter();
-          }catch(e){
-            error = e;
-          }
-        });
     });
 
     test('unused sources are properly garbage collected', (){
@@ -238,17 +65,24 @@ void runEndToEndTests(){
 
 }
 
-
-class TestSource extends Source{
+TestModel _ConstTestModel () => new TestModel();
+@PurityModel('TestSource', _ConstTestModel)
+class TestModel extends Model{
   final List<Massive> _massives = new List<Massive>();
 
-  void doStuff(x){
+  @PurityMethod('doStuff')
+  void doStuff(x) => method('doStuff', _doStuff, [x]);
+
+  void _doStuff(x){
     emit(
       new TestEvent()
       ..prop = x);
   }
 
-  void createAMassiveObject() {
+  @PurityMethod('createAMassiveObject')
+  void createAMassiveObject() => method('createAMassiveObject', _createAMassiveObject);
+
+  void _createAMassiveObject() {
     var massive = new Massive();
     _massives.add(massive);
     emit(
@@ -260,7 +94,10 @@ class TestSource extends Source{
     print('private method called');
   }
 
-  void deleteAMassiveObject() {
+  @PurityMethod('deleteAMassiveObject')
+  void deleteAMassiveObject() => method('deleteAMassiveObject', _deleteAMassiveObject);
+
+  void _deleteAMassiveObject() {
     if(_massives.isNotEmpty){
       emit(
         new MassiveObjectDeleted()
@@ -269,7 +106,9 @@ class TestSource extends Source{
   }
 }
 
-class Massive extends Source{
+Massive _ConstMassive () => new Massive();
+@PurityModel('Massive', _ConstMassive)
+class Massive extends Model{
   final List<double> _memoryUser = new List<double>();
   Massive(){
     var rng = new Random();
@@ -284,31 +123,31 @@ class Massive extends Source{
   }
 }
 
-class TestConsumer extends Consumer{
+class TestView extends View{
 
-  final List<MassiveConsumer> _massives = new List<MassiveConsumer>();
+  final List<MassiveView> _massives = new List<MassiveView>();
   int massivesToCreateToEnsureNoMemoryLeaks = massivesToCreateToEnsureCrash;
 
-  TestConsumer(src):super(src){
+  TestView(src):super(src){
     _addEventHandlers();
   }
 
   _addEventHandlers(){
-    listen(source, All, (Event e){
+    listen(model, All, (Event e){
       lastEventDataCaughtByConsumer = e.data;
     });
-    listen(source, MassiveObjectCreated, (Event<MassiveObjectCreated> e){
-      _massives.add(new MassiveConsumer(e.data.massive));
+    listen(model, MassiveObjectCreated, (Event<MassiveObjectCreated> e){
+      _massives.add(new MassiveView(e.data.massive));
       Timer.run((){
-        source.deleteAMassiveObject();
+        model.deleteAMassiveObject();
       });
     });
-    listen(source, MassiveObjectDeleted, (Event<MassiveObjectDeleted> e){
-      var massive = _massives.singleWhere((massive) => e.data.massive == massive.source);
+    listen(model, MassiveObjectDeleted, (Event<MassiveObjectDeleted> e){
+      var massive = _massives.singleWhere((massive) => e.data.massive == massive.model);
       _massives.remove(massive);
       massive.dispose();
       if(massivesToCreateToEnsureNoMemoryLeaks-- > 0){
-        source.createAMassiveObject();
+        model.createAMassiveObject();
       }else{
         memoryLeakTestComplete = true;
       }
@@ -316,50 +155,51 @@ class TestConsumer extends Consumer{
   }
 
   void doStuff(x){
-    source.doStuff(x);
+    model.doStuff(x);
   }
 
   void callSourceMethod(Symbol name, [List<dynamic> posArgs]){
     posArgs = posArgs == null? []: posArgs;
-    reflect(source).invoke(name, posArgs);
+    reflect(model).invoke(name, posArgs);
   }
 
   void callGetter(){
-    return source.aGetter;
+    return model.aGetter;
   }
 
   void callSetter(){
-    source.aSetter = 1;
+    model.aSetter = 1;
   }
 
   void runMemoryLeakSequence(){
-    source.createAMassiveObject();
+    model.createAMassiveObject();
   }
 }
 
-class MassiveConsumer extends Consumer{
-  MassiveConsumer(src):super(src);
+class MassiveView extends View{
+  MassiveView(src):super(src);
 }
 
-class TestEvent extends Transmittable{
+
+TestEvent _ConstTestEvent() => new TestEvent();
+@PurityEventData('TestEvent', _ConstTestEvent)
+class TestEvent extends EventData{
   dynamic get prop => get('prop');
   void set prop (o) => set('prop', o);
 }
 
-
+MassiveObjectDeleted _ConstMassiveObjectDeleted() => new MassiveObjectDeleted();
+@PurityEventData('MassiveObjectDeleted', _ConstMassiveObjectDeleted)
 class MassiveObjectDeleted extends MassiveObjectCreatedOrDeleted{}
+
+MassiveObjectCreated _ConstMassiveObjectCreated() => new MassiveObjectCreated();
+@PurityEventData('MassiveObjectCreated', _ConstMassiveObjectCreated)
 class MassiveObjectCreated extends MassiveObjectCreatedOrDeleted{}
-class MassiveObjectCreatedOrDeleted extends Transmittable{
+
+abstract class MassiveObjectCreatedOrDeleted extends EventData{
   dynamic get massive => get('massive');
   void set massive (o) => set('massive', o);
 }
-
-final Registrar _registerPurityTestTranTypes = generateRegistrar(
-    'purity.test', 'pt', [
-    new TranRegistration.subtype(TestEvent, () => new TestEvent()),
-    new TranRegistration.subtype(MassiveObjectDeleted, () => new MassiveObjectDeleted()),
-    new TranRegistration.subtype(MassiveObjectCreated, () => new MassiveObjectCreated()),
-  ]);
 
 const int massivesToCreateToEnsureCrash = 50;
 const int massiveSize = 1000000;
@@ -367,8 +207,8 @@ bool restrictedAccessMethodCalled = false;
 bool memoryLeakTestComplete = false;
 local.Host currentHost;
 local.ProxyEndPoint currentproxyEndPoint;
-TestSource currentTestSrc;
-TestConsumer currentTestConsumer;
+TestModel currentTestSrc;
+TestView currentTestConsumer;
 dynamic srcPassedToConsumer;
 dynamic lastErrorCaughtDuringTest;
 dynamic lastEventDataCaughtByConsumer;
@@ -377,14 +217,14 @@ void _setUp(){
 
   runZoned((){
     currentHost = new local.Host(
-      (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestSource()),
+      (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestModel()),
       (src) => new Future.delayed(new Duration(), (){}),
       1);
 
     local.initConsumerSettings(
       (src, proxyEndPoint){
         currentproxyEndPoint = proxyEndPoint;
-        currentTestConsumer = new TestConsumer(src);
+        currentTestConsumer = new TestView(src);
       },
       (){});
 

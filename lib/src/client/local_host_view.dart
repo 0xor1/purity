@@ -10,11 +10,11 @@ part of purity.client;
  * This is intended to be a temporary solution until an angular component
  * can be made to replace it.
  */
-class LocalHostView extends core.Consumer{
+class LocalHostView extends core.View{
 
   static const String COMMUNICATIONS = 'purity-local-host-view-communications';
 
-  local.Host get host => source;
+  local.Host get host => model;
 
   cnp.CommandLine _cmdLn;
   cnp.CommandLineInputBinder _binder;
@@ -45,7 +45,7 @@ class LocalHostView extends core.Consumer{
     listen(host, core.EndPointMessage, (core.Event<core.EndPointMessage> event){
       var msg = event.data;
       String str;
-      if(msg.isProxyToSource){
+      if(msg.isClientToServer){
         str = 'EP#${msg.endPointName} -> Host: ${msg.message}';
       }else{
         str = 'Host -> EP#${msg.endPointName}: ${msg.message}';

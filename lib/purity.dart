@@ -4,9 +4,14 @@
 
 library purity;
 
-export 'package:transmittable/transmittable.dart';
 export 'package:emitters/emitters.dart';
 export 'core.dart'
   show
-    Source,
-    Consumer;
+    View,
+    Model,
+    EventData,
+    PurityLib,
+    PurityEventData,
+    PurityType,
+    PurityModel,
+    PurityMethod;

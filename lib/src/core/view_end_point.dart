@@ -5,15 +5,15 @@
 part of purity.core;
 
 /**
- * A down-stream [_EndPoint] to route [Event]s from [Source]s to their proxies for re-emitting to any listening [Consumer]s.
+ * A down-stream [_EndPoint] to route [Event]s from [Model]s to any listening [View]s.
  */
-class ProxyEndPoint extends _EndPoint{
+class ViewEndPoint extends _EndPoint{
   final InitConsumer _initConsumption;
   final Action _onConnectionClose;
-  final Map<ObjectId, Source> _proxies = new Map<ObjectId, Source>();
+  final Map<ObjectId, Model> _proxies = new Map<ObjectId, Model>();
   bool _proxyEventInProgress = false;
 
-  ProxyEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
+  ViewEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
     super(connection){
   }
 
@@ -25,13 +25,13 @@ class ProxyEndPoint extends _EndPoint{
   void _receiveString(String str){
     var tran = new Transmittable.fromTranString(str, _postprocessTran);
     if(tran is _Transmission){
-      if(tran is _SourceReady){
+      if(tran is _AppReady){
         _initConsumption(tran.seed, this);
       }else if(tran is _GarbageCollectionStart){
         _runGarbageCollectionSequence();
-      }else if(tran is _SourceEvent){
+      }else if(tran is _ModelEvent){
         _proxyEventInProgress = true;
-        _proxies[tran.proxy._purityId].emit(tran.data).then((_){ _proxyEventInProgress = false; });
+        _proxies[tran.model._purityId].emit(tran.eventData).then((_){ _proxyEventInProgress = false; });
       }
     }else{
       throw new UnsupportedMessageTypeError(tran.runtimeType);
@@ -39,7 +39,7 @@ class ProxyEndPoint extends _EndPoint{
   }
 
   dynamic _postprocessTran(dynamic v){
-    if(v is Source){
+    if(v is Model){
       if(!_proxies.containsKey(v._purityId)){
         v._sendTran = _sendTransmittable;
         _proxies[v._purityId] = v;
@@ -59,7 +59,7 @@ class ProxyEndPoint extends _EndPoint{
       new Future.delayed(new Duration(), _runGarbageCollectionSequence);
       return;
     }else{
-      var proxiesCollected = new Set<Source>();
+      var proxiesCollected = new Set<Model>();
       _proxies.forEach((purityId, proxy){
         if(proxy._usageCount == 0){
           proxiesCollected.add(proxy);
@@ -68,7 +68,7 @@ class ProxyEndPoint extends _EndPoint{
       proxiesCollected.forEach((proxy){
         _proxies.remove(proxy._purityId);
       });
-      _sendTransmittable(new _GarbageCollectionReport()..proxies = proxiesCollected);
+      _sendTransmittable(new _GarbageCollectionReport()..models = proxiesCollected);
     }
   }
 }

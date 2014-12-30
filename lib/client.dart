@@ -17,6 +17,6 @@ void initConsumerSettings(core.InitConsumer initCon, core.Action onConnectionClo
   var ws = new WebSocket('$protocol://${Uri.base.host}:${Uri.base.port}${core.PURITY_WEB_SOCKET_ROUTE_PATH}');
   ws.onOpen.first.then((_){
     var biConnection = new core.EndPointConnection(ws.onMessage.map((msg) => msg.data), ws.sendString, ws.close);
-    new core.ProxyEndPoint(initCon, onConnectionClose, biConnection);
+    new core.ViewEndPoint(initCon, onConnectionClose, biConnection);
   });
 }

@@ -5,4 +5,4 @@
 part of purity.core;
 
 /// Emmited when an [_EndPoint] is shutdown.
-class Shutdown extends Transmittable{}
+class Shutdown extends EventData{}
