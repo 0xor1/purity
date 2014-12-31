@@ -13,7 +13,6 @@ void _runViewEndPointTests(){
       var connectionPair = new local.EndPointConnectionPair();
       var viewEndPoint = new ViewEndPoint(
         (_, __){},
-        (){},
         connectionPair.a);
       viewEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       viewEndPoint.shutdown();
@@ -25,7 +24,6 @@ void _runViewEndPointTests(){
       var connectionPair = new local.EndPointConnectionPair();
       var viewEndPoint = new ViewEndPoint(
         (_, __){},
-        (){},
         connectionPair.a);
       viewEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       connectionPair.b.close();
@@ -39,7 +37,6 @@ void _runViewEndPointTests(){
       var connectionPair = new local.EndPointConnectionPair();
       var viewEndPoint = new ViewEndPoint(
         (_, __){},
-        (){},
         connectionPair.a);
       connectionPair.b.incoming.listen((event){}, onDone: (){ outgoingStreamClosed = true; });
       viewEndPoint.shutdown();
@@ -57,7 +54,6 @@ void _runViewEndPointTests(){
         var connectionPair = new local.EndPointConnectionPair();
         var viewEndPoint = new ViewEndPoint(
           (_, __){},
-          (){},
           connectionPair.a);
         connectionPair.b.send(new Transmittable().toTranString());
       }, onError: (e){ error = e; });

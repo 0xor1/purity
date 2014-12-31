@@ -12,11 +12,11 @@ import 'package:controls_and_panels/controls_and_panels.dart' as cnp;
 
 part 'src/client/local_server_view.dart';
 
-void initConsumerSettings(core.InitConsumer initCon, core.Action onConnectionClose, String protocol){
+void initConsumerSettings(core.InitConsumer initCon, [String protocol = "ws", core.Action onConnectionClose = null]){
   core.initConsumerSettings(initCon, onConnectionClose);
   var ws = new WebSocket('$protocol://${Uri.base.host}:${Uri.base.port}${core.PURITY_WEB_SOCKET_ROUTE_PATH}');
   ws.onOpen.first.then((_){
     var biConnection = new core.EndPointConnection(ws.onMessage.map((msg) => msg.data), ws.sendString, ws.close);
-    new core.ViewEndPoint(initCon, onConnectionClose, biConnection);
+    new core.ViewEndPoint(initCon, biConnection, onConnectionClose);
   });
 }

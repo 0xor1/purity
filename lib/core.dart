@@ -65,7 +65,7 @@ Action get hanleConnectionClose => _handleConnectionClose;
  *
  * Throws [ConsumerSettingsAlreadyInitialisedError] if called more than once.
  */
-void initConsumerSettings(InitConsumer initConsumer, Action handleConnectionClose){
+void initConsumerSettings(InitConsumer initConsumer, [Action handleConnectionClose = null]){
   if(_consumerSettingsInitialised){
     throw new ConsumerSettingsAlreadyInitialisedError();
   }

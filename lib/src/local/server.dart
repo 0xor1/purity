@@ -16,7 +16,7 @@ class Server extends core.ServerCore {
     }
     var biConnectionPair = new EndPointConnectionPair();
     var name = '${_endPointIdSrc++}';
-    var proxyEndPoint = new ViewEndPoint(name, core.initConsumer, core.hanleConnectionClose, biConnectionPair.a);
+    var proxyEndPoint = new ViewEndPoint(name, core.initConsumer, biConnectionPair.a, core.hanleConnectionClose);
     var srcEndPoint = createSourceEndPoint(name, biConnectionPair.b);
     emit(new ProxyEndPointCreated()..proxyEndPoint = proxyEndPoint);
   }

@@ -13,12 +13,14 @@ class ViewEndPoint extends _EndPoint{
   final Map<ObjectId, Model> _proxies = new Map<ObjectId, Model>();
   bool _proxyEventInProgress = false;
 
-  ViewEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
+  ViewEndPoint(this._initConsumption, EndPointConnection connection, [this._onConnectionClose = null]):
     super(connection){
   }
 
   void shutdown(){
-    _onConnectionClose();
+    if(_onConnectionClose != null){
+      _onConnectionClose();
+    }
     super.shutdown();
   }
 

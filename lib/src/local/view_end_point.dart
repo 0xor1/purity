@@ -6,6 +6,6 @@ part of purity.local;
 
 class ViewEndPoint extends core.ViewEndPoint{
   final String name;
-  ViewEndPoint(this.name, core.InitConsumer initConsumption, core.Action onCloseConnection, core.EndPointConnection connection):
-    super(initConsumption, onCloseConnection, connection);
+  ViewEndPoint(this.name, core.InitConsumer initConsumption, core.EndPointConnection connection, [core.Action onCloseConnection = null]):
+    super(initConsumption, connection, onCloseConnection);
 }
