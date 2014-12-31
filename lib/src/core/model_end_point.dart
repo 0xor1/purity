@@ -15,7 +15,7 @@ class ModelEndPoint extends _EndPoint{
   final CloseSource _closeSrc;
   final List<Transmittable> _messageQueue = new List<Transmittable>();
   final Map<ObjectId, Model> _srcs = new Map<ObjectId, Model>();
-  final int _garbageCollectionFrequency;
+  final int _gcFreq;
   bool _garbageCollectionInProgress = false;
   Timer _garbageCollectionTimer;
 
@@ -24,11 +24,11 @@ class ModelEndPoint extends _EndPoint{
    *
    * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
-   * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
+   * * [_gcFreq] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
    * * [connection] as the bi-directional connection to the paired down-stream [ViewEndPoint].
    *
    */
-  ModelEndPoint(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, EndPointConnection connection):
+  ModelEndPoint(this._seedApplication, EndPointConnection connection, [this._closeSrc = null, this._gcFreq = 0]):
   super(connection){
     _setGarbageCollectionTimer();
     var seed = _seedApplication(this);
@@ -46,7 +46,10 @@ class ModelEndPoint extends _EndPoint{
     if(_garbageCollectionTimer != null){
       _garbageCollectionTimer.cancel();
     }
-    var closeSrcVal = _closeSrc(_seed);
+    var closeSrcVal;
+    if(_closeSrc != null){
+      closeSrcVal = _closeSrc(_seed);
+    }
     _seed = null;
     if(closeSrcVal is Future){
       closeSrcVal.then((_){
@@ -96,10 +99,10 @@ class ModelEndPoint extends _EndPoint{
       _garbageCollectionTimer.cancel();
     }
     _garbageCollectionInProgress = false;
-    if(_garbageCollectionFrequency == 0 || _garbageCollectionFrequency == null){
+    if(_gcFreq == 0 || _gcFreq == null){
       return;
     }
-    _garbageCollectionTimer = new Timer(new Duration(seconds: _garbageCollectionFrequency), (){
+    _garbageCollectionTimer = new Timer(new Duration(seconds: _gcFreq), (){
       _garbageCollectionInProgress = true;
       _sendTransmittable(new _GarbageCollectionStart());
     });

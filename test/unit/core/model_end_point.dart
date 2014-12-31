@@ -17,9 +17,9 @@ void _runModelEndPointTests(){
         var connectionPair = new local.EndPointConnectionPair();
         var srcEndPoint = new ModelEndPoint(
           (_) => new Future(() => new _TestModel()),
+          connectionPair.a,
           (_) => new Future((){}),
-          2,
-          connectionPair.a);
+          2);
         srcEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
         srcEndPoint.shutdown();
       });
@@ -38,9 +38,9 @@ void _runModelEndPointTests(){
         });
         var srcEndPoint = new ModelEndPoint(
           (_) => initSeed = new _TestModel(),
+          connectionPair.a,
           (_) => new Future((){}),
-          2,
-          connectionPair.a);
+          2);
       });
     });
 
@@ -49,9 +49,9 @@ void _runModelEndPointTests(){
       try{
         var srcEndPoint = new ModelEndPoint(
           (_) => 1, //not a Source or Future<Source>
+          connectionPair.a,
           (_) => new Future((){}),
-          2,
-          connectionPair.a);
+          2);
       }catch(ex){
         expect(ex is InvalidInitSourceReturnTypeError, equals(true));
       }
@@ -62,9 +62,9 @@ void _runModelEndPointTests(){
       var connectionPair = new local.EndPointConnectionPair();
       var srcEndPoint = new ModelEndPoint(
         (_) => new _TestModel(),
+        connectionPair.a,
         (_){},
-        2,
-        connectionPair.a);
+        2);
       srcEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       connectionPair.b.close();
       expectAsyncWithReadyCheckAndTimeout(
@@ -77,9 +77,9 @@ void _runModelEndPointTests(){
       var connectionPair = new local.EndPointConnectionPair();
       var srcEndPoint = new ModelEndPoint(
         (_) => new Future(() => new _TestModel()),
+        connectionPair.a,
         (_) => new Future((){}),
-        2,
-        connectionPair.a);
+        2);
       connectionPair.b.incoming.listen((event){}, onDone: (){ outgoingStreamClosed = true; });
       srcEndPoint.shutdown();
       expectAsyncWithReadyCheckAndTimeout(
@@ -96,9 +96,9 @@ void _runModelEndPointTests(){
         var connectionPair = new local.EndPointConnectionPair();
         var srcEndPoint = new ModelEndPoint(
           (_) => new Future(() => new _TestModel()),
+          connectionPair.a,
           (_) => new Future((){}),
-          2,
-          connectionPair.a);
+          2);
         connectionPair.b.send(new Transmittable().toTranString());
       }, onError: (e){ error = e; });
     });

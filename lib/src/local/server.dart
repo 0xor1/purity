@@ -8,7 +8,7 @@ class Server extends core.ServerCore {
 
   static int _endPointIdSrc = 0;
 
-  Server(core.SeedApplication seedApplication, core.CloseSource closeSrc, int garbageCollectionFrequency, [bool verbose = true]) : super(seedApplication, closeSrc, garbageCollectionFrequency, verbose);
+  Server(core.SeedApplication seedApplication, [core.CloseSource closeSrc = null, int gcFreq = 0, bool verbose = true]) : super(seedApplication, closeSrc, gcFreq, verbose);
 
   void createEndPointPair() {
     if (!core.consumerSettingsInitialised) {

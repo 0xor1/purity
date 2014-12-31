@@ -11,7 +11,7 @@ abstract class ServerCore extends Model{
 
   final SeedApplication _seedApplication;
   final CloseSource _closeSrc;
-  final int _garbageCollectionFrequency;
+  final int _gcFreq;
   final Set<ModelEndPoint> srcEndPoints = new Set<ModelEndPoint>();
   final bool _verbose;
 
@@ -20,11 +20,11 @@ abstract class ServerCore extends Model{
    *
    * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
-   * * [_garbageCollectionFrequency] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
+   * * [_gcFreq] as th number of seconds between garbage collection executions. 0 or null to never run garbage collection.
    * * [_verbose] as an optional argument to emit events for each message sent and received from all hosted [ModelEndPoint]s.
    *
    */
-  ServerCore(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
+  ServerCore(this._seedApplication, [this._closeSrc = null, this._gcFreq = 0, this._verbose = false]);
 
   /**
    * Creates a [ModelEndPoint] with the supplied [name] and [connection]
@@ -46,7 +46,7 @@ abstract class ServerCore extends Model{
       };
       connection = new EndPointConnection(connection.incoming, verboseSend, connection.close);
     }
-    var srcEndPoint = new ModelEndPoint(_seedApplication, _closeSrc, _garbageCollectionFrequency, connection);
+    var srcEndPoint = new ModelEndPoint(_seedApplication, connection, _closeSrc, _gcFreq);
     listen(srcEndPoint, Shutdown, (event){
       _emitEndPointMessageEvent(name, false, 'Source end-point shutdown');
       srcEndPoints.remove(event.emitter);

@@ -2,7 +2,7 @@
  * Author:  Daniel Robinson http://github.com/0xor1
  */
 
-library purity.host;
+library purity.server;
 
 import 'dart:io';
 import 'dart:async';
@@ -13,7 +13,7 @@ import 'package:logging/logging.dart' show Logger, Level, LogRecord;
 
 final Logger _log = new Logger('Purity Host');
 
-class Host extends core.ServerCore{
+class Server extends core.ServerCore{
 
   final dynamic address;
   final int port;
@@ -23,8 +23,8 @@ class Host extends core.ServerCore{
   final bool requestClientCertificate;
 
 
-  Host(dynamic this.address, int this.port, String this.staticFileDirectory, core.SeedApplication seedApplication, core.CloseSource closeSrc, int garbageCollectionFrequency, {bool verbose: false, this.backlog: 0, this.certificateName: null, this.requestClientCertificate: false}):
-    super(seedApplication, closeSrc, garbageCollectionFrequency, verbose);
+  Server(dynamic this.address, int this.port, String this.staticFileDirectory, core.SeedApplication seedApplication, {core.CloseSource closeSrc: null, int gcFreq: 0, bool verbose: false, this.backlog: 0, this.certificateName: null, this.requestClientCertificate: false}):
+    super(seedApplication, closeSrc, gcFreq, verbose);
 
   Future<Router> start(){
 
