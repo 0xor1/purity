@@ -22,7 +22,7 @@ part 'src/core/view.dart';
 part 'src/core/end_point_connection.dart';
 part 'src/core/end_point.dart';
 part 'src/core/event_data.dart';
-part 'src/core/host.dart';
+part 'src/core/server_core.dart';
 part 'src/core/annotation.dart';
 
 part 'src/core/tran/model_event.dart';

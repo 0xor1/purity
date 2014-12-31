@@ -5,6 +5,6 @@
 part of purity.local;
 
 class ProxyEndPointCreated extends core.EventData{
-  ProxyEndPoint get proxyEndPoint => get('proxyEndPoint');
-  void set proxyEndPoint (ProxyEndPoint o) => set('proxyEndPoint', o);
+  ViewEndPoint get proxyEndPoint => get('proxyEndPoint');
+  void set proxyEndPoint (ViewEndPoint o) => set('proxyEndPoint', o);
 }

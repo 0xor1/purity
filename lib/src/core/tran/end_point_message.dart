@@ -4,7 +4,7 @@
 
 part of purity.core;
 
-/// Emitted by [ModelEndPoint]s if the [Host] creating the [ModelEndPoint]s was constructed with verbose = true.
+/// Emitted by [ModelEndPoint]s if the [ServerCore] creating the [ModelEndPoint]s was constructed with verbose = true.
 class EndPointMessage extends EventData{
   String get endPointName => get('endPointName');
   void set endPointName (String o){set('endPointName', o);}

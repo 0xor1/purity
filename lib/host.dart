@@ -13,7 +13,7 @@ import 'package:logging/logging.dart' show Logger, Level, LogRecord;
 
 final Logger _log = new Logger('Purity Host');
 
-class Host extends core.Host{
+class Host extends core.ServerCore{
 
   final dynamic address;
   final int port;

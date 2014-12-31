@@ -7,7 +7,7 @@ part of purity.core;
 /**
  * Hosts multiple [ModelEndPoint]s.
  */
-abstract class Host extends Model{
+abstract class ServerCore extends Model{
 
   final SeedApplication _seedApplication;
   final CloseSource _closeSrc;
@@ -16,7 +16,7 @@ abstract class Host extends Model{
   final bool _verbose;
 
   /**
-   * Constructs a new [Host] instance with:
+   * Constructs a new [ServerCore] instance with:
    *
    * * [_seedApplication] as the [SeedApplication] function for the application.
    * * [_closeSrc] as the [CloseSource] function for the application.
@@ -24,7 +24,7 @@ abstract class Host extends Model{
    * * [_verbose] as an optional argument to emit events for each message sent and received from all hosted [ModelEndPoint]s.
    *
    */
-  Host(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
+  ServerCore(this._seedApplication, this._closeSrc, this._garbageCollectionFrequency, [this._verbose = false]);
 
   /**
    * Creates a [ModelEndPoint] with the supplied [name] and [connection]

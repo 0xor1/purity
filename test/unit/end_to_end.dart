@@ -205,8 +205,8 @@ const int massivesToCreateToEnsureCrash = 50;
 const int massiveSize = 1000000;
 bool restrictedAccessMethodCalled = false;
 bool memoryLeakTestComplete = false;
-local.Host currentHost;
-local.ProxyEndPoint currentproxyEndPoint;
+local.Server currentServer;
+local.ViewEndPoint currentViewEndPoint;
 TestModel currentTestSrc;
 TestView currentTestConsumer;
 dynamic srcPassedToConsumer;
@@ -216,19 +216,19 @@ dynamic lastEventDataCaughtByConsumer;
 void _setUp(){
 
   runZoned((){
-    currentHost = new local.Host(
+    currentServer = new local.Server(
       (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestModel()),
       (src) => new Future.delayed(new Duration(), (){}),
       1);
 
     local.initConsumerSettings(
       (src, proxyEndPoint){
-        currentproxyEndPoint = proxyEndPoint;
+        currentViewEndPoint = proxyEndPoint;
         currentTestConsumer = new TestView(src);
       },
       (){});
 
-    currentHost.createEndPointPair();
+    currentServer.createEndPointPair();
     },
     onError:(error){
       lastErrorCaughtDuringTest = error;
@@ -236,9 +236,9 @@ void _setUp(){
 }
 
 void _tearDown(){
-  currentHost.shutdown();
+  currentServer.shutdown();
   local.clearConsumerSettings();
-  currentHost = currentTestSrc = currentTestConsumer =
+  currentServer = currentTestSrc = currentTestConsumer =
   srcPassedToConsumer = lastEventDataCaughtByConsumer =
   lastErrorCaughtDuringTest = null;
   restrictedAccessMethodCalled = false;

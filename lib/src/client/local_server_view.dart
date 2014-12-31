@@ -7,14 +7,12 @@ part of purity.client;
 /**
  * Acts as a basic view for running a purity server on the client side
  * to enable the user to launch multiple clients and debug communications.
- * This is intended to be a temporary solution until an angular component
- * can be made to replace it.
+ * This is intended to be a temporary solution until a polymer element
+ * is made to replace it.
  */
-class LocalHostView extends core.View{
+class LocalServerView extends core.View<Server>{
 
   static const String COMMUNICATIONS = 'purity-local-host-view-communications';
-
-  local.Host get host => model;
 
   cnp.CommandLine _cmdLn;
   cnp.CommandLineInputBinder _binder;
@@ -22,11 +20,11 @@ class LocalHostView extends core.View{
   cnp.CommandLine _coms;
   cnp.Window _comsWindow;
   final Map<String, cnp.Window> _clientWindows = new Map<String, cnp.Window>();
-  final Map<String, local.ProxyEndPoint> _clientEndPoints = new Map<String, local.ProxyEndPoint>();
+  final Map<String, ViewEndPoint> _clientEndPoints = new Map<String, ViewEndPoint>();
 
   DivElement get html => _page.html;
 
-  LocalHostView(local.Host host):super(host){
+  LocalServerView(Server server):super(server){
     _localHostViewStyle.insert();
     _cmdLn = new cnp.CommandLine()
     ..enterText('Enter showComs to display a window showing all communications to/from the Purity Host.')
@@ -42,7 +40,7 @@ class LocalHostView extends core.View{
   }
 
   void _hookUpEvents(){
-    listen(host, core.EndPointMessage, (core.Event<core.EndPointMessage> event){
+    listen(model, core.EndPointMessage, (core.Event<core.EndPointMessage> event){
       var msg = event.data;
       String str;
       if(msg.isClientToServer){
@@ -60,7 +58,7 @@ class LocalHostView extends core.View{
         'newClient',
         'Simulates a new client browsing to the Host',
         (cnp.CommandLine cmdLn, List<String> posArgs, Map<String, String> namArgs){
-          host.createEndPointPair();
+          model.createEndPointPair();
         }),
       new cnp.CommandLineBinding(
         'closeClient',
@@ -86,14 +84,14 @@ class LocalHostView extends core.View{
     ]);
   }
 
-  void addNewClientView(local.ProxyEndPoint proxyEndPoint, Element appHtmlRoot, [int width = 200, int height = 200, int top = 0, int left = 0]){
-    _clientEndPoints[proxyEndPoint.name] = proxyEndPoint;
-    _clientWindows[proxyEndPoint.name] =
+  void addNewClientView(ViewEndPoint viewEndPoint, Element appHtmlRoot, [int width = 200, int height = 200, int top = 0, int left = 0]){
+    _clientEndPoints[viewEndPoint.name] = viewEndPoint;
+    _clientWindows[viewEndPoint.name] =
       new cnp.Window(
         new cnp.Wrapper.ForElement(appHtmlRoot)
         ..fill()
         ..style.overflow = 'auto',
-        proxyEndPoint.name, width, height, top, left)..show();
+        viewEndPoint.name, width, height, top, left)..show();
   }
 
   static final cnp.Style _localHostViewStyle = new cnp.Style('''
