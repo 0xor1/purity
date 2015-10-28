@@ -145,6 +145,17 @@ void runEndToEndTests(){
         () => currentTestConsumer.callSourceMethod(#ignoreAll, [null]));
     });
 
+    test('a Source may not have #_invoke invoked on it', (){
+      expectAsyncWithReadyCheckAndTimeout(
+        () => lastErrorCaughtDuringTest != null,
+        (){
+          expect(lastErrorCaughtDuringTest is ArgumentError, equals(true));
+        });
+      executeWhenReadyOrTimeout(
+        () => currentTestConsumer != null,
+        () => currentTestConsumer.callSourceMethod(#_invoke));
+    });
+
     test('a Source may not have a private method invoked on it', (){
       expectAsyncWithReadyCheckAndTimeout(
         () => lastErrorCaughtDuringTest != null,
@@ -245,6 +256,10 @@ class TestSource extends Source{
       ..massive = massive);
   }
 
+  void _aPrivateMethod(){
+    print('private method called');
+  }
+
   void deleteAMassiveObject() {
     if(_massives.isNotEmpty){
       emit(
@@ -279,17 +294,17 @@ class TestConsumer extends Consumer{
   }
 
   _addEventHandlers(){
-    listen(source, All, (Emission em){
-      lastEventDataCaughtByConsumer = em.data;
+    listen(source, All, (Event e){
+      lastEventDataCaughtByConsumer = e.data;
     });
-    listen(source, MassiveObjectCreated, (Emission<MassiveObjectCreated> em){
-      _massives.add(new MassiveConsumer(em.data.massive));
+    listen(source, MassiveObjectCreated, (Event<MassiveObjectCreated> e){
+      _massives.add(new MassiveConsumer(e.data.massive));
       Timer.run((){
         source.deleteAMassiveObject();
       });
     });
-    listen(source, MassiveObjectDeleted, (Emission<MassiveObjectDeleted> em){
-      var massive = _massives.singleWhere((massive) => em.data.massive == massive.source);
+    listen(source, MassiveObjectDeleted, (Event<MassiveObjectDeleted> e){
+      var massive = _massives.singleWhere((massive) => e.data.massive == massive.source);
       _massives.remove(massive);
       massive.dispose();
       if(massivesToCreateToEnsureNoMemoryLeaks-- > 0){
@@ -326,16 +341,17 @@ class MassiveConsumer extends Consumer{
   MassiveConsumer(src):super(src);
 }
 
-class TestEvent extends Transmittable implements ITestEvent{}
-abstract class ITestEvent{
-  dynamic prop;
+class TestEvent extends Transmittable{
+  dynamic get prop => get('prop');
+  void set prop (o) => set('prop', o);
 }
 
 
-class MassiveObjectDeleted extends Transmittable implements IMassiveObjectCreatedOrDeleted{}
-class MassiveObjectCreated extends Transmittable implements IMassiveObjectCreatedOrDeleted{}
-abstract class IMassiveObjectCreatedOrDeleted{
-  dynamic massive;
+class MassiveObjectDeleted extends MassiveObjectCreatedOrDeleted{}
+class MassiveObjectCreated extends MassiveObjectCreatedOrDeleted{}
+class MassiveObjectCreatedOrDeleted extends Transmittable{
+  dynamic get massive => get('massive');
+  void set massive (o) => set('massive', o);
 }
 
 final Registrar _registerPurityTestTranTypes = generateRegistrar(
@@ -363,15 +379,14 @@ void _setUp(){
     currentHost = new local.Host(
       (_) => new Future.delayed(new Duration(), () => currentTestSrc = new TestSource()),
       (src) => new Future.delayed(new Duration(), (){}),
-      2);
+      1);
 
     local.initConsumerSettings(
       (src, proxyEndPoint){
         currentproxyEndPoint = proxyEndPoint;
         currentTestConsumer = new TestConsumer(src);
       },
-      (){}
-    );
+      (){});
 
     currentHost.createEndPointPair();
     },

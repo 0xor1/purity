@@ -9,25 +9,25 @@ void _runProxyEndPointTests(){
   group('proxy_end_point:', (){
 
     test('emits Event<Shutdown> on shutdown', (){
-      Emission<Shutdown> caughtEvent;
+      Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
       var proxyEndPoint = new ProxyEndPoint(
         (_, __){},
         (){},
         connectionPair.a);
-      proxyEndPoint.on(Shutdown, (Emission<Shutdown> event) => caughtEvent = event);
+      proxyEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       proxyEndPoint.shutdown();
       Timer.run(expectAsync(() => expect(caughtEvent.data is Shutdown, equals(true))));
     });
 
     test('shuts down when the incoming stream is closed', (){
-      Emission<Shutdown> caughtEvent;
+      Event<Shutdown> caughtEvent;
       var connectionPair = new local.EndPointConnectionPair();
       var proxyEndPoint = new ProxyEndPoint(
         (_, __){},
         (){},
         connectionPair.a);
-      proxyEndPoint.on(Shutdown, (Emission<Shutdown> event) => caughtEvent = event);
+      proxyEndPoint.on(Shutdown, (Event<Shutdown> event) => caughtEvent = event);
       connectionPair.b.close();
       expectAsyncWithReadyCheckAndTimeout(
         () => caughtEvent != null,

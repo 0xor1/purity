@@ -5,12 +5,12 @@
 part of purity.core;
 
 /**
- * A down-stream [_EndPoint] to route [Emission]s from [Source]s to their proxies for re-emitting to any listening [Consumer]s.
+ * A down-stream [_EndPoint] to route [Event]s from [Source]s to their proxies for re-emitting to any listening [Consumer]s.
  */
 class ProxyEndPoint extends _EndPoint{
   final InitConsumer _initConsumption;
   final Action _onConnectionClose;
-  final Map<ObjectId, _Proxy> _proxies = new Map<ObjectId, _Proxy>();
+  final Map<ObjectId, Source> _proxies = new Map<ObjectId, Source>();
   bool _proxyEventInProgress = false;
 
   ProxyEndPoint(this._initConsumption, this._onConnectionClose, EndPointConnection connection):
@@ -34,14 +34,14 @@ class ProxyEndPoint extends _EndPoint{
         _proxies[tran.proxy._purityId].emit(tran.data).then((_){ _proxyEventInProgress = false; });
       }
     }else{
-      throw new UnsupportedMessageTypeError(reflect(tran).type.reflectedType);
+      throw new UnsupportedMessageTypeError(tran.runtimeType);
     }
   }
 
   dynamic _postprocessTran(dynamic v){
-    if(v is _Proxy){
-      v.sendTran = _sendTran;
+    if(v is Source){
       if(!_proxies.containsKey(v._purityId)){
+        v._sendTran = _sendTransmittable;
         _proxies[v._purityId] = v;
       }else{
         return _proxies[v._purityId];
@@ -50,7 +50,7 @@ class ProxyEndPoint extends _EndPoint{
     return v;
   }
 
-  void _sendTran(Transmittable tran){
+  void _sendTransmittable(Transmittable tran){
     _connection.send(tran.toTranString());
   }
 
@@ -59,7 +59,7 @@ class ProxyEndPoint extends _EndPoint{
       new Future.delayed(new Duration(), _runGarbageCollectionSequence);
       return;
     }else{
-      var proxiesCollected = new Set<_Proxy>();
+      var proxiesCollected = new Set<Source>();
       _proxies.forEach((purityId, proxy){
         if(proxy._usageCount == 0){
           proxiesCollected.add(proxy);
@@ -68,7 +68,7 @@ class ProxyEndPoint extends _EndPoint{
       proxiesCollected.forEach((proxy){
         _proxies.remove(proxy._purityId);
       });
-      _sendTran(new _GarbageCollectionReport()..proxies = proxiesCollected);
+      _sendTransmittable(new _GarbageCollectionReport()..proxies = proxiesCollected);
     }
   }
 }

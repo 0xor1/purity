@@ -4,7 +4,7 @@
 
 part of purity.core;
 
-class _SourceReady extends _Transmission implements _ISourceReady{}
-abstract class _ISourceReady{
-  _Base seed;
+class _SourceReady extends _Transmission{
+  Source get seed => get('seed');
+  void set seed (Source o) => set('seed', o);
 }
