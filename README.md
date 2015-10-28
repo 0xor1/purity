@@ -60,11 +60,11 @@ there at all, and instead simply have the **Consumers** consume their
 ##Examples
 
 * Stopwatch
-    * [Repo](http://github.com/0xor1/purity_stopwatch_example)
-    * [Local test with Purity](http://0xor1.github.io/purity_stopwatch_example/)
-    * [Local test without Purity](http://0xor1.github.io/purity_stopwatch_example/without_purity/)
+    * [Repo](http://github.com/robsix/purity_stopwatch_example)
+    * [Local test with Purity](http://robsix.github.io/purity_stopwatch_example/)
+    * [Local test without Purity](http://robsix.github.io/purity_stopwatch_example/without_purity/)
 
 * Chat
-    * [Repo](http://github.com/0xor1/purity_chat_example)
-    * [Local test with Purity](http://0xor1.github.io/purity_chat_example/)
-    * [Local test without Purity](http://0xor1.github.io/purity_chat_example/without_purity/)
+    * [Repo](http://github.com/robsix/purity_chat_example)
+    * [Local test with Purity](http://robsix.github.io/purity_chat_example/)
+    * [Local test without Purity](http://robsix.github.io/purity_chat_example/without_purity/)
