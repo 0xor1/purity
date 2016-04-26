@@ -361,7 +361,7 @@ final Registrar _registerPurityTestTranTypes = generateRegistrar(
     new TranRegistration.subtype(MassiveObjectCreated, () => new MassiveObjectCreated()),
   ]);
 
-const int massivesToCreateToEnsureCrash = 50;
+const int massivesToCreateToEnsureCrash = 100;
 const int massiveSize = 1000000;
 bool restrictedAccessMethodCalled = false;
 bool memoryLeakTestComplete = false;
