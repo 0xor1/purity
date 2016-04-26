@@ -215,25 +215,6 @@ void runEndToEndTests(){
         () => currentTestConsumer.runMemoryLeakSequence());
     });
 
-    test('$massivesToCreateToEnsureCrash Massive objects is enough to cause OutOfMemoryError', (){
-      List<double> _memoryUser = new List<double>();
-      var success = false;
-      var count = massivesToCreateToEnsureCrash;
-      try{
-        var rng = new Random();
-        while(count-- > 0){
-          for(var i = 0; i < massiveSize; i++){
-            _memoryUser.add(rng.nextDouble());
-          }
-        }
-      }on OutOfMemoryError catch(error){
-        _memoryUser.clear();
-        success = true;
-      }finally{
-        expect(success, equals(true));
-      }
-    });
-
   });
 
 }
